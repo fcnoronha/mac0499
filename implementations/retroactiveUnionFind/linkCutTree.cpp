@@ -37,13 +37,15 @@ void LinkCutTree::access(Node *u)
     Node *last = NULL;
     Node *p = u;
 
+    // transform all parent pointers from u to the root into part of the same preferred path
     while (p != NULL)
     {
-        splayTree.splay(p);
-        p->r_child = last;
+        splayTree.splay(p); // makes p the root of its preferred path auxiliary tree
+        p->r_child = last;  // separates the preferred path of p, appending the last auxiliary
+                            // tree processed as the deepest part of this path
+        p->recalculate_max_subtree_value();
         last = p;
-        last->recalculate_max_subtree_value();
-        p = p->parent;
+        p = p->parent; // moves up to the parent preferred path auxiliary tree
     }
     splayTree.splay(u);
 }
@@ -121,6 +123,7 @@ bool LinkCutTree::is_connected(int u, int v)
 
     access(u_node);
     access(v_node);
+    // if they are in the same tree, u is either in v's auxiliary tree or has a parent pointer to it
     return (u_node->parent != NULL);
 }
 
@@ -134,6 +137,6 @@ int LinkCutTree::maximum_edge(int u, int v)
     Node *u_node = vertices[u];
 
     make_root(v_node);
-    access(u_node);
+    access(u_node); // now creates a u-v preferred path
     return u_node->max_subtree_value;
 }

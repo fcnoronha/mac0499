@@ -32,8 +32,7 @@ void RetroactiveUnionFind::delete_union(int t)
 {
     checkEdgeExistAtTime(t);
 
-    std::pair<int, int>
-        edge = edges_by_time[t];
+    std::pair<int, int> edge = edges_by_time[t];
     linkCutTree.cut(edge.first, edge.second);
     edges_by_time.erase(edges_by_time.find(t));
 }

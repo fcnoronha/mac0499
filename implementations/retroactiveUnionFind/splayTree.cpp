@@ -69,6 +69,8 @@ void SplayTree::rotate(Node *u)
             grandparent->l_child = u;
     }
 
+    // always keep parent and u updated regarding it reversed status. By doing this, u's children
+    // will always be correct while splaying up
     parent->push_reversed_bit();
     u->push_reversed_bit();
 
