@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include "splayTree.hpp"
 
-void SplayTree::checkNullNodePointer(Node *u)
+void SplayTree::check_null_node_pointer(Node *u)
 {
     if (u == NULL)
     {
@@ -56,7 +56,7 @@ bool Node::is_root()
 
 void SplayTree::rotate(Node *u)
 {
-    checkNullNodePointer(u);
+    check_null_node_pointer(u);
 
     Node *parent = u->parent;
     Node *grandparent = parent->parent;
@@ -100,7 +100,7 @@ void SplayTree::rotate(Node *u)
 
 void SplayTree::splay(Node *u)
 {
-    checkNullNodePointer(u);
+    check_null_node_pointer(u);
 
     while (!u->is_root())
     {

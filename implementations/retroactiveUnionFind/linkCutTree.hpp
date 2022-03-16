@@ -17,15 +17,15 @@ private:
     void access(Node *);
 
     /* Sanitization method to check if there is a node pointer for a given node id. */
-    void checkVertexExist(int);
+    void check_vertex_exist(int);
 
     /* Sanitization method to check if two nodes are already connected, ie make part
        of the same tree. */
-    void checkVerticesAlreadyConnected(int, int);
+    void check_vertices_already_connected(int, int);
 
     /* Sanitization method to check if two nodes are not connected, ie in separated
        trees. */
-    void checkVerticesAreNotConnected(int, int);
+    void check_vertices_are_not_connected(int, int);
 
 public:
     /* Create a node pointer for the given node id if it does not already exist. */

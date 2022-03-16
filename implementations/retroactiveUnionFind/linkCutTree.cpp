@@ -2,7 +2,7 @@
 #include "splayTree.hpp"
 #include "linkCutTree.hpp"
 
-void LinkCutTree::checkVertexExist(int u)
+void LinkCutTree::check_vertex_exist(int u)
 {
     if (!vertices[u])
     {
@@ -10,7 +10,7 @@ void LinkCutTree::checkVertexExist(int u)
     }
 }
 
-void LinkCutTree::checkVerticesAlreadyConnected(int u, int v)
+void LinkCutTree::check_vertices_already_connected(int u, int v)
 {
     if (is_connected(u, v))
     {
@@ -18,7 +18,7 @@ void LinkCutTree::checkVerticesAlreadyConnected(int u, int v)
     }
 }
 
-void LinkCutTree::checkVerticesAreNotConnected(int u, int v)
+void LinkCutTree::check_vertices_are_not_connected(int u, int v)
 {
     if (!is_connected(u, v))
     {
@@ -58,7 +58,7 @@ void LinkCutTree::create_node(int u)
 
 void LinkCutTree::make_root(int u)
 {
-    checkVertexExist(u);
+    check_vertex_exist(u);
 
     Node *u_node = vertices[u];
 
@@ -68,9 +68,9 @@ void LinkCutTree::make_root(int u)
 
 void LinkCutTree::link(int u, int v, int w = 0)
 {
-    checkVertexExist(u);
-    checkVertexExist(v);
-    checkVerticesAlreadyConnected(u, v);
+    check_vertex_exist(u);
+    check_vertex_exist(v);
+    check_vertices_already_connected(u, v);
 
     Node *v_node = vertices[v];
     Node *u_node = vertices[u];
@@ -89,9 +89,9 @@ void LinkCutTree::link(int u, int v, int w = 0)
 
 void LinkCutTree::cut(int u, int v)
 {
-    checkVertexExist(u);
-    checkVertexExist(v);
-    checkVerticesAreNotConnected(u, v);
+    check_vertex_exist(u);
+    check_vertex_exist(v);
+    check_vertices_are_not_connected(u, v);
 
     Node *v_node = vertices[v];
     Node *u_node = vertices[u];
@@ -115,8 +115,8 @@ void LinkCutTree::cut(int u, int v)
 
 bool LinkCutTree::is_connected(int u, int v)
 {
-    checkVertexExist(u);
-    checkVertexExist(v);
+    check_vertex_exist(u);
+    check_vertex_exist(v);
 
     Node *v_node = vertices[v];
     Node *u_node = vertices[u];
@@ -129,9 +129,9 @@ bool LinkCutTree::is_connected(int u, int v)
 
 int LinkCutTree::maximum_edge(int u, int v)
 {
-    checkVertexExist(u);
-    checkVertexExist(v);
-    checkVerticesAreNotConnected(u, v);
+    check_vertex_exist(u);
+    check_vertex_exist(v);
+    check_vertices_are_not_connected(u, v);
 
     Node *v_node = vertices[v];
     Node *u_node = vertices[u];

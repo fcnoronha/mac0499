@@ -37,7 +37,7 @@ private:
     void rotate(Node *);
 
     /* Sanitization method to check if a given node poiter is null. */
-    void checkNullNodePointer(Node *);
+    void check_null_node_pointer(Node *);
 
 public:
     /* Performs a series of rotations to bring the node u to the top of the
