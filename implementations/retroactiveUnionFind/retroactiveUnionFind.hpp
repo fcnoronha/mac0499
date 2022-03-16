@@ -12,9 +12,12 @@ private:
     /* Sanitization method used to check if two nodes are connected before linking. */
     void checkVerticesAlreadyConnected(int, int);
 
+    /* Sanitization method used to check if a union at time t already exists. */
+    void checkUnionAlreadyExistAtTime(int);
+
     /* Sanitization method used to check if the union set to be deleted at time
        t really exists. */
-    void checkEdgeExistAtTime(int);
+    void checkUnionDoNotExistAtTime(int);
 
 public:
     /* Create a union between elements u and v at the time t. */

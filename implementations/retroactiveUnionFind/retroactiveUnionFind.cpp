@@ -10,7 +10,7 @@ void RetroactiveUnionFind::checkVerticesAlreadyConnected(int u, int v)
     }
 }
 
-void RetroactiveUnionFind::checkEdgeExistAtTime(int t)
+void RetroactiveUnionFind::checkUnionDoNotExistAtTime(int t)
 {
     if (edges_by_time.count(t) == 0)
     {
@@ -18,8 +18,17 @@ void RetroactiveUnionFind::checkEdgeExistAtTime(int t)
     }
 }
 
+void RetroactiveUnionFind::checkUnionAlreadyExistAtTime(int t)
+{
+    if (edges_by_time.count(t) > 0)
+    {
+        throw std::invalid_argument("union already exist at time t");
+    }
+}
+
 void RetroactiveUnionFind::create_union(int u, int v, int t)
 {
+    checkUnionAlreadyExistAtTime(t);
     linkCutTree.create_node(u);
     linkCutTree.create_node(v);
     checkVerticesAlreadyConnected(u, v);
@@ -30,7 +39,7 @@ void RetroactiveUnionFind::create_union(int u, int v, int t)
 
 void RetroactiveUnionFind::delete_union(int t)
 {
-    checkEdgeExistAtTime(t);
+    checkUnionDoNotExistAtTime(t);
 
     std::pair<int, int> edge = edges_by_time[t];
     linkCutTree.cut(edge.first, edge.second);
