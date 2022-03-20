@@ -1,0 +1,25 @@
+%!TeX root=../tese.tex
+%("dica" para o editor de texto: este arquivo é parte de um documento maior)
+% para saber mais: https://tex.stackexchange.com/q/78101/183146
+
+%% ------------------------------------------------------------------------- %%
+\chapter{Link-Cut Trees}
+\label{cap:link-cut-trees}
+
+Neste capítulo, apresentaremos a estrutura de dados chamada de Link-Cut Tree. Introduzida por ~\citet{10.1145/800076.802464}, essas arvores nos permitem realizar três operações principais, são elas:
+
+\begin{itemize}
+    \item $make\_root(u)$: enraíza no vértice $u$ a arvore que o contem.
+    \item $link(u, v)$: dado que $u$ e $v$ estão em arvores separadas, transforma $v$ em raiz e o liga como filho de $u$.
+    \item $cut(u, v)$: retira da arvore a aresta com pontas em $u$ e $v$, criando duas novas arvores.
+\end{itemize}
+
+Além disso, a Link-Cut Tree possui a capacidade de realizar operações agregadas nos vertices, isto é, consultas acerca de propriedades de uma sub-arvore ou de um caminho entre dois vertices. Em particular, para as estruturas que estudaremos nos próximos capítulos, vamos utilizar a função $maximum\_edge(u, v)$, que nos informa o valor máximo de uma aresta entre os vertices $u$ e $v$.
+
+Para que essas operações sejam realizadas de maneira rápida, usamos a ideia de \textit{preferred paths}. No artigo original, os autores utilizam uma arvore binaria enviesada para cuidar destes caminhos, porém, 4 anos depois, os autores apresentam a Splay Tree, que possibilita realizarmos as operações necessárias para manter os \textit{preferred paths} em tempo $O(logn)$ amortizado.
+
+%% ------------------------------------------------------------------------- %%
+\section{Splay Trees}
+\label{sec:splay-trees}
+
+Também introduzida por ~\citet{10.1145/3828.3835}, a Splay Tree é uma arvore binaria de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca em tempo $O(lg n)$ amortizado.
