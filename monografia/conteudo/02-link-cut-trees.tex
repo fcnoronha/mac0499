@@ -3,23 +3,86 @@
 % para saber mais: https://tex.stackexchange.com/q/78101/183146
 
 %% ------------------------------------------------------------------------- %%
+% Explicar uso nas próximas etapas 
 \chapter{Link-Cut Trees}
 \label{cap:link-cut-trees}
 
-Neste capítulo, apresentaremos a estrutura de dados chamada de Link-Cut Tree. Introduzida por ~\citet{10.1145/800076.802464}, essas arvores nos permitem realizar três operações principais, são elas:
-
-\begin{itemize}
-    \item $make\_root(u)$: enraíza no vértice $u$ a arvore que o contem.
-    \item $link(u, v)$: dado que $u$ e $v$ estão em arvores separadas, transforma $v$ em raiz e o liga como filho de $u$.
-    \item $cut(u, v)$: retira da arvore a aresta com pontas em $u$ e $v$, criando duas novas arvores.
-\end{itemize}
-
-Além disso, a Link-Cut Tree possui a capacidade de realizar operações agregadas nos vertices, isto é, consultas acerca de propriedades de uma sub-arvore ou de um caminho entre dois vertices. Em particular, para as estruturas que estudaremos nos próximos capítulos, vamos utilizar a função $maximum\_edge(u, v)$, que nos informa o valor máximo de uma aresta entre os vertices $u$ e $v$.
-
-Para que essas operações sejam realizadas de maneira rápida, usamos a ideia de \textit{preferred paths}. No artigo original, os autores utilizam uma arvore binaria enviesada para cuidar destes caminhos, porém, 4 anos depois, os autores apresentam a Splay Tree, que possibilita realizarmos as operações necessárias para manter os \textit{preferred paths} em tempo $O(logn)$ amortizado.
+Neste capítulo, apresentaremos uma estrutura de dados introduzida por ~\citet{10.1145/800076.802464}, chamada Link-Cut Tree. Esta arvore serve como base para as estruturas retroativas apresentadas nos próximos capítulos.
 
 %% ------------------------------------------------------------------------- %%
-\section{Splay Trees}
-\label{sec:splay-trees}
+% o que a arvore mantém, sua estrutura e principais operações 
+\section{Ideia}
+\label{sec:lct-ideia}
 
-Também introduzida por ~\citet{10.1145/3828.3835}, a Splay Tree é uma arvore binaria de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca em tempo $O(lg n)$ amortizado.
+A Link-Cut Tree é uma estrutura de dados que nos permite manter uma floresta, onde os nós de cada árvore podem possuir um número arbitrário de filhos. Igualmente importante, essa estrutura nos fornece o seguinte conjunto de operações:
+
+\begin{itemize}
+    \item $make\_root(u)$: enraíza no vértice $u$ a árvore que o contem.
+    \item $link(u, v, w)$: dado que os vértices $u$ e $v$ estão em árvores separadas, transforma $v$ em raiz e o liga como filho de $u$, colocando peso $w$ na nova aresta criada.
+    \item $cut(u, v)$: retira da árvore a aresta com pontas em $u$ e $v$, efetivamente separando estes vértices e criando duas novas arvores.
+\end{itemize}
+
+Além disso, a Link-Cut Tree possui a capacidade de realizar operações agregadas nos vértices, isto é, consultas acerca de propriedades de uma sub-arvore ou de um caminho entre dois vértices. Em particular, estamos interessados na função $maximum\_edge(u, v)$, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
+
+Tudo isso consumindo tempo $O(log n)$ amortizado por operação, onde $n$ é o numero de vértices na floresta.
+
+%% ------------------------------------------------------------------------- %%
+% represented tree, preferred child, preferred path, aux tree and path parent pointer
+\section{Definições}
+\label{sec:lct-definicoes}
+
+Primeiramente, precisamos fazer algumas definições acerca da estrutura que vamos estudar.
+
+Chamamos de árvores representadas as árvores genéricas que nossa estrutura sintetiza. Para a representação que a Link-Cut Tree utiliza internamente dividimos uma árvore representada em caminhos vértice-disjunto, os caminhos preferidos. Por conveniência, definimos o início de um caminho preferido como o vértice mais profundo contido nele.
+
+Se uma aresta faz parte de um caminho preferido, chamamos ela de aresta preferida. Ademais, colocamos a propriedade de que um vértice pode ter no máximo uma aresta preferida com a outra ponta em algum de seus filhos. Caso tal aresta exista, ela liga um vértice á seu filho preferido.
+
+Finalmente, representamos cada caminho preferido com uma árvore auxiliar, no caso, uma Splay Tree (seu funcionamento é explicado na próxima seção). Para isso, cada vértice é armazenado na árvore auxiliar utilizando sua profundidade como chave de ordenação. Ademais, cada árvore auxiliar possui um ponteiro para o caminho preferido imediatamente acima de seu fim, exceto no caminho preferido que contem a raiz da árvore representada.
+
+\begin{center}
+    \textbf{TODO}: colocar imagem de uma arvore representada e de uma arvore auxiliar.
+\end{center}
+
+%% ------------------------------------------------------------------------- %%
+% uso para aux tree, estrutura dos nos, arestas sao vertices para termos os pesos, operação de splay, recalculate max e push reversed
+\section{Splay Trees}
+\label{sec:lct-splay-trees}
+
+No artigo original, os autores utilizam uma árvore binaria enviesada para as árvores auxiliares de caminhos preferidos, porém, 4 anos depois, ~\citet{10.1145/3828.3835} apresentam a Splay Tree, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $O(logn)$ amortizado, com uma implementação muito mais limpa do que a da versão original.
+
+A Splay Tree é uma árvore binaria de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca. Em particular, para seu uso como arvore auxiliar, estamos interessados na sua operação $splay$, que traz um nó para a raiz da árvore através de suscetivas rotações. Mas antes de nos aprofundarmos neste método, vamos examinar como os caminhos preferidos são representados aqui.
+
+Primeiramente, para podermos lidar com os pesos nas arestas da Link-Cut Tree, fazemos com que cada aresta vire um nó interno na árvore auxiliar. Isso nos permite calcular o peso máximo de uma aresta em um caminho preferido, dado que podemos facilmente obter o peso máximo de um vértice em uma Splay Tree.
+
+\begin{center}
+    \textbf{TODO}: colocar imagem de um preferred path e sua respectiva splay tree.
+    % splay tree com os campos e arestas como vértices
+    % enraizar splay no centro do caminho e destacar na legenda que essa é apenas umas das possíveis configurações dessa árvore auxiliar em particular
+\end{center}
+
+Além disso, como usamos a profundidade dos nós na árvore representada como chave para a árvore auxiliar, temos que todo nó à esquerda da raiz de uma Splay Tree tem uma profundidade menor que a mesma, enquanto os nós a direita tem uma profundidade maior. Contudo, ao realizamos uma operação $make\_root(u)$ fazemos com que todos os nós que estavam acima de $u$ na árvore representada se tornem parte de sua sub-arvore. Para isso, incluímos na Splay Tree um mecanismo para inverter a ordem de uma árvore auxiliar, efetivamente invertendo a orientação de um caminho preferido.
+
+\begin{center}
+    \textbf{TODO}: colocar imagem de uma Splay antes e depois da inversão, assim como sua árvore representada.
+\end{center}
+
+Com isso, os nós da árvore auxiliar tem os seguintes campos:
+
+\begin{itemize}
+    \item $parent$: apontador para o pai na Splay Tree, caso o nó em particular seja a raiz da árvore auxiliar, este campo armazena um ponteiro para o vértice que esta logo acima do fim deste caminho preferido na árvore representada.
+    \item $left\_child$ e $right\_child$: apontadores para os filhos de um nó na Splay Tree.
+    \item $value$: utilizado para guardar o peso de uma aresta da árvore representada transformado em vértice na árvore auxiliar.
+    \item $is\_reverserd$: valor booliano para sinalizar se uma sub-árvore deve ter sua ordem invertida ou não, isto é, se todas as posições de filhos esquerdos e direitos devem ser invertidos nessa  sub-árvore.
+    \item $max\_subtree\_value$: guarda o valor máximo armazenado na  sub-árvore do respectivo nó.
+\end{itemize}
+
+\subsection{Splay}
+\label{subsection:lct-splay-splay}
+
+%% ------------------------------------------------------------------------- %%
+% access e como implementa o resto
+\section{Operações}
+\label{sec:lct-operacoes}
+
+\subsection{Access}
+\label{subsection:lct-access}
