@@ -39,6 +39,7 @@ void Node::recalculate_max_subtree_value()
 void Node::reverse_subtree()
 {
     is_reversed ^= true;
+    push_reversed_bit();
 }
 
 void Node::set_parent(Node *newParent)
@@ -54,6 +55,7 @@ void Node::split_left_subtree()
 
 void Node::join_right_subtree(Node *newChild)
 {
+    // newChild->parent = this; TODO: investigate
     r_child = newChild;
     recalculate_max_subtree_value();
 }

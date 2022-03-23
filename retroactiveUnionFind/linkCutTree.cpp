@@ -41,8 +41,8 @@ void LinkCutTree::access(Node *u)
     while (current_root != NULL)
     {
         splayTree.splay(current_root);          // makes p the root of its preferred path auxiliary tree
-        current_root->join_right_subtree(last); // separates the preferred path of p, appending the last auxiliary
-                                                // tree processed as the deepest part of this path
+        current_root->join_right_subtree(last); // separates the preferred path of cur_root, appending the
+                                                // last auxiliary tree processed as the deepest part of this path
         last = current_root;
         current_root = current_root->parent; // moves up to the parent preferred path auxiliary tree
     }
