@@ -35,17 +35,16 @@ void LinkCutTree::make_root(Node *u)
 void LinkCutTree::access(Node *u)
 {
     Node *last = NULL;
-    Node *p = u;
+    Node *current_root = u;
 
     // transform all parent pointers from u to the root into part of the same preferred path
-    while (p != NULL)
+    while (current_root != NULL)
     {
-        splayTree.splay(p); // makes p the root of its preferred path auxiliary tree
-        p->r_child = last;  // separates the preferred path of p, appending the last auxiliary
-                            // tree processed as the deepest part of this path
-        p->recalculate_max_subtree_value();
-        last = p;
-        p = p->parent; // moves up to the parent preferred path auxiliary tree
+        splayTree.splay(current_root);          // makes p the root of its preferred path auxiliary tree
+        current_root->join_right_subtree(last); // separates the preferred path of p, appending the last auxiliary
+                                                // tree processed as the deepest part of this path
+        last = current_root;
+        current_root = current_root->parent; // moves up to the parent preferred path auxiliary tree
     }
     splayTree.splay(u);
 }
@@ -78,13 +77,13 @@ void LinkCutTree::link(int u, int v, int w = 0)
     Node *uv_edge = new Node(w);
     edges[{u, v}] = edges[{v, u}] = uv_edge;
 
-    // linking (v) <- (uv_edge)
-    make_root(uv_edge);
-    uv_edge->parent = v_node;
+    // linking (uv_edge)-(v)
+    make_root(v_node);
+    v_node->set_parent(uv_edge);
 
-    // linking (uv_edge) <- (u)
+    // linking (uv_edge)-(u)
     make_root(u_node);
-    u_node->parent = uv_edge;
+    u_node->set_parent(uv_edge);
 }
 
 void LinkCutTree::cut(int u, int v)
@@ -97,17 +96,20 @@ void LinkCutTree::cut(int u, int v)
     Node *u_node = vertices[u];
     Node *uv_edge = edges[{u, v}];
 
-    // cutting (v) <- (uv_edge)
-    make_root(uv_edge);
-    access(v_node);
-    v_node->l_child->parent = NULL;
-    v_node->l_child = NULL;
+    // when cutting two nodes, we will re-root the link-cut tree into both
+    // vertices and then access the uv_edge node, by doing this, since they
+    // are neighboors, our Splay will only have two nodes, uv_edge as root
+    // and the respertive vertex as left child
 
-    // cutting (uv_edge) <- (u)
+    // cutting (v)-(uv_edge)
+    make_root(v_node);
+    access(uv_edge);
+    uv_edge->split_left_subtree();
+
+    // cutting (u)-(uv_edge)
     make_root(u_node);
     access(uv_edge);
-    uv_edge->l_child->parent = NULL;
-    uv_edge->l_child = NULL;
+    uv_edge->split_left_subtree();
 
     edges.erase(edges.find({u, v}));
     edges.erase(edges.find({v, u}));
@@ -123,7 +125,8 @@ bool LinkCutTree::is_connected(int u, int v)
 
     access(u_node);
     access(v_node);
-    // if they are in the same tree, u is either in v's auxiliary tree or has a parent pointer to it
+    // if they are in the same tree, u is either in v's auxiliary tree or has
+    // a parent pointer to it
     return (u_node->parent != NULL);
 }
 

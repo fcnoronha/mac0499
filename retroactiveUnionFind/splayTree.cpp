@@ -41,6 +41,23 @@ void Node::reverse_subtree()
     is_reversed ^= true;
 }
 
+void Node::set_parent(Node *newParent)
+{
+    parent = newParent;
+}
+
+void Node::split_left_subtree()
+{
+    l_child->parent = NULL;
+    l_child = NULL;
+}
+
+void Node::join_right_subtree(Node *newChild)
+{
+    r_child = newChild;
+    recalculate_max_subtree_value();
+}
+
 bool Node::is_root()
 {
     // link-cut tree root
@@ -61,6 +78,13 @@ void SplayTree::rotate(Node *u)
     Node *parent = u->parent;
     Node *grandparent = parent->parent;
 
+    // always keep grandparent, parent and u updated regarding it reversed status
+    // by doing this, u's children will always be correct while splaying up
+    if (!parent->is_root())
+        grandparent->push_reversed_bit();
+    parent->push_reversed_bit();
+    u->push_reversed_bit();
+
     if (!parent->is_root())
     {
         if (grandparent->r_child == parent)
@@ -68,11 +92,6 @@ void SplayTree::rotate(Node *u)
         else
             grandparent->l_child = u;
     }
-
-    // always keep parent and u updated regarding it reversed status. By doing this, u's children
-    // will always be correct while splaying up
-    parent->push_reversed_bit();
-    u->push_reversed_bit();
 
     if (parent->l_child == u)
     {
@@ -109,10 +128,15 @@ void SplayTree::splay(Node *u)
 
         if (!parent->is_root())
         {
-            // not zig-zag
+            // we push the reversed bit from grandparent to parent in order to
+            // guarantee the next conditional will check the correct children
+            grandparent->push_reversed_bit();
+            parent->push_reversed_bit();
+
+            // zig-zig or zag-zag
             if ((grandparent->r_child == parent) == (parent->r_child == u))
                 rotate(parent);
-            // zig zag
+            // zig-zag
             else
                 rotate(u);
         }
