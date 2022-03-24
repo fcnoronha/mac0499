@@ -40,7 +40,7 @@ Se uma aresta faz parte de um caminho preferido, chamamos ela de aresta preferid
 Finalmente, representamos cada caminho preferido com uma árvore auxiliar, no caso, uma Splay Tree (seu funcionamento é explicado na próxima seção). Para isso, cada vértice é armazenado na árvore auxiliar utilizando sua profundidade como chave de ordenação. Ademais, cada árvore auxiliar possui um ponteiro para o caminho preferido imediatamente acima de seu fim, exceto no caminho preferido que contem a raiz da árvore representada.
 
 \begin{center}
-    \textbf{TODO}: colocar imagem de uma arvore representada e de uma arvore auxiliar.
+    \textbf{TODO}: colocar imagem de uma arvore representada e sua arvore auxiliar.
 \end{center}
 
 %% ------------------------------------------------------------------------- %%
@@ -52,9 +52,9 @@ No artigo original, os autores utilizam uma árvore binaria enviesada como estru
 
 A Splay Tree é uma árvore binaria de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca. Em particular, para seu uso como arvore auxiliar, estamos interessados na sua operação $splay$, que traz um nó para a raiz da árvore através de suscetivas rotações. Mas antes de nos aprofundarmos neste método, vamos examinar como os caminhos preferidos são representados aqui.
 
-Primeiramente, em nosso uso, a ordenação dos nós na Splay Tree é dada pela profundidade destes, na Link-Cut Tree. Note que, não guardamos explicitamente esses valores, ao invés disso utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós apos as operações de separação e união das árvores. A contrapartida deste método é perda da capacidade de realizarmos buscas por chave na Splay Tree, porem isto não nos representa um problema.
+Primeiramente, em nosso uso, a ordenação dos nós na Splay Tree é dada pela profundidade destes na Link-Cut Tree. Note que, não guardamos explicitamente esses valores, ao invés disso utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores. A contrapartida deste método é perda da capacidade de realizarmos buscas por chave na Splay Tree, porem isto não nos representa um problema.
 
-Ademais, para podermos lidar com os pesos nas arestas da Link-Cut Tree, fazemos com que cada aresta da arvore representada vire um nó na árvore auxiliar. Isso nos permite calcular o peso máximo de uma aresta em um caminho preferido, dado que podemos facilmente obter o peso máximo de um vértice em uma Splay Tree.
+Ademais, para podermos lidar com os pesos nas arestas da Link-Cut Tree, fazemos com que cada aresta da árvore representada vire um nó na árvore auxiliar. Isso nos permite calcular o peso máximo de uma aresta em um caminho preferido, dado que podemos facilmente obter o peso máximo de um vértice em uma Splay Tree.
 
 \begin{center}
     \textbf{TODO}: colocar imagem de um preferred path e sua respectiva splay tree.
@@ -81,32 +81,51 @@ Com isso, os nós da árvore auxiliar tem os seguintes campos:
 \subsection{Splay}
 \label{subsection:lct-splay-splay}
 
-Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a $splay$. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da Splay Tree, através de diversas rotações.
+Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a $splay$. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da Splay Tree, através de diversas rotações. Ademais, as operações de $splay$ contribuem para diminuir a profundidade da árvore, melhorando o seu consumo de tempo.
 
 \begin{center}
     \textbf{TODO}: Colocar figura de uma Splay antes e depois do Splay em uma folha
 \end{center}
 
-Primeiramente, recebemos um nó $u$ da Splay Tree, e enquanto este nó não é raiz de nossa árvore, fazemos a seguinte rotina:
+De modo a facilitarmos nossa explicação, chamamos $parent$ o pai de um nó $u$ e de $grandparent$ o pai de $parent$. Primeiramente, recebemos um nó $u$ da Splay Tree, e enquanto este nó não é raiz de nossa árvore, fazemos a seguinte rotina:
 
 \begin{itemize}
-    \item Checo se o pai deste é a raiz da árvore, caso positivo, vou para o último item.
-    \item Caso o pai não seja a raiz da árvore, iremos propagar o valor booliano $is_reversed$ do meu avô e em seguida o do meu pai. Isso nos fornece a invariante de que iremos fazer a comparação a seguir entre os filhos corretos.
-    \item Em seguida, checamos se avô, pai e filho estão em uma orientação de \textit{zig-zig}, \textit{zag-zag} ou \textit{zig-zag}, como exemplificadas na figura abaixo. Dependendo da orientação, fazemos uma rotação em $u$ ou em seu pai.
-    \item Por último, fazemos uma rotação em $u$, trocando este com a posição de seu pai.
+    \item Checo se $parent$ é a raiz da árvore, caso positivo, vou para o último item.
+    \item Caso contrario, iremos propagar o valor booliano $is\_reversed$ de $grandparent$ e em seguida o de $parent$, fazendo as devidas reversões caso necessárias. Isso nos fornece a invariante de que iremos fazer a comparação a seguir entre os filhos corretos.
+    \item Em seguida, checamos se $grandparent$, $parent$ e $u$ estão em uma orientação de \textit{zig-zig}, \textit{zag-zag} ou \textit{zig-zag}, como exemplificadas na figura abaixo. Dependendo da orientação, fazemos uma rotação em $u$ ou em $parent$, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
+    \item Por último, fazemos uma rotação em $u$, o que o coloca na posição que inicialmente estava o nó $grandparent$.
 \end{itemize}
 
 \begin{center}
     \textbf{TODO}: Colocar figura mostrando configurações de zig-zig, zag-zag e zig-zags.
 \end{center}
 
-Ao sair da função $splay$, o nó ira estar na raiz de sua árvore auxiliar. Além disso, seu valor booliano $is\_reversed$ vai estar nulo, pois as reversões já terão sido propagadas aos filhos, e seu $max\_subtree\_value$ vai estar atualizado, contendo o maior valor presente na Splay Tree.
+Ao sair da função $splay$, o nó $u$ estará na raiz de sua árvore auxiliar. Além disso, seu valor booliano $is\_reversed$ estará nulo, pois as reversões já terão sido propagadas aos seus filhos, e seu $max\_subtree\_value$ vai estar atualizado, contendo o maior valor presente na Splay Tree.
 
 \begin{center}
-    \textbf{TODO}: Colocar código ou pseudocódigo da função splay ?
+    \textbf{TODO}: Colocar código ou pseudocódigo da função splay?
 \end{center}
 
-Agora, vamos olhar o a função responsável por realizar as rotações.
+\subsection{Rotate}
+\label{subsection:lct-splay-rotate}
+
+Agora, vamos olhar a função responsável por realizar as rotações. Basicamente ela pode ser fatorada em 4 partes:
+
+\begin{itemize}
+    \item Primeiramente propagamos as reversões de $grandparent$, $parent$ e $u$, garantido que estaremos acessando e manipulando os filhos corretos destes respectivos nós.
+    \item Em seguida, caso o $parent$ não seja a raiz da Splay Tree, trocamos ele de lugar com $u$, efetivamente colocando $u$ como algum dos filhos de $grandparent$.
+    \item Agora, basta colocarmos $parent$ como algum dos filhos $u$, espelhando a orientação inicial em que $u$ estava como filho de $parent$.
+    \item Por último, recalculamos os valores máximos nas sub-arvores de $parent$ e de $u$.
+\end{itemize}
+
+\subsection{Métodos auxiliares}
+\label{subsection:lct-splay-aux}
+
+Para finalizar, nossa Splay Tree possui 2 métodos auxiliares, o $join\_right\_subtree$ e o $split\_left\_subtree$.
+
+O primeiro vai ser utilizado para a implementação da função $access()$ na Link-Cut Tree. Essa rotina nos permite ligarmos uma nova sub-arvore ao filho direito do nó atual. Já o segundo sera usado na função $cut()$, ele efetivamente separa a sub-árvore esquerda de um dado no, criando 2 novas Splay Trees no processo.
+
+Com isso, temos todas as ferramentas necessárias para manipularmos a Splay Tree em seu uso como arvore auxiliar.
 
 %% ------------------------------------------------------------------------- %%
 % access e como implementa o resto
