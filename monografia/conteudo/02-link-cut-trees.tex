@@ -3,58 +3,54 @@
 % para saber mais: https://tex.stackexchange.com/q/78101/183146
 
 %% ------------------------------------------------------------------------- %%
-% Explicar uso nas próximas etapas 
 \chapter{Link-Cut Trees}
 \label{cap:link-cut-trees}
 
-Neste capítulo, apresentaremos a estrutura de dados Link-Cut Tree, introduzida por ~\citet{10.1145/800076.802464}. Esta arvore serve como base para as estruturas retroativas apresentadas nos próximos capítulos.
+Neste capítulo, apresentaremos a estrutura de dados Link-Cut Tree, introduzida por ~\citet{10.1145/800076.802464}. Esta árvore serve como base para as estruturas retroativas apresentadas nos próximos capítulos.
 
 %% ------------------------------------------------------------------------- %%
-% o que a arvore mantém, sua estrutura e principais operações 
 \section{Ideia}
 \label{sec:lct-ideia}
 
 A Link-Cut Tree é uma estrutura de dados que nos permite manter uma floresta, onde os nós de cada árvore possuem um número arbitrário de filhos. Igualmente importante, essa estrutura nos fornece o seguinte conjunto de operações:
 
 \begin{itemize}
-    \item $make\_root(u)$: enraíza no vértice $u$ a árvore que o contem.
-    \item $link(u, v, w)$: dado que os vértices $u$ e $v$ estão em árvores separadas, transforma $v$ em raiz de sua árvore e o liga como filho de $u$, colocando peso $w$ na nova aresta criada.
-    \item $cut(u, v)$: retira da árvore a aresta com pontas em $u$ e $v$, efetivamente separando estes vértices e criando duas novas arvores.
+    \item \texttt{make\_root(u)}: enraíza no vértice $u$ a árvore que o contém.
+    \item \texttt{link(u, v, w)}: dado que os vértices $u$ e $v$ estão em árvores separadas, transforma $v$ em raiz de sua árvore e o liga como filho de $u$, colocando peso $w$ na nova aresta criada.
+    \item \texttt{cut(u, v)}: retira da árvore a aresta com pontas em $u$ e $v$, efetivamente separando estes vértices e criando duas novas árvores.
 \end{itemize}
 
-Além disso, a Link-Cut Tree possui a capacidade de realizar operações agregadas nos vértices, isto é, consultas acerca de propriedades de uma sub-arvore ou de um caminho entre dois vértices. Em particular, estamos interessados na rotina $maximum\_edge(u, v)$, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
+Além disso, a Link-Cut Tree possui a capacidade de realizar operações agregadas nos vértices, isto é, consultas acerca de propriedades de uma sub-árvore ou de um caminho entre dois vértices. Em particular, estamos interessados na rotina \texttt{maximum\_edge(u, v)}, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
 
-Todas essas operações consomem tempo $O(\log n)$ amortizado, onde $n$ é o numero de vértices na floresta.
+Todas essas operações consomem tempo $O(\log n)$ amortizado, onde $n$ é o número de vértices na floresta.
 
 %% ------------------------------------------------------------------------- %%
-% represented tree, preferred child, preferred path, aux tree and path parent pointer
 \section{Definições}
 \label{sec:lct-definicoes}
 
 Primeiramente, precisamos fazer algumas definições acerca da estrutura que vamos estudar.
 
-Chamamos de árvores representadas as árvores genéricas que nossa estrutura sintetiza. Para a representação que a Link-Cut Tree utiliza internamente dividimos uma árvore representada em caminhos vértice-disjunto, os caminhos preferidos. Por conveniência, definimos o início de um caminho preferido como o vértice mais profundo contido nele.
+Chamamos de árvores representadas as árvores genéricas que nossa estrutura sintetiza. Para a representação que a Link-Cut Tree utiliza, internamente dividimos uma árvore representada em caminhos vértice-disjuntos, os chamados caminhos preferidos. Todo caminho preferido vai de um vértice a um ancestral deste vértice na arvore representada. Por conveniência, definimos o início de um caminho preferido como o vértice mais profundo contido nele.
 
-Se uma aresta faz parte de um caminho preferido, chamamos ela de aresta preferida. Ademais, colocamos a propriedade de que um vértice pode ter no máximo uma aresta preferida com a outra ponta em algum de seus filhos. Caso tal aresta exista, ela liga um vértice á seu filho preferido.
+Se uma aresta faz parte de um caminho preferido, a chamamos de aresta preferida. Ademais, mantemos a propriedade de que um vértice pode ter no máximo uma aresta preferida com a outra ponta em algum de seus filhos. Caso tal aresta exista, ela liga um vértice a seu filho preferido.
 
-Finalmente, representamos cada caminho preferido com uma árvore auxiliar, no caso, uma Splay Tree (seu funcionamento é explicado na próxima seção). Para isso, cada vértice é armazenado na árvore auxiliar utilizando sua profundidade como chave de ordenação. Ademais, cada árvore auxiliar possui um ponteiro para o caminho preferido imediatamente acima de seu fim, exceto no caminho preferido que contem a raiz da árvore representada.
+Finalmente, representamos cada caminho preferido com uma estrutura auxiliar, no caso, uma árvore binária de busca chamada Splay Tree (seu funcionamento é explicado na próxima seção). Para isso, cada vértice é armazenado na árvore auxiliar utilizando sua profundidade no caminho preferido como chave de ordenação. Ademais, cada árvore auxiliar possui um ponteiro para o caminho preferido imediatamente acima de seu fim, exceto pela árvore do caminho preferido que contem a raiz da árvore representada.
 
 \begin{center}
-    \textbf{TODO}: colocar imagem de uma arvore representada e sua arvore auxiliar.
+    \textbf{TODO}: colocar imagem de uma árvore representada e sua árvore auxiliar.
 \end{center}
 
 %% ------------------------------------------------------------------------- %%
-% uso para aux tree, estrutura dos nos, arestas sao vertices para termos os pesos, operação de splay, recalculate max e push reversed
 \section{Splay Trees}
 \label{sec:lct-splay-trees}
 
-No artigo original, os autores utilizam uma árvore binaria enviesada como estrutura para as árvores auxiliares. Porém, 4 anos depois, ~\citet{10.1145/3828.3835} apresentaram a Splay Tree, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $O(\log n)$ amortizado, com uma implementação muito mais limpa do que a da versão original.
+No artigo original, os autores utilizam uma árvore binária enviesada como estrutura para as árvores auxiliares. Porém, quatro anos depois, ~\citet{10.1145/3828.3835} apresentaram a Splay Tree, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $O(\log n)$ amortizado, com uma implementação muito mais limpa do que a da versão original.
 
-A Splay Tree é uma árvore binaria de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca. Em particular, para seu uso como arvore auxiliar, estamos interessados na sua operação $splay$, que traz um nó para a raiz da árvore através de suscetivas rotações. Mas antes de nos aprofundarmos neste método, vamos examinar como os caminhos preferidos são representados aqui.
+A Splay Tree é uma árvore binária de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca. Em particular, para seu uso como árvore auxiliar, estamos interessados na sua operação \emph{splay}, que traz um nó para a raiz da árvore através de sucessivas rotações. Mas antes de nos aprofundarmos neste método, examinaremos como os caminhos preferidos são representados aqui.
 
-Primeiramente, em nosso uso, a ordenação dos nós na Splay Tree é dada pela profundidade destes na Link-Cut Tree. Note que, não guardamos explicitamente esses valores, ao invés disso utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores. A contrapartida deste método é perda da capacidade de realizarmos buscas por chave na Splay Tree, porem isto não nos representa um problema.
+Primeiramente, em nosso uso, a ordenação dos nós na Splay Tree é dada pela profundidade destes na Link-Cut Tree. Note que, não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores. A contrapartida deste método é perda da capacidade de realizarmos buscas por chave na Splay Tree, porém não necessitamos dessa operação.
 
-Ademais, para podermos lidar com os pesos nas arestas da Link-Cut Tree, fazemos com que cada aresta da árvore representada vire um nó na árvore auxiliar. Isso nos permite calcular o peso máximo de uma aresta em um caminho preferido, dado que podemos facilmente obter o peso máximo de um vértice em uma Splay Tree.
+Ademais, para podermos lidar com os pesos nas arestas da Link-Cut Tree, fazemos com que cada aresta da árvore representada vire um nó na árvore auxiliar. Isso nos permite calcular eficientemente o peso máximo de uma aresta em um caminho preferido, dado que podemos facilmente manter o peso máximo dos vértices em cada sub-árvore de uma Splay Tree.
 
 \begin{center}
     \textbf{TODO}: colocar imagem de um preferred path e sua respectiva splay tree.
@@ -62,45 +58,45 @@ Ademais, para podermos lidar com os pesos nas arestas da Link-Cut Tree, fazemos 
     % enraizar splay no centro do caminho e destacar na legenda que essa é apenas umas das possíveis configurações dessa árvore auxiliar em particular
 \end{center}
 
-Além disso, como usamos a profundidade dos nós na árvore representada como chave para a árvore auxiliar, temos que todo os nós na sub-arvore esquerda da raiz de uma Splay Tree tem uma profundidade menor que a raiz, enquanto os nós a direita tem uma profundidade maior. Contudo, ao realizamos uma operação $make\_root(u)$ fazemos com que todos os nós que estavam acima de $u$ na árvore representada se tornem parte de sua sub-arvore. Para isso, incluímos na Splay Tree um mecanismo para inverter a ordem de todos os filhos de uma árvore auxiliar, efetivamente invertendo a orientação de um caminho preferido.
+Além disso, como usamos a profundidade dos nós na árvore representada como chave para a árvore auxiliar, temos que todos os nós na sub-árvore esquerda da raiz de uma Splay Tree têm uma profundidade menor que a raiz, enquanto os nós á direita têm uma profundidade maior. Contudo, ao realizamos uma operação \texttt{make\_root(u)}, fazemos com que todos os nós que estavam acima de $u$ na árvore representada se tornem parte de sua sub-árvore. Para isso, incluímos na Splay Tree um mecanismo para inverter a ordem de todos os nós de uma árvore auxiliar, efetivamente invertendo a orientação de um caminho preferido.
 
 \begin{center}
     \textbf{TODO}: colocar imagem de uma Splay antes e depois da inversão, assim como sua árvore representada.
 \end{center}
 
-Com isso, os nós da árvore auxiliar tem os seguintes campos:
+Com isso, os nós da árvore auxiliar têm os seguintes campos:
 
 \begin{itemize}
-    \item $parent$: apontador para o pai na Splay Tree. Caso o nó em particular seja a raiz da árvore auxiliar, este campo armazena um ponteiro para o vértice que esta logo acima do fim deste caminho preferido na árvore representada.
-    \item $left\_child$ e $right\_child$: apontadores para os filhos de um nó na Splay Tree.
-    \item $value$: utilizado para guardar o peso de uma aresta da árvore representada transformado em vértice na árvore auxiliar.
-    \item $is\_reverserd$: valor booliano para sinalizar se uma sub-árvore deve ter sua ordem invertida ou não, isto é, se todas as posições de filhos esquerdos e direitos devem ser invertidos nessa  sub-árvore.
-    \item $max\_subtree\_value$: guarda o valor máximo armazenado na sub-árvore do respectivo nó.
+    \item \texttt{parent}: apontador para o pai na Splay Tree. Caso o nó em particular seja a raiz da árvore auxiliar, este campo armazena um ponteiro para o vértice que está logo acima do fim deste caminho preferido na árvore representada.
+    \item \texttt{left\_child} e \texttt{right\_child}: apontadores para os filhos de um nó na Splay Tree.
+    \item \texttt{value}: guarda o peso de uma aresta da árvore representada transformado em vértice na árvore auxiliar.
+    \item \texttt{is\_reversed}: valor booleano para sinalizar se a sub-árvore do nó esta com sua ordem invertida ou não, isto é, se todas as posições de filhos esquerdos e direitos estão  invertidas nessa  sub-árvore.
+    \item \texttt{max\_subtree\_value}: guarda o valor máximo armazenado na sub-árvore do nó.
 \end{itemize}
 
 \subsection{Splay}
 \label{subsection:lct-splay-splay}
 
-Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a $splay$. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da Splay Tree, através de diversas rotações. Ademais, as operações de $splay$ contribuem para diminuir a profundidade da árvore, melhorando o seu consumo de tempo.
+Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a \emph{splay}. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da Splay Tree, através de diversas rotações. Ademais, as operações de \emph{splay} contribuem para diminuir a altura da árvore, melhorando o seu consumo de tempo.
 
 \begin{center}
     \textbf{TODO}: Colocar figura de uma Splay antes e depois do Splay em uma folha
 \end{center}
 
-De modo a facilitarmos nossa explicação, chamamos $parent$ o pai de um nó $u$ e de $grandparent$ o pai de $parent$. Primeiramente, recebemos um nó $u$ da Splay Tree, e enquanto este nó não é raiz de nossa árvore, fazemos a seguinte rotina:
+De modo a facilitarmos nossa explicação, chamamos \texttt{parent} o pai de um nó $u$ e de \texttt{grandparent} o pai de \texttt{parent}. Primeiramente, recebemos um nó $u$ da Splay Tree, e enquanto este nó não é raiz de nossa árvore, conduzimos a seguinte rotina:
 
 \begin{itemize}
-    \item Checo se $parent$ é a raiz da árvore, caso positivo, vou para o último item.
-    \item Caso contrario, iremos propagar o valor booliano $is\_reversed$ de $grandparent$ e em seguida o de $parent$, fazendo as devidas reversões caso necessárias. Isso nos fornece a invariante de que iremos fazer a comparação a seguir entre os filhos corretos.
-    \item Em seguida, checamos se $grandparent$, $parent$ e $u$ estão em uma orientação de \textit{zig-zig}, \textit{zag-zag} ou \textit{zig-zag}, como exemplificadas na figura abaixo. Dependendo da orientação, fazemos uma rotação em $u$ ou em $parent$, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
-    \item Por último, fazemos uma rotação em $u$, o que o coloca na posição que inicialmente estava o nó $grandparent$.
+    \item Verifico se \texttt{parent} é a raiz da árvore, caso positivo, vou para o último item.
+    \item Caso contrario, propagaremos o valor booleano $is\_reversed$ de \texttt{grandparent} e em seguida o de \texttt{parent}, fazendo as devidas reversões caso necessárias. Isso nos fornece a invariante de que iremos fazer a comparação a seguir entre os filhos corretos.
+    \item Em seguida, checamos se \texttt{grandparent}, \texttt{parent} e $u$ estão em uma orientação de \textit{zig-zig}, \textit{zag-zag} ou \textit{zig-zag}, como exemplificadas na figura abaixo. Dependendo da orientação, fazemos uma rotação em $u$ ou em \texttt{parent}, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
+    \item Por último, fazemos uma rotação em $u$, o que o coloca na posição que inicialmente estava o nó \texttt{grandparent}.
 \end{itemize}
 
 \begin{center}
     \textbf{TODO}: Colocar figura mostrando configurações de zig-zig, zag-zag e zig-zags.
 \end{center}
 
-Ao sair da função $splay$, o nó $u$ estará na raiz de sua árvore auxiliar. Além disso, seu valor booliano $is\_reversed$ estará nulo, pois as reversões já terão sido propagadas aos seus filhos, e seu $max\_subtree\_value$ vai estar atualizado, contendo o maior valor presente na Splay Tree.
+Ao sair da função \emph{splay}, o nó $u$ estará na raiz de sua árvore auxiliar. Além disso, seu valor booleano $is\_reversed$ estará nulo, pois as reversões já terão sido propagadas aos seus filhos, e seu $max\_subtree\_value$ vai estar atualizado, contendo o maior valor presente na Splay Tree.
 
 \begin{center}
     \textbf{TODO}: Colocar código ou pseudocódigo da função splay?
@@ -109,23 +105,23 @@ Ao sair da função $splay$, o nó $u$ estará na raiz de sua árvore auxiliar. 
 \subsection{Rotate}
 \label{subsection:lct-splay-rotate}
 
-Agora, vamos olhar a função responsável por realizar as rotações. Basicamente ela pode ser fatorada em 4 partes:
+Agora, vamos olhar a função responsável por realizar as rotações. Basicamente ela pode ser fatorada em quatro partes:
 
 \begin{itemize}
-    \item Primeiramente propagamos as reversões de $grandparent$, $parent$ e $u$, garantido que estaremos acessando e manipulando os filhos corretos destes respectivos nós.
-    \item Em seguida, caso o $parent$ não seja a raiz da Splay Tree, trocamos ele de lugar com $u$, efetivamente colocando $u$ como algum dos filhos de $grandparent$.
-    \item Agora, basta colocarmos $parent$ como algum dos filhos $u$, espelhando a orientação inicial em que $u$ estava como filho de $parent$.
-    \item Por último, recalculamos os valores máximos nas sub-arvores de $parent$ e de $u$.
+    \item Primeiramente propagamos as reversões de \texttt{grandparent}, \texttt{parent} e $u$, garantindo que estaremos acessando e manipulando os filhos corretos destes respectivos nós.
+    \item Em seguida, caso o \texttt{parent} não seja a raiz da Splay Tree, o trocamos  de lugar com $u$, efetivamente colocando $u$ como algum dos filhos de \texttt{grandparent}.
+    \item Agora, basta colocarmos \texttt{parent} como algum dos filhos $u$, espelhando a orientação inicial em que $u$ estava como filho de \texttt{parent}.
+    \item Por último, recalculamos os valores máximos nas sub-árvores de \texttt{parent} e de $u$.
 \end{itemize}
 
 \subsection{Métodos auxiliares}
 \label{subsection:lct-splay-aux}
 
-Para finalizar, nossa Splay Tree possui 2 métodos auxiliares, o $join\_right\_subtree$ e o $split\_left\_subtree$.
+Para finalizar, nossa Splay Tree possui dois métodos auxiliares, o \texttt{join\_right\_subtree()} e o \texttt{split\_left\_subtree()}.
 
-O primeiro vai ser utilizado para a implementação da função $access()$ na Link-Cut Tree. Essa rotina nos permite ligarmos uma nova sub-arvore ao filho direito do nó atual. Já o segundo sera usado na função $cut()$, ele efetivamente separa a sub-árvore esquerda de um dado no, criando 2 novas Splay Trees no processo.
+O primeiro será utilizado para a implementação da função \texttt{access()} na Link-Cut Tree. Essa rotina nos permite ligarmos uma nova sub-árvore ao filho direito do nó atual. Já o segundo será usado na função \texttt{cut()}, e ele efetivamente separa a sub-árvore esquerda de um dado no, criando duas novas Splay Trees no processo.
 
-Com isso, temos todas as ferramentas necessárias para manipularmos a Splay Tree em seu uso como arvore auxiliar.
+Com isso, temos todas as ferramentas necessárias para manipularmos a Splay Tree em seu uso como árvore auxiliar.
 
 %% ------------------------------------------------------------------------- %%
 % access e como implementa o resto
