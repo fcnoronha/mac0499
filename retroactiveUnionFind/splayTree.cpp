@@ -55,7 +55,9 @@ void Node::split_left_subtree()
 
 void Node::join_right_subtree(Node *newChild)
 {
-    // newChild->parent = this; TODO: investigate
+    if (newChild != NULL)
+        newChild->parent = this;
+
     r_child = newChild;
     recalculate_max_subtree_value();
 }
