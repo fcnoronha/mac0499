@@ -26,6 +26,9 @@ public:
    bool is_root();
 };
 
+/* In our implementation, the Splay Tree is used to maintain the preferred paths
+   of the Link-Cut Tree. For this, each edge of the LCT is also a node in here
+   and the depth of the nodes in the represented tree are used as implicit keys. */
 class SplayTree
 {
 private:
@@ -52,7 +55,7 @@ public:
    /* Given u and v, ids of their respective paths and with v deeper than u,
       separates u from the deepest part of its path and concatenates v's path
       instead. Used when creating new preferred paths, will let the separated
-      path with a parent pointer u. */
+      path with a parent pointer to u. */
    void join(Node *, Node *);
 
    /* Changes the orientation of u's preferred path by flipping the is_reversed
@@ -64,7 +67,7 @@ public:
    Node *get_parent_path_node(Node *);
 
    /* Return the shallowest vertex of u's preferred path, the one in the end of
-      it, by accessing the smaller value in the tree. */
+      it, by accessing the smallest value in the Splay Tree. */
    Node *get_path_end_node(Node *);
 
    /* Return the maximum value stored in a vertex of u's preferred path.
