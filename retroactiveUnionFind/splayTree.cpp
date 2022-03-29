@@ -36,32 +36,6 @@ void Node::recalculate_max_subtree_value()
         max_subtree_value = std::max(max_subtree_value, r_child->max_subtree_value);
 }
 
-void Node::reverse_subtree()
-{
-    is_reversed ^= true;
-    push_reversed_bit();
-}
-
-void Node::set_parent(Node *newParent)
-{
-    parent = newParent;
-}
-
-void Node::split_left_subtree()
-{
-    l_child->parent = NULL;
-    l_child = NULL;
-}
-
-void Node::join_right_subtree(Node *newChild)
-{
-    if (newChild != NULL)
-        newChild->parent = this;
-
-    r_child = newChild;
-    recalculate_max_subtree_value();
-}
-
 bool Node::is_root()
 {
     // link-cut tree root
@@ -147,4 +121,50 @@ void SplayTree::splay(Node *u)
         rotate(u);
     }
     u->push_reversed_bit();
+}
+
+void SplayTree::split(Node *u)
+{
+    u->l_child->parent = NULL;
+    u->l_child = NULL;
+}
+
+void SplayTree::join(Node *u, Node *newChild)
+{
+    if (newChild != NULL)
+        newChild->parent = u;
+
+    u->r_child = newChild;
+    u->recalculate_max_subtree_value();
+}
+
+void SplayTree::reverse_path(Node *u)
+{
+    u->is_reversed ^= true;
+    u->push_reversed_bit();
+}
+
+Node *SplayTree::get_parent_path_node(Node *u)
+{
+    splay(u);
+    return u->parent;
+}
+
+Node *SplayTree::get_path_end_node(Node *u)
+{
+    splay(u);
+
+    Node *smallest_value = u;
+    while (smallest_value->l_child != NULL)
+    {
+        smallest_value = smallest_value->l_child;
+    }
+    splay(smallest_value); // making sure it'll be faster next time
+
+    return smallest_value;
+}
+
+int SplayTree::get_maximum_path_value(Node *u)
+{
+    return u->max_subtree_value;
 }

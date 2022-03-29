@@ -29,7 +29,7 @@ void LinkCutTree::check_vertices_are_not_connected(int u, int v)
 void LinkCutTree::make_root(Node *u)
 {
     access(u);
-    u->reverse_subtree();
+    splayTree.reverse_path(u);
 }
 
 void LinkCutTree::access(Node *u)
@@ -40,11 +40,11 @@ void LinkCutTree::access(Node *u)
     // transform all parent pointers from u to the root into part of the same preferred path
     while (current_root != NULL)
     {
-        splayTree.splay(current_root);          // makes p the root of its preferred path auxiliary tree
-        current_root->join_right_subtree(last); // separates the preferred path of cur_root, appending the
-                                                // last auxiliary tree processed as the deepest part of this path
+        splayTree.splay(current_root);      // makes p the id of its preferred path auxiliary tree
+        splayTree.join(current_root, last); // separates the preferred path of cur_root, appending the
+                                            // last auxiliary tree processed as the deepest part of this path
         last = current_root;
-        current_root = current_root->parent; // moves up to the parent preferred path auxiliary tree
+        current_root = splayTree.get_parent_path_node(current_root);
     }
     splayTree.splay(u);
 }
@@ -62,7 +62,7 @@ void LinkCutTree::make_root(int u)
     Node *u_node = vertices[u];
 
     access(u_node);
-    u_node->reverse_subtree();
+    splayTree.reverse_path(u_node);
 }
 
 void LinkCutTree::link(int u, int v, int w = 0)
@@ -79,11 +79,14 @@ void LinkCutTree::link(int u, int v, int w = 0)
 
     // linking (uv_edge)-(v)
     make_root(v_node);
-    v_node->set_parent(uv_edge);
+    access(v_node);
+    splayTree.join(v_node, uv_edge);
 
     // linking (uv_edge)-(u)
     make_root(u_node);
-    u_node->set_parent(uv_edge);
+    access(u_node);
+    access(uv_edge);
+    splayTree.join(uv_edge, u_node);
 }
 
 void LinkCutTree::cut(int u, int v)
@@ -104,12 +107,12 @@ void LinkCutTree::cut(int u, int v)
     // cutting (v)-(uv_edge)
     make_root(v_node);
     access(uv_edge);
-    uv_edge->split_left_subtree();
+    splayTree.split(uv_edge);
 
     // cutting (u)-(uv_edge)
     make_root(u_node);
     access(uv_edge);
-    uv_edge->split_left_subtree();
+    splayTree.split(uv_edge);
 
     edges.erase(edges.find({u, v}));
     edges.erase(edges.find({v, u}));
@@ -124,10 +127,12 @@ bool LinkCutTree::is_connected(int u, int v)
     Node *u_node = vertices[u];
 
     access(u_node);
+    Node *u_path_end = splayTree.get_path_end_node(u_node);
+
     access(v_node);
-    // if they are in the same tree, u is either in v's auxiliary tree or has
-    // a parent pointer to it
-    return (u_node->parent != NULL);
+    Node *v_path_end = splayTree.get_path_end_node(v_node);
+
+    return (u_path_end == v_path_end);
 }
 
 int LinkCutTree::maximum_edge(int u, int v)
@@ -141,5 +146,5 @@ int LinkCutTree::maximum_edge(int u, int v)
 
     make_root(v_node);
     access(u_node); // now creates a u-v preferred path
-    return u_node->max_subtree_value;
+    return splayTree.get_maximum_path_value(u_node);
 }

@@ -17,5 +17,5 @@ $ bazel build //retroactiveUnionFind:retroactive-union-find
 Ja para executar os testes, execute:
 
 ```bash
-$ bazel test //retroactiveUnionFind:retroactive-union-find-test
+$ bazel test --test_output=all //retroactiveUnionFind:retroactive-union-find-test
 ```

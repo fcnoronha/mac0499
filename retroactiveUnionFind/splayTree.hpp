@@ -22,22 +22,6 @@ public:
    /* Recalculates the maximum value stored in the current node subtree. */
    void recalculate_max_subtree_value();
 
-   /* Flip the is_reversed flag of the current node. */
-   void reverse_subtree();
-
-   /* Set the parent pointer of the current node. */
-   void set_parent(Node *newParent);
-
-   /* Separates the current node from its left subtree by erasing the
-      respectives parent and child pointers. In other words, separates it
-      from all the nodes smaller than it.*/
-   void split_left_subtree();
-
-   /* Sets a new right subtree to the current node. Used when creating new
-      preferred paths and will let the preview right child with a parent
-      pointer to the current node. */
-   void join_right_subtree(Node *newChild);
-
    /* Check if the node is either a Splay Tree root or a Link-Cut tree root. */
    bool is_root();
 };
@@ -53,8 +37,37 @@ private:
    void check_null_node_pointer(Node *);
 
 public:
-   /* Performs a series of rotations to bring the node u to the top of the
-      Splay Tree. The node will end up with its maximum subtree value
-      recalculated and its reversed bit zeroed out (propagated to children) */
+   /* Performs a series of rotations (splays) to bring the node u to the top of
+      the Splay Tree. The node will end up with its maximum subtree value
+      recalculated and its reversed bit zeroed out (propagated to children).
+      After this, u will be its path identifier. */
    void splay(Node *);
+
+   /* Separates u's preferred path in 2, breaking the connection between u and
+      its parent in the represented tree. In other words, separates u from all
+      the nodes shallower than it in the preferred path. Erases the respectives
+      parent and child pointers. */
+   void split(Node *);
+
+   /* Given u and v, ids of their respective paths and with v deeper than u,
+      separates u from the deepest part of its path and concatenates v's path
+      instead. Used when creating new preferred paths, will let the separated
+      path with a parent pointer u. */
+   void join(Node *, Node *);
+
+   /* Changes the orientation of u's preferred path by flipping the is_reversed
+      flag of u. Assumes u is path identifier. */
+   void reverse_path(Node *);
+
+   /* Return the vertex immediately above the end of u's preferred path in the
+      represented tree, the parent node of the Splay Tree root. */
+   Node *get_parent_path_node(Node *);
+
+   /* Return the shallowest vertex of u's preferred path, the one in the end of
+      it, by accessing the smaller value in the tree. */
+   Node *get_path_end_node(Node *);
+
+   /* Return the maximum value stored in a vertex of u's preferred path.
+      Assumes u is path identifier. */
+   int get_maximum_path_value(Node *);
 };
