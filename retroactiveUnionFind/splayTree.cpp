@@ -125,7 +125,8 @@ void SplayTree::splay(Node *u)
 
 void SplayTree::split(Node *u)
 {
-    u->l_child->parent = NULL;
+    if (u->l_child)
+        u->l_child->parent = NULL;
     u->l_child = NULL;
 }
 

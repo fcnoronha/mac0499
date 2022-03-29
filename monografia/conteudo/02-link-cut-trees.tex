@@ -12,7 +12,7 @@ Neste capítulo, apresentaremos a estrutura de dados Link-Cut Tree, introduzida 
 \section{Ideia}
 \label{sec:lct-ideia}
 
-A Link-Cut Tree é uma estrutura de dados que nos permite manter uma floresta, onde os nós de cada árvore possuem um número arbitrário de filhos. Igualmente importante, essa estrutura nos fornece o seguinte conjunto de operações:
+A Link-Cut Tree é uma estrutura de dados que nos permite manter uma floresta de árvores enraizadas, onde os nós de cada árvore possuem um número arbitrário de filhos. Ademais, essa estrutura nos fornece o seguinte conjunto de operações:
 
 \begin{itemize}
     \item \texttt{make\_root(u)}: enraíza no vértice $u$ a árvore que o contém.
@@ -20,7 +20,7 @@ A Link-Cut Tree é uma estrutura de dados que nos permite manter uma floresta, o
     \item \texttt{cut(u, v)}: retira da árvore a aresta com pontas em $u$ e $v$, efetivamente separando estes vértices e criando duas novas árvores.
 \end{itemize}
 
-Além disso, a Link-Cut Tree possui a capacidade de realizar operações agregadas nos vértices, isto é, consultas acerca de propriedades de uma sub-árvore ou de um caminho entre dois vértices. Em particular, estamos interessados na rotina \texttt{maximum\_edge(u, v)}, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
+Por último, a Link-Cut Tree possui a capacidade de realizar operações agregadas nos vértices, isto é, consultas acerca de propriedades de uma sub-árvore ou de um caminho entre dois vértices. Em particular, estamos interessados na rotina \texttt{maximum\_edge(u, v)}, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
 
 Todas essas operações consomem tempo $O(\log n)$ amortizado, onde $n$ é o número de vértices na floresta.
 
@@ -34,17 +34,29 @@ Chamamos de árvores representadas as árvores genéricas que nossa estrutura si
 
 Se uma aresta faz parte de um caminho preferido, a chamamos de aresta preferida. Ademais, mantemos a propriedade de que um vértice pode ter no máximo uma aresta preferida com a outra ponta em algum de seus filhos. Caso tal aresta exista, ela liga um vértice a seu filho preferido.
 
-Finalmente, representamos cada caminho preferido com uma estrutura auxiliar, no caso, uma árvore binária de busca chamada Splay Tree (seu funcionamento é explicado na próxima seção). Para isso, cada vértice é armazenado na árvore auxiliar utilizando sua profundidade no caminho preferido como chave de ordenação. Ademais, cada árvore auxiliar possui um ponteiro para o caminho preferido imediatamente acima de seu fim, exceto pela árvore do caminho preferido que contem a raiz da árvore representada.
+% Finalmente, representamos cada caminho preferido com uma estrutura auxiliar, no caso, uma árvore binária de busca chamada Splay Tree (seu funcionamento é explicado na próxima seção). Para isso, cada vértice é armazenado na árvore auxiliar utilizando sua profundidade no caminho preferido como chave de ordenação. Ademais, cada árvore auxiliar possui um ponteiro para o caminho preferido imediatamente acima de seu fim, exceto pela árvore do caminho preferido que contem a raiz da árvore representada.
+
+Finalmente, para cada caminho preferido, elegemos um vértice como seu identificador. A manutenção deste vértice será importante para a estrutura auxiliar que utilizaremos para manter os caminhos preferidos, dado que tais vértices serão responsáveis por guardar um ponteiro para o vértice do caminho preferido imediatamente acima do caminho que o contem.
 
 \begin{center}
-    \textbf{TODO}: colocar imagem de uma árvore representada e sua árvore auxiliar.
+    \textbf{TODO}: colocar imagem de uma árvore representada e seus caminhos preferidos.
 \end{center}
+
+%% ------------------------------------------------------------------------- %%
+% access e como implementa o resto
+\section{Operações}
+\label{sec:lct-operacoes}
+
+\subsection{Access}
+\label{subsection:lct-access}
+
+
 
 %% ------------------------------------------------------------------------- %%
 \section{Splay Trees}
 \label{sec:lct-splay-trees}
 
-No artigo original, os autores utilizam uma árvore binária enviesada como estrutura para as árvores auxiliares. Porém, quatro anos depois, ~\citet{10.1145/3828.3835} apresentaram a Splay Tree, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $O(\log n)$ amortizado, com uma implementação muito mais limpa do que a da versão original.
+No artigo original, os autores utilizam uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, ~\citet{10.1145/3828.3835} apresentaram a Splay Tree, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $O(\log n)$ amortizado, com uma implementação muito mais limpa do que a da versão original. Portanto, usaremos a Splay Tree como uma arvore auxiliar que cuida de manter os caminhos preferidos.
 
 A Splay Tree é uma árvore binária de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca. Em particular, para seu uso como árvore auxiliar, estamos interessados na sua operação \emph{splay}, que traz um nó para a raiz da árvore através de sucessivas rotações. Mas antes de nos aprofundarmos neste método, examinaremos como os caminhos preferidos são representados aqui.
 
@@ -77,7 +89,7 @@ Com isso, os nós da árvore auxiliar têm os seguintes campos:
 \subsection{Splay}
 \label{subsection:lct-splay-splay}
 
-Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a \emph{splay}. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da Splay Tree, através de diversas rotações. Ademais, as operações de \emph{splay} contribuem para diminuir a altura da árvore, melhorando o seu consumo de tempo.
+Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a \emph{splay}. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da Splay Tree, através de diversas rotações. Em particular, podemos dizer que esta operação é responsável por transformar um vértice em identificador de seu caminho. Ademais, as operações de \emph{splay} contribuem para diminuir a altura da árvore, melhorando o seu consumo de tempo.
 
 \begin{center}
     \textbf{TODO}: Colocar figura de uma Splay antes e depois do Splay em uma folha
@@ -102,9 +114,6 @@ Ao sair da função \emph{splay}, o nó $u$ estará na raiz de sua árvore auxil
     \textbf{TODO}: Colocar código ou pseudocódigo da função splay?
 \end{center}
 
-\subsection{Rotate}
-\label{subsection:lct-splay-rotate}
-
 Agora, vamos olhar a função responsável por realizar as rotações. Basicamente ela pode ser fatorada em quatro partes:
 
 \begin{itemize}
@@ -114,19 +123,20 @@ Agora, vamos olhar a função responsável por realizar as rotações. Basicamen
     \item Por último, recalculamos os valores máximos nas sub-árvores de \texttt{parent} e de $u$.
 \end{itemize}
 
+\subsection{Split e Join}
+\label{subsection:lct-splay-split-join}
+
+Temos também dois métodos importantes para a manutenção dos caminhos preferidos, \texttt{split} e \texttt{join}, responsáveis por separar e concatenar caminhos preferidos, respectivamente.
+
+Primeiramente, o método \texttt{split(u)} recebe um nó $u$ e separa o caminho preferido que contem este nó em dois, quebrando a conexão entre ele e seu filho preferido, caso exista. Note que, este método é destrutivo: ele remove tanto o ponteiro para o filho preferido de $u$ quanto o ponteiro \texttt{parent} que tal filho possui para $u$. Logo, usamos essa rotina apenas para o método \texttt{cut()} da Link-Cut Tree.
+
+De maneira complementar, temos a rotina \texttt{join(u, v)} que recebe dois nós, $u$ e $v$ --- identificadores de seus caminhos e com $v$ mais profundo que $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando a aresta $\{u,v\}$ em preferida. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$.
+
 \subsection{Métodos auxiliares}
 \label{subsection:lct-splay-aux}
 
-Para finalizar, nossa Splay Tree possui dois métodos auxiliares, o \texttt{join\_right\_subtree()} e o \texttt{split\_left\_subtree()}.
+Para finalizar, nossa Splay Tree possui quatro métodos auxiliares, o \texttt{reverse\_path}, \texttt{get\_parent\_path\_node}, \texttt{get\_path\_end\_node} e \texttt{get\_maximum\_path\_value}.
 
-O primeiro será utilizado para a implementação da função \texttt{access()} na Link-Cut Tree. Essa rotina nos permite ligarmos uma nova sub-árvore ao filho direito do nó atual. Já o segundo será usado na função \texttt{cut()}, e ele efetivamente separa a sub-árvore esquerda de um dado no, criando duas novas Splay Trees no processo.
+% TODO: explicar métodos.
 
 Com isso, temos todas as ferramentas necessárias para manipularmos a Splay Tree em seu uso como árvore auxiliar.
-
-%% ------------------------------------------------------------------------- %%
-% access e como implementa o resto
-\section{Operações}
-\label{sec:lct-operacoes}
-
-\subsection{Access}
-\label{subsection:lct-access}
