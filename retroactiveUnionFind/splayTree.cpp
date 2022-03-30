@@ -125,17 +125,18 @@ void SplayTree::splay(Node *u)
 
 void SplayTree::split(Node *u)
 {
-    if (u->l_child)
+    if (u->l_child != NULL)
         u->l_child->parent = NULL;
+
     u->l_child = NULL;
 }
 
-void SplayTree::join(Node *u, Node *newChild)
+void SplayTree::join(Node *u, Node *v)
 {
-    if (newChild != NULL)
-        newChild->parent = u;
+    if (v != NULL)
+        v->parent = u;
 
-    u->r_child = newChild;
+    u->r_child = v;
     u->recalculate_max_subtree_value();
 }
 

@@ -40,10 +40,10 @@ void LinkCutTree::access(Node *u)
     // transform all parent pointers from u to the root into part of the same preferred path
     while (current_root != NULL)
     {
-        splayTree.splay(current_root);      // makes p the id of its preferred path auxiliary tree
-        splayTree.join(current_root, last); // separates the preferred path of cur_root, appending the
+        splayTree.splay(current_root);      // makes current_root the id of its preferred path auxiliary tree
+        splayTree.join(current_root, last); // separates the preferred path of current_root, appending the
                                             // last auxiliary tree processed as the deepest part of this path
-        last = current_root;
+        last = current_root;                // current_root is now path id
         current_root = splayTree.get_parent_path_node(current_root);
     }
     splayTree.splay(u);
