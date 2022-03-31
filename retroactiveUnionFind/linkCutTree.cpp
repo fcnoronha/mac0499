@@ -127,12 +127,12 @@ bool LinkCutTree::is_connected(int u, int v)
     Node *u_node = vertices[u];
 
     access(u_node);
-    Node *u_path_end = splayTree.get_path_end_node(u_node);
+    Node *u_tree_root = splayTree.get_path_end_node(u_node);
 
     access(v_node);
-    Node *v_path_end = splayTree.get_path_end_node(v_node);
+    Node *v_tree_root = splayTree.get_path_end_node(v_node);
 
-    return (u_path_end == v_path_end);
+    return (u_tree_root == v_tree_root);
 }
 
 int LinkCutTree::maximum_edge(int u, int v)
