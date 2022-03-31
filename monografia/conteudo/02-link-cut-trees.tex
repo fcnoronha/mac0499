@@ -3,27 +3,27 @@
 % para saber mais: https://tex.stackexchange.com/q/78101/183146
 
 %% ------------------------------------------------------------------------- %%
-\chapter{Link-Cut Trees}
+\chapter{Link-Cut Tree}
 \label{cap:link-cut-trees}
 
-Neste capítulo, apresentaremos a estrutura de dados Link-Cut Tree, introduzida por ~\citet{10.1145/800076.802464}. Esta árvore serve como base para as estruturas retroativas apresentadas nos próximos capítulos.
+Neste capítulo, apresentaremos a estrutura de dados link-cut tree, introduzida por ~\citet{10.1145/800076.802464}. Esta árvore serve como base para as estruturas retroativas apresentadas nos próximos capítulos.
 
 %% ------------------------------------------------------------------------- %%
 \section{Ideia}
 \label{sec:lct-ideia}
 
-A Link-Cut Tree é uma estrutura de dados que nos permite manter uma floresta de árvores enraizadas, onde os nós de cada árvore possuem um número arbitrário de filhos. Ademais, essa estrutura nos fornece o seguinte conjunto de operações:
+A link-cut tree é uma estrutura de dados que nos permite manter uma floresta de árvores enraizadas com peso nas arestas, onde os nós de cada árvore possuem um número arbitrário de filhos. Ademais, essa estrutura nos fornece o seguinte conjunto de operações:
 
 \begin{itemize}
     \item \texttt{make\_root(u)}: enraíza no vértice $u$ a árvore que o contém.
     \item \texttt{link(u, v, w)}: dado que os vértices $u$ e $v$ estão em árvores separadas, transforma $v$ em raiz de sua árvore e o liga como filho de $u$, colocando peso $w$ na nova aresta criada.
-    \item \texttt{cut(u, v)}: retira da árvore a aresta com pontas em $u$ e $v$, efetivamente separando estes vértices e criando duas novas árvores.
+    \item \texttt{cut(u, v)}: retira da árvore a aresta com pontas em $u$ e $v$, efetivamente separando estes vértices e resultando duas novas árvores.
     \item \texttt{is\_connected(u, v)}: retorna \texttt{verdadeiro} caso $u$ e $v$ pertençam á mesma árvore, \texttt{falso} caso contrario.
 \end{itemize}
 
-Por último, a Link-Cut Tree possui a capacidade de realizar operações agregadas nos vértices, isto é, consultas acerca de propriedades de uma sub-árvore ou de um caminho entre dois vértices. Em particular, estamos interessados na rotina \texttt{maximum\_edge(u, v)}, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
+Por último, a link-cut tree possui a capacidade de realizar operações agregadas nos vértices, isto é, consultas acerca de propriedades de uma sub-árvore ou de um caminho entre dois vértices. Em particular, estamos interessados na rotina \texttt{maximum\_edge(u, v)}, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
 
-Todas essas operações consomem tempo $O(\log n)$ amortizado, onde $n$ é o número de vértices na floresta.
+Todas essas operações consomem tempo $\Oh(\log n)$ amortizado, onde $n$ é o número de vértices na floresta.
 
 %% ------------------------------------------------------------------------- %%
 \section{Definições}
@@ -31,11 +31,13 @@ Todas essas operações consomem tempo $O(\log n)$ amortizado, onde $n$ é o nú
 
 Primeiramente, precisamos fazer algumas definições acerca da estrutura que vamos estudar.
 
-Chamamos de árvores representadas as árvores genéricas que nossa estrutura sintetiza. Para a representação que a Link-Cut Tree utiliza, internamente dividimos uma árvore representada em caminhos vértice-disjuntos, os chamados caminhos preferidos. Todo caminho preferido vai de um vértice a um ancestral deste vértice na arvore representada. Por conveniência, definimos o início de um caminho preferido como o vértice mais profundo contido nele.
+Chamamos de \emph{árvores representadas} as componentes da floresta armazenada na link-cut tree. Para a representação que a link-cut tree utiliza, internamente dividimos uma árvore representada em caminhos vértice-disjuntos, os chamados \emph{caminhos preferidos}. Todo caminho preferido vai de um vértice a um ancestral deste vértice na árvore representada. Por conveniência, definimos o início de um caminho preferido como o vértice mais profundo contido nele.
 
-Se uma aresta faz parte de um caminho preferido, a chamamos de aresta preferida. Ademais, mantemos a propriedade de que um vértice pode ter no máximo uma aresta preferida com a outra ponta em algum de seus filhos. Caso tal aresta exista, ela liga um vértice a seu filho preferido.
+Se uma aresta faz parte de um caminho preferido, a chamamos de \emph{aresta preferida}. Ademais, mantemos a propriedade de que um vértice pode ter no máximo uma aresta preferida com a outra ponta em algum de seus filhos. Caso tal aresta exista, ela liga um vértice a seu \emph{filho preferido}.
 
-Finalmente, para cada caminho preferido, elegemos um vértice como seu identificador. A manutenção deste vértice será importante para a estrutura auxiliar que utilizaremos para manter os caminhos preferidos, dado que tais vértices serão responsáveis por guardar um ponteiro para o vértice do caminho preferido imediatamente acima do caminho que o contem.
+Finalmente, para cada caminho preferido, elegemos um \emph{vértice identificador}. A manutenção deste vértice será importante para a estrutura auxiliar que utilizaremos para manter os caminhos preferidos, dado que tais vértices serão responsáveis por guardar um ponteiro para o vértice do caminho preferido imediatamente acima do caminho que o contém.
+
+Ademais, para armazenar os pesos das arestas da floresta, a estrutura usada terá nós para vértices e para arestas da floresta. O nó correspondente à aresta $uv$ tem o nó $u$ como seu pai e $v$ como seu único filho.
 
 \begin{center}
     \textbf{TODO}: colocar imagem de uma árvore representada e seus caminhos preferidos.
@@ -46,30 +48,30 @@ Finalmente, para cada caminho preferido, elegemos um vértice como seu identific
 \section{Operações}
 \label{sec:lct-operacoes}
 
-Nessa seção, apresentaremos o código por trás das operações que estamos interessados em implementar na Link-Cut Tree. Em um primeiro momento, assumiremos que já sabemos como implementar alguns métodos que lidam com os caminhos preferidos. Desta forma, a implementação dos métodos abaixo fica reservada para a próxima seção.
+Nessa seção, apresentaremos o código por trás das operações que estamos interessados em implementar na link-cut tree. Em um primeiro momento, assumiremos que já sabemos como implementar alguns métodos que lidam com os caminhos preferidos. Desta forma, a implementação dos métodos abaixo fica reservada para a próxima seção.
 
 \begin{itemize}
     \item \texttt{make\_identifier(u)}: transforma um vértice $u$ em identificador de seu caminho preferido.
-    \item \texttt{split(u)}: recebe um nó $u$ e separa o caminho preferido que contem este nó em dois, quebrando a conexão entre $u$ e seu filho preferido, caso exista. Ao final, tanto $u$ quanto o seu filho preferido inicial serão os identificadores de seus caminhos.
-    \item \texttt{join(u, v)}: recebe dois nós, $u$ e $v$ --- identificadores de seus caminhos e com $v$ mais profundo que $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando $\{u,v\}$ em aresta preferida. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$. Ao final da operação, $u$ sera o identificador do novo caminho criado.
+    \item \texttt{split(u)}: recebe um nó $u$ e separa o caminho preferido que contém este nó em dois, quebrando a conexão entre $u$ e seu filho preferido, caso exista. Ao final, tanto $u$ quanto o seu filho preferido inicial serão os identificadores de seus caminhos.
+    \item \texttt{join(u, v)}: recebe dois nós, $u$ e $v$ --- identificadores de seus caminhos e sendo $v$ um filho de $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando $uv$ em aresta preferida. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$. Ao final da operação, $u$ será o identificador do novo caminho criado.
     \item \texttt{reverse\_path(u)}: recebe $u$, o identificador de um caminho preferido, e inverte a orientação desse caminho, isto é, o fim se transforma no começo e o começo no fim.
     \item \texttt{get\_path\_end\_node(u)}: retorna o vértice menos profundo do caminho preferido de $u$, em outras palavras, o vértice no fim do caminho preferido que contém $u$.
-    \item \texttt{get\_parent\_path\_node(u)}: retorna o vértice imediatamente acima do fim do caminho preferido que contêm $u$, caso tal caminho contenha a raiz da árvore representada, este método retorna \texttt{null}.
+    \item \texttt{get\_parent\_path\_node(u)}: retorna o vértice ma floresta imediatamente acima do fim do caminho preferido que contém $u$; caso tal caminho contenha a raiz da árvore representada, este método retorna \texttt{null}.
     \item \texttt{get\_maximum\_path\_value(u)}:  recebe $u$, o identificador de um caminho preferido, e retorna o maior valor de uma aresta neste caminho.
 \end{itemize}
 
-Com tal conjunto de funções, podemos avançar para os métodos da Link-Cut Tree.
+Com tal conjunto de funções, podemos avançar para os métodos da link-cut tree.
 
-\subsection{Access}
+\subsection{Rotina Access}
 \label{subsection:lct-access}
 
-Uma rotina utilizada por todos os métodos da Link-Cut Tree que vamos implementar é a \texttt{access(u)}, a partir dela conseguimos reorganizar a estrutura interna da árvore representada a nosso favor. Basicamente, a operação \texttt{access(u)} cria um caminho preferido que parte da raiz da árvore representada e vai até $u$. Com isso, todas as arestas preferidas que tinham somente uma das pontas fazendo parte deste novo caminho são destruídas e $u$ termina sem nenhum filho preferido.
+Uma rotina utilizada por todos os métodos da link-cut tree que vamos implementar é a \texttt{access(u)}, a partir dela conseguimos reorganizar a estrutura interna da árvore representada a nosso favor. Basicamente, a operação \texttt{access(u)} cria um caminho preferido que parte da raiz da árvore representada e vai até $u$. Com isso, todas as arestas preferidas que tinham somente uma das pontas fazendo parte deste novo caminho são destruídas e $u$ termina sem nenhum filho preferido.
 
 Para isso, começamos uma sequência de iterações, que vão crescendo um caminho preferido desde $u$ até que tal caminho contemple a raiz da árvore representada. A cada iteração, fazemos com que uma variável \texttt{current\_root}, que inicialmente corresponde ao vértice $u$, vire o identificador de seu caminho preferido. Além disso, mantemos uma variável \texttt{last}, que corresponde a \texttt{current\_root} da iteração anterior, no início com valor igual a \texttt{null}.
 
 Com estes valores em mãos, podemos ir criando um caminho preferido através de sucessivas concatenações, unindo o caminho que \texttt{current\_root} identifica a parte superior do caminho mantido por \texttt{last}. Ao final dessa concatenação, temos que \texttt{current\_root} é o identificador deste caminho que esta sendo construído, e após guardarmos seu valor em \texttt{last}, podemos prosseguir para o próximo passo, onde \texttt{current\_root} agora corresponde ao no imediatamente em cima do caminho preferido que estamos construindo.
 
-\begin{programruledcaption}{\label{lct:access}}
+\begin{programruledcaption}{Access\label{lct:access}}
     \begin{lstlisting}[
       language={[brazilian]pseudocode},
       style=pseudocode,
@@ -93,12 +95,12 @@ Com estes valores em mãos, podemos ir criando um caminho preferido através de 
 
 Ao final da iteração, colocamos o vértice $u$ como identificador deste novo caminho preferencial, simplificando as operações a seguir.
 
-\subsection{Make Root}
+\subsection{Rotinas Make Root, Link e Cut}
 \label{subsection:lct-make-root}
 
 Em seguida, temos a função \texttt{make\_root(u)}, que enraíza em $u$ a árvore representada que o contém. Para isso, criamos um caminho preferencial que vai da raiz da árvore ate $u$, utilizando \texttt{access(u)}. Em seguida, utilizamos a rotina \texttt{reverse\_path(u)}, que inverte a orientação deste caminho preferido recém-criado. Tal inversão coloca $u$ como o vértice de menor profundidade da árvore representada, o que se traduz neste sendo a nova raiz.
 
-\begin{programruledcaption}{\label{lct:make-root}}
+\begin{programruledcaption}{Make Root\label{lct:make-root}}
     \begin{lstlisting}[
       language={[brazilian]pseudocode},
       style=pseudocode,
@@ -113,24 +115,21 @@ Em seguida, temos a função \texttt{make\_root(u)}, que enraíza em $u$ a árvo
     \end{lstlisting}
 \end{programruledcaption}
 
-\subsection{Link e Cut}
-\label{subsection:lct-link-cut}
-
 Como rotinas que dão nome a nossa estrutura, temos \texttt{link(u, v, w)} e \texttt{cut{u, v}}.
 
 A primeiro delas, recebe dois vértices $u$ e $v$ que estão em árvores distintas, e cria uma aresta de peso $w$, conectando-os. Primeiramente, devemos lembrar que as arestas da árvore representada viram vértices em nossa representação interna. Com isso, o primeiro passo é criar um vértice que tem seu valor definido como $w$, vamos chama-lo \texttt{uv\_edge}. Dessa forma, criaremos as seguintes conexões: $u \leftrightarrow uv\_edge \leftrightarrow v$.
 
 Inicialmente, colocamos $v$ como raiz de nossa árvore representada, e criamos um caminho preferido que só possui este vértice como integrante. Com isso, conseguimos concatenar este caminho preferido de tamanho unitário com o caminho que \texttt{uv\_edge} constitui. A seguir, aplicamos a mesma ideia, criando um caminho unitário que contém $u$ e o concatenando com um caminho que possui $v$ e \texttt{uv\_edge}.
 
-\begin{programruledcaption}{\label{lct:link}}
+\begin{programruledcaption}{Link\label{lct:link}}
     \begin{lstlisting}[
       language={[brazilian]pseudocode},
       style=pseudocode,
       style=wider,
       keepspaces=true,
       commentstyle=\color{gray},
-    ]
-        funcao link(u, v, w)
+    ]   
+        funcao link(u, v, w) // $u$ e $v$ em árvores distintas
             uv_edge := new Node(w) // cria nó com peso $w$
             // ligando (v) - (uv\_edge)
             make_root(v)
@@ -145,11 +144,12 @@ Inicialmente, colocamos $v$ como raiz de nossa árvore representada, e criamos u
     \end{lstlisting}
 \end{programruledcaption}
 
+
 Já a operação \texttt{cut(u, v)}, que separa dois nós, é um pouco mais simples. Note que, temos que separar as conexões entre $u$ e \texttt{uv\_edge} assim como entre \texttt{uv\_edge} e $v$. O processo de separação é igual para as duas partes, por isso, vamos explicar somente a separação de $u$ e \texttt{uv\_edge}.
 
 A ideia é colocarmos $u$ como raiz de nossa árvore representada, com isso, podemos criar um caminho preferido vai de $u$ até $u$ e \texttt{uv\_edge}. Agora, basta usarmos nossa operação $u$ e \texttt{split(uv\_edge)}, que separa \texttt{uv\_edge} da parte superior de seu caminho preferido, efetivamente quebrando sua conexão com $u$.
 
-\begin{programruledcaption}{\label{lct:cut}}
+\begin{programruledcaption}{Cut\label{lct:cut}}
     \begin{lstlisting}[
       language={[brazilian]pseudocode},
       style=pseudocode,
@@ -157,7 +157,7 @@ A ideia é colocarmos $u$ como raiz de nossa árvore representada, com isso, pod
       keepspaces=true,
       commentstyle=\color{gray},,
     ]
-        funcao cut(u, v)
+        funcao cut(u, v) // $u$ e $v$ na mesma árvore
             // cortando (u) - (uv\_edge)
             make_root(u)
             access(uv_edge)
@@ -170,12 +170,12 @@ A ideia é colocarmos $u$ como raiz de nossa árvore representada, com isso, pod
     \end{lstlisting}
 \end{programruledcaption}
 
-\subsection{Is Connected}
+\subsection{Consultas Is Connected e Maximum Edge}
 \label{subsection:lct-is-connected}
 
 A função \texttt{is\_connected(u, v)}, que nos informa se $u$ e $v$ pertencem a mesma árvore, funciona da seguinte maneira. Primeiro acessamos $u$, criando um caminho deste até a raiz da árvore. Em seguida, guardamos o vértice que esta no fim desse caminho, isto é, guardamos a raiz da árvore que contém $u$. A seguir, repetimos o mesmo processo com o vértice $v$. Agora, basta compararmos se ambos os valores que guardamos são iguais.
 
-\begin{programruledcaption}{\label{lct:is-connected}}
+\begin{programruledcaption}{Is Connected\label{lct:is-connected}}
     \begin{lstlisting}[
       language={[brazilian]pseudocode},
       style=pseudocode,
@@ -193,12 +193,9 @@ A função \texttt{is\_connected(u, v)}, que nos informa se $u$ e $v$ pertencem 
     \end{lstlisting}
 \end{programruledcaption}
 
-\subsection{Maximum Edge}
-\label{subsection:lct-max-edge}
-
 Por último, temos a função \texttt{maximum\_edge(u, v)}, que retorna o peso da maior aresta no caminho simples entre $u$ e $v$. Como transformamos as arestas em vértices na nossa representação interna, precisamos procurar o maior valor de um vértice no caminho preferido entre $u$ e $v$. Para isso, transformamos $v$ na raiz de nossa árvore e acessamos $u$. Com isso, podemos utilizar \texttt{get\_maximum\_path\_value(u)} para obter o maior valor contido neste caminho preferido.
 
-\begin{programruledcaption}{\label{lct:max-edge}}
+\begin{programruledcaption}{Maximum Edge\label{lct:max-edge}}
     \begin{lstlisting}[
       language={[brazilian]pseudocode},
       style=pseudocode,
@@ -206,15 +203,15 @@ Por último, temos a função \texttt{maximum\_edge(u, v)}, que retorna o peso d
       keepspaces=true,
       commentstyle=\color{gray},,
     ]
-        funcao maximum_edge(u, v)
+        funcao maximum_edge(u, v) // $u$ e $v$ na mesma árvore
             make_root(v);
-            access(u); // cria um caminho preferido entre $u$ e $v$
+            access(u);
             devolva get_maximum_path_value(u)
         fim
     \end{lstlisting}
 \end{programruledcaption}
 
-E com isso, encerramos a explicação da implementação dos métodos da Link-Cut Tree.
+E com isso, encerramos a explicação da implementação dos métodos da link-cut tree.
 
 %% ------------------------------------------------------------------------- %%
 %% ------------------------------------------------------------------------- %%
@@ -223,13 +220,13 @@ E com isso, encerramos a explicação da implementação dos métodos da Link-Cu
 \section{Splay Trees}
 \label{sec:lct-splay-trees}
 
-No artigo original, os autores utilizam uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, ~\citet{10.1145/3828.3835} apresentaram a Splay Tree, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $O(\log n)$ amortizado, com uma implementação muito mais limpa do que a da versão original. Portanto, usaremos a Splay Tree como uma arvore auxiliar que cuida de manter os caminhos preferidos.
+No artigo original, os autores utilizam uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, ~\citet{10.1145/3828.3835} apresentaram a Splay Tree, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $\Oh(\log n)$ amortizado, com uma implementação muito mais limpa do que a da versão original. Portanto, usaremos a Splay Tree como uma árvore auxiliar que cuida de manter os caminhos preferidos.
 
 A Splay Tree é uma árvore binária de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca. Em particular, para seu uso como árvore auxiliar, estamos interessados na sua operação \texttt{splay}, que traz um nó para a raiz da árvore através de sucessivas rotações. Mas antes de nos aprofundarmos neste método, examinaremos como os caminhos preferidos são representados aqui.
 
-Primeiramente, em nosso uso, a ordenação dos nós na Splay Tree é dada pela profundidade destes na Link-Cut Tree. Note que, não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores, apresentadas a seguir. Em contrapartida, com este método, perdemos a capacidade de realizarmos buscas por chave na Splay Tree, porém não necessitamos dessa operação.
+Primeiramente, em nosso uso, a ordenação dos nós na Splay Tree é dada pela profundidade destes na link-cut tree. Note que, não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores, apresentadas a seguir. Em contrapartida, com este método, perdemos a capacidade de realizarmos buscas por chave na Splay Tree, porém não necessitamos dessa operação.
 
-Ademais, para podermos lidar com os pesos nas arestas da Link-Cut Tree, fazemos com que cada aresta da árvore representada vire um nó na árvore auxiliar. Isso nos permite calcular eficientemente o peso máximo de uma aresta em um caminho preferido, dado que podemos facilmente manter o peso máximo dos vértices em cada sub-árvore de uma Splay Tree.
+Ademais, para podermos lidar com os pesos nas arestas da link-cut tree, fazemos com que cada aresta da árvore representada vire um nó na árvore auxiliar. Isso nos permite calcular eficientemente o peso máximo de uma aresta em um caminho preferido, dado que podemos facilmente manter o peso máximo dos vértices em cada sub-árvore de uma Splay Tree.
 
 \begin{center}
     \textbf{TODO}: colocar imagem de um preferred path e sua respectiva splay tree.
@@ -337,7 +334,7 @@ Temos também dois métodos importantes para a manutenção dos caminhos preferi
     \end{lstlisting}
 \end{programruledcaption}
 
-Primeiramente, falaremos do método \texttt{split(u)}, que recebe um nó $u$ e separa caminho preferido que o contem em dois. Para isso, ele simplesmente separa a sub-árvore esquerda de $u$, como mostrado acima. Vale notar que, este método é destrutivo: removendo tanto o ponteiro para o filho preferido de $u$ quanto o ponteiro \texttt{parent} que tal filho possui para $u$. Logo, usamos essa rotina apenas para o \texttt{cut()} da Link-Cut Tree.
+Primeiramente, falaremos do método \texttt{split(u)}, que recebe um nó $u$ e separa caminho preferido que o contem em dois. Para isso, ele simplesmente separa a sub-árvore esquerda de $u$, como mostrado acima. Vale notar que, este método é destrutivo: removendo tanto o ponteiro para o filho preferido de $u$ quanto o ponteiro \texttt{parent} que tal filho possui para $u$. Logo, usamos essa rotina apenas para o \texttt{cut()} da link-cut tree.
 
 \begin{programruledcaption}{\label{splay:join}}
     \begin{lstlisting}[
