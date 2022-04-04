@@ -39,9 +39,51 @@ Finalmente, para cada caminho preferido, elegemos um \emph{vértice identificado
 
 Ademais, para armazenar os pesos das arestas da floresta, a estrutura usada terá nós para vértices e para arestas da floresta. O nó correspondente à aresta $uv$ tem o nó $u$ como seu pai e $v$ como seu único filho.
 
-\begin{center}
-    \textbf{TODO}: colocar imagem de uma árvore representada e seus caminhos preferidos.
-\end{center}
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[
+            nointerno/.style={shape=circle, draw=black},
+            pref/.style={ultra thick},
+            pptr/.style={densely dashed},
+        ]
+        \node[nointerno] (a) at (6, 20) {A};
+        \node[nointerno] (b) at (4, 18) {B};
+        \node[nointerno] (c) at (8, 18) {C};
+        \node[nointerno] (d) at (2, 16) {D};
+        \node[nointerno] (e) at (6, 16) {E};
+        \node[nointerno] (f) at (10, 16) {F};
+        \node[nointerno] (g) at (4, 14) {G};
+        \node[nointerno] (h) at (8, 14) {H};
+        \node[nointerno] (i) at (10, 14) {I};
+        \node[nointerno] (j) at (12, 14) {J};
+        \node[nointerno] (k) at (2, 12) {K};
+        \node[nointerno] (l) at (6, 12) {L};
+        \node[nointerno] (m) at (10, 12) {M};
+        \node[nointerno] (n) at (10, 10) {N};
+        \node[nointerno] (o) at (8, 8) {O};
+
+        \draw[pref] (a) -- (b) node[midway, above] {5};
+        \draw[pptr] (a) -- (c) node[midway, above] {1};
+        \draw[pref] (b) -- (d) node[midway, above] {7};
+        \draw[pref] (d) -- (g) node[midway, above] {2};
+        \draw[pref] (g) -- (k) node[midway, above] {10};
+        \draw[pptr] (g) -- (l) node[midway, above] {9};
+        \draw[pptr] (c) -- (f) node[midway, above] {7};
+        \draw[pref] (c) -- (e) node[midway, above] {4};
+        \draw[pptr] (f) -- (h) node[midway, left] {12};
+        \draw[pref] (f) -- (i) node[midway, left] {15};
+        \draw[pptr] (f) -- (j) node[midway, above] {8};
+        \draw[pref] (i) -- (m) node[midway, left] {11};
+        \draw[pptr] (m) -- (n) node[midway, left] {19};
+        \draw[pref] (n) -- (o) node[midway, above] {20};
+
+    \end{tikzpicture}
+    \caption{Árvore representada e seus caminhos preferidos. Na figura acima, as arestas escuras representam caminhos preferidos, com isso, temos os seguinte conjunto de caminhos vértice-disjuntos $ \{ \{A,B,D,G,K\}, \{C,E\}, \{F,I,M\}, \{L\}, \{H\}, \{ J\}, \{N,O\} \} $. }
+\end{figure}
+
+% \begin{center}
+%     \textbf{TODO}: colocar imagem de uma árvore representada e seus caminhos preferidos.
+% \end{center}
 
 %% ------------------------------------------------------------------------- %%
 % access e como implementa o resto
@@ -304,7 +346,7 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz de sua árvore aux
     \end{lstlisting}
 \end{programruledcaption}
 
-Assim como a operação acima, o restante da nossa implementação de uma splay tree é bastante tradicional. Com isso, nossos únicos cuidados extras são a manutenção do bit \texttt{is\_reversed}, do valor máximo das sub-arvores e da manutenção das chaves implícitas. Assim, no método \texttt{rotate(u)}, temos como primeiro passo a propagação do bit \texttt{is\_reversed} de \texttt{grandparent} até $u$ e como última etapa o cálculo dos novos valores de \texttt{max\_subtree\_value}.
+Assim como a operação acima, o restante da nossa implementação de uma splay tree é bastante tradicional. Com isso, nossos únicos cuidados extras são a manutenção do bit \texttt{is\_reversed}, do valor máximo das sub-árvores e da manutenção das chaves implícitas. Assim, no método \texttt{rotate(u)}, temos como primeiro passo a propagação do bit \texttt{is\_reversed} de \texttt{grandparent} até $u$ e como última etapa o cálculo dos novos valores de \texttt{max\_subtree\_value}.
 
 \subsection{Split e Join}
 \label{subsection:lct-splay-split-join}
@@ -331,21 +373,22 @@ Primeiramente, falaremos do método \texttt{split(u)}, que recebe um nó $u$ e s
 
 \begin{programruledcaption}{\label{splay:join}}
     \begin{lstlisting}[
-      language={[brazilian]pseudocode},
-      style=pseudocode,
-      style=wider,
-      keepspaces=true,
-      commentstyle=\color{gray},
-    ]
+        language={[brazilian]pseudocode},
+        style=pseudocode,
+        style=wider,
+        keepspaces=true,
+        commentstyle=\color{gray},
+      ]
         funcao join(u, v)
             se v != NULL
-                v.parent := u
+            v.parent := u
             u.r_child := v
             // atualiza \texttt{max\_subtree\_value} com o máximo entre o \texttt{value} dos dois filhos e de $u$ 
             u.recalculate_max_subtree_value() 
         fim
     \end{lstlisting}
 \end{programruledcaption}
+
 
 De maneira complementar, temos a rotina \texttt{join(u, v)} que recebe dois nós e concatena os respectivos caminhos preferidos. Para isso, assume-se que ambos os nós sejam identificadores de seus caminhos preferidos, ou seja, que eles sejam as raízes de suas splay trees. Com isso, simplesmente colocamos a splay tree em que $v$ é raiz como a sub-árvore direita de $u$, atualizando os respetivos apontadores e recalculando o valor máximo na splay tree de $u$. Note que, a sub-árvore direita inicial, que constitui a parte do caminho preferido de $u$ que foi substituída, ficará com um apontador \texttt{parent} para $u$.
 
