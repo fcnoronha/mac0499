@@ -1,6 +1,6 @@
 # MAC0499 - Trabalho de formatura supervisionado
 
-Repositório do meu Trabalho de conclusão de curso no IME-USP @ 2022. [Veja aqui](./monografia/monografia.pdf) a monografia.
+Repositório do meu Trabalho de conclusão de curso no IME-USP @ 2022. [Acesse aqui](https://linux.ime.usp.br/~felipen/mac0499/) a pagina do trabalho.
 
 ## Como executar
 

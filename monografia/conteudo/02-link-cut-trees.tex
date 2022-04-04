@@ -217,16 +217,16 @@ E com isso, encerramos a explicação da implementação dos métodos da link-cu
 %% ------------------------------------------------------------------------- %%
 %% ------------------------------------------------------------------------- %%
 %% ------------------------------------------------------------------------- %%
-\section{Splay Trees}
+\section{Splay Tree}
 \label{sec:lct-splay-trees}
 
-No artigo original, os autores utilizam uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, ~\citet{10.1145/3828.3835} apresentaram a Splay Tree, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $\Oh(\log n)$ amortizado, com uma implementação muito mais limpa do que a da versão original. Portanto, usaremos a Splay Tree como uma árvore auxiliar que cuida de manter os caminhos preferidos.
+No artigo original, Sleator e Tarjan propuseram a utilização de uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, eles apresentaram a splay tree ~\citep{10.1145/3828.3835}, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $\Oh(\log n)$ amortizado, com uma implementação muito mais limpa do que a da versão original. Portanto, usaremos a splay trees para armazenar os caminhos preferidos.
 
-A Splay Tree é uma árvore binária de busca auto-ajustável, capaz de realizar as operações de inserção, deleção e busca. Em particular, para seu uso como árvore auxiliar, estamos interessados na sua operação \texttt{splay}, que traz um nó para a raiz da árvore através de sucessivas rotações. Mas antes de nos aprofundarmos neste método, examinaremos como os caminhos preferidos são representados aqui.
+Uma splay tree é uma árvore binária de busca auto-balanceável. Estas árvores utilizam rotações para auto-balancear, através de uma operação chamada \texttt{splay}. A operação \texttt{splay}, traz um nó para a raiz da árvore através de sucessivas rotações. Mas antes de nos aprofundarmos neste método, examinaremos como os caminhos preferidos são representados aqui.
 
-Primeiramente, em nosso uso, a ordenação dos nós na Splay Tree é dada pela profundidade destes na link-cut tree. Note que, não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores, apresentadas a seguir. Em contrapartida, com este método, perdemos a capacidade de realizarmos buscas por chave na Splay Tree, porém não necessitamos dessa operação.
+Primeiramente, em nosso uso, a ordenação dos nós na splay tree é dada pela profundidade destes na link-cut tree. Note que não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores, apresentadas a seguir. Em contrapartida, com este método, perdemos a capacidade de realizarmos buscas por chave na splay tree, porém não necessitamos dessa operação.
 
-Ademais, para podermos lidar com os pesos nas arestas da link-cut tree, fazemos com que cada aresta da árvore representada vire um nó na árvore auxiliar. Isso nos permite calcular eficientemente o peso máximo de uma aresta em um caminho preferido, dado que podemos facilmente manter o peso máximo dos vértices em cada sub-árvore de uma Splay Tree.
+Ademais, para implementar eficientemente a operação \texttt{get\_maximum\_path\_value}, mantemos o peso máximo dos nós em cada sub-árvore de uma splay tree.
 
 \begin{center}
     \textbf{TODO}: colocar imagem de um preferred path e sua respectiva splay tree.
@@ -234,18 +234,18 @@ Ademais, para podermos lidar com os pesos nas arestas da link-cut tree, fazemos 
     % enraizar splay no centro do caminho e destacar na legenda que essa é apenas umas das possíveis configurações dessa árvore auxiliar em particular
 \end{center}
 
-Além disso, como usamos a profundidade dos nós na árvore representada como chave para a árvore auxiliar, temos que todos os nós na sub-árvore esquerda da raiz de uma Splay Tree têm uma profundidade menor que a raiz, enquanto os nós á direita têm uma profundidade maior. Contudo, ao realizamos uma operação \texttt{make\_root(u)}, fazemos com que todos os nós que estavam acima de $u$ na árvore representada se tornem parte de sua sub-árvore. Para isso, incluímos na Splay Tree um mecanismo para inverter a ordem de todos os nós de uma árvore auxiliar, efetivamente invertendo a orientação de um caminho preferido.
+Além disso, como usamos a profundidade dos nós na árvore representada como chave para a árvore auxiliar, temos que todos os nós na sub-árvore esquerda da raiz de uma splay tree têm uma profundidade menor que a raiz, enquanto os nós à direita têm uma profundidade maior. Contudo, ao realizamos uma operação \texttt{make\_root(u)}, fazemos com que todos os nós que estavam acima de $u$ na árvore representada se tornem parte de sua sub-árvore. Para isso, incluímos na splay tree um mecanismo para inverter a ordem de todos os nós de uma árvore auxiliar, efetivamente invertendo a orientação de um caminho preferido.
 
 \begin{center}
-    \textbf{TODO}: colocar imagem de uma Splay antes e depois da inversão, assim como sua árvore representada.
+    \textbf{TODO}: colocar imagem de uma splay tree antes e depois da inversão, assim como sua árvore representada.
 \end{center}
 
 Com isso, os nós da árvore auxiliar têm os seguintes campos:
 
 \begin{itemize}
-    \item \texttt{parent}: apontador para o pai na Splay Tree. Caso o nó em particular seja a raiz da árvore auxiliar, este campo armazena um ponteiro para o vértice que está logo acima do fim deste caminho preferido na árvore representada.
-    \item \texttt{left\_child} e \texttt{right\_child}: apontadores para os filhos esquerdo e direito de um nó na Splay Tree.
-    \item \texttt{value}: guarda o peso de uma aresta da árvore representada transformado em vértice na árvore auxiliar.
+    \item \texttt{parent}: apontador para o pai na splay tree. Caso o nó em particular seja a raiz da árvore auxiliar, este campo armazena um ponteiro para o vértice que está logo acima do fim deste caminho preferido na árvore representada.
+    \item \texttt{left\_child} e \texttt{right\_child}: apontadores para os filhos esquerdo e direito de um nó na splay tree.
+    \item \texttt{value}: se o nó representa uma aresta da árvore representada guarda o peso desta aresta, senão guarda 0.
     \item \texttt{is\_reversed}: valor booleano para sinalizar se a sub-árvore do nó esta com sua ordem invertida ou não, isto é, se todas as posições de filhos esquerdos e direitos estão  invertidas nessa  sub-árvore.
     \item \texttt{max\_subtree\_value}: guarda o valor máximo armazenado na sub-árvore do nó.
 \end{itemize}
@@ -253,7 +253,7 @@ Com isso, os nós da árvore auxiliar têm os seguintes campos:
 \subsection{Splay}
 \label{subsection:lct-splay-splay}
 
-Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a \texttt{splay}. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da Splay Tree, através de diversas rotações.  Ademais, as operações de \texttt{splay} contribuem para diminuir a altura da árvore, melhorando o seu consumo de tempo.
+Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a \texttt{splay}. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da splay tree, através de diversas rotações.  Ademais, as operações de \texttt{splay} contribuem para diminuir a altura da árvore, melhorando o seu consumo de tempo.
 
 \begin{center}
     \textbf{TODO}: Colocar figura de uma Splay antes e depois do Splay em uma folha
@@ -261,20 +261,20 @@ Com a estrutura apresentada, podemos partir para a explicação de sua principal
 
 Em particular, podemos dizer que esta operação é responsável por transformar um vértice em identificador de seu caminho, ou seja, entendemos como sinônimos os métodos \texttt{make\_identifier} e \texttt{splay}.
 
-De modo a facilitarmos nossa explicação, chamamos \texttt{parent} o pai de um nó $u$ e de \texttt{grandparent} o pai de \texttt{parent}. Primeiramente, recebemos um nó $u$ da Splay Tree, e enquanto este nó não é raiz de nossa árvore, conduzimos a seguinte rotina:
+De modo a facilitarmos nossa explicação, chamamos \texttt{parent} o pai de um nó $u$ e de \texttt{grandparent} o pai de \texttt{parent}.
+
+Primeiramente, uma operação de \texttt{splay} consiste em realizamos diversos passos de \emph{splay}, que trazem $u$ cada vez mais próximo à raiz da árvore, isto é, em cada um desses passos, realizamos uma rotação que diminui a profundidade de $u$. Porém, ao realizar estes passos, temos que nos preocupar com dois fatores:
 
 \begin{itemize}
-    \item Verifico se \texttt{parent} é a raiz da árvore, caso positivo, vou para o último item.
-    \item Caso contrario, propagamos o valor booleano $is\_reversed$ de \texttt{grandparent} e em seguida o de \texttt{parent}, fazendo as devidas reversões caso necessárias. Isso nos fornece a invariante de que iremos fazer a comparação a seguir entre os filhos corretos.
-    \item Em seguida, checamos se \texttt{grandparent}, \texttt{parent} e $u$ estão em uma orientação de \textit{zig-zig}, \textit{zag-zag} ou \textit{zig-zag}, como exemplificadas na figura abaixo. Dependendo da orientação, fazemos uma rotação em $u$ ou em \texttt{parent}, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
-    \item Por último, fazemos uma rotação em $u$, o que o coloca na profundidade que inicialmente estava o nó \texttt{grandparent}.
+    \item A propagação do valor booleano $is\_reversed$ de \texttt{grandparent} e em seguida o de \texttt{parent}, fazendo as devidas reversões caso necessárias. Isso nos fornece a invariante de que iremos fazer comparações entre os filhos corretos para determinar qual rotação fazer.
+    \item A orientação que \texttt{grandparent}, \texttt{parent} e $u$ se encontram, isto é, se estão em uma orientação de \textit{zig-zig}, \textit{zag-zag} ou \textit{zig-zag}, como exemplificadas na figura abaixo. Dependendo da orientação, fazemos uma rotação em $u$ ou em \texttt{parent}, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
 \end{itemize}
 
 \begin{center}
     \textbf{TODO}: Colocar figura mostrando configurações de zig-zig, zag-zag e zig-zags.
 \end{center}
 
-Ao sair da função \texttt{splay}, o nó $u$ estará na raiz de sua árvore auxiliar. Além disso, seu valor booleano $is\_reversed$ estará nulo, pois as reversões já terão sido propagadas aos seus filhos, e seu $max\_subtree\_value$ estará atualizado, contendo o maior valor presente na Splay Tree.
+Ao sair da função \texttt{splay}, o nó $u$ estará na raiz de sua árvore auxiliar. Além disso, seu valor booleano $is\_reversed$ estará nulo, pois as reversões já terão sido propagadas aos seus filhos, e seu $max\_subtree\_value$ estará atualizado, contendo o maior valor presente na splay tree.
 
 \begin{programruledcaption}{\label{splay:splay}}
     \begin{lstlisting}[
@@ -304,19 +304,12 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz de sua árvore aux
     \end{lstlisting}
 \end{programruledcaption}
 
-Agora, olharemos a função responsável por realizar as rotações. Basicamente ela pode ser fatorada em quatro partes:
-
-\begin{itemize}
-    \item Primeiramente propagamos as reversões de \texttt{grandparent}, \texttt{parent} e $u$, garantindo que estaremos acessando e manipulando os filhos corretos destes respectivos nós.
-    \item Em seguida, caso o \texttt{parent} não seja a raiz da Splay Tree, o trocamos  de lugar com $u$, efetivamente colocando $u$ como algum dos filhos de \texttt{grandparent}.
-    \item Agora, basta colocarmos \texttt{parent} como algum dos filhos $u$, espelhando a orientação inicial em que $u$ estava como filho de \texttt{parent}.
-    \item Por último, recalculamos os valores máximos nas sub-árvores de \texttt{parent} e de $u$.
-\end{itemize}
+Assim como a operação acima, o restante da nossa implementação de uma splay tree é bastante tradicional. Com isso, nossos únicos cuidados extras são a manutenção do bit \texttt{is\_reversed}, do valor máximo das sub-arvores e da manutenção das chaves implícitas. Assim, no método \texttt{rotate(u)}, temos como primeiro passo a propagação do bit \texttt{is\_reversed} de \texttt{grandparent} até $u$ e como última etapa o cálculo dos novos valores de \texttt{max\_subtree\_value}.
 
 \subsection{Split e Join}
 \label{subsection:lct-splay-split-join}
 
-Temos também dois métodos importantes para a manutenção dos caminhos preferidos, \texttt{split} e \texttt{join}, responsáveis por separar e concatenar caminhos preferidos, respectivamente.
+Temos também dois métodos importantes das splay trees usados na manutenção dos caminhos preferidos, \texttt{split} e \texttt{join}, responsáveis por separar e concatenar caminhos preferidos, respectivamente.
 
 \begin{programruledcaption}{\label{splay:split}}
     \begin{lstlisting}[
@@ -354,12 +347,12 @@ Primeiramente, falaremos do método \texttt{split(u)}, que recebe um nó $u$ e s
     \end{lstlisting}
 \end{programruledcaption}
 
-De maneira complementar, temos a rotina \texttt{join(u, v)} que recebe dois nós e concatena os respectivos caminhos preferidos. Para isso, assume-se que ambos os nós sejam identificadores de seus caminhos preferidos, ou seja, que eles sejam as raízes de suas Splay Trees. Com isso, simplesmente colocamos a Splay Tree em que $v$ é raiz como a sub-árvore direita de $u$, atualizando os respetivos apontadores e recalculando o valor máximo na Splay Tree de $u$. Note que, a sub-árvore direita inicial, que constitui a parte do caminho preferido de $u$ que foi substituída, ficará com um apontador \texttt{parent} para $u$.
+De maneira complementar, temos a rotina \texttt{join(u, v)} que recebe dois nós e concatena os respectivos caminhos preferidos. Para isso, assume-se que ambos os nós sejam identificadores de seus caminhos preferidos, ou seja, que eles sejam as raízes de suas splay trees. Com isso, simplesmente colocamos a splay tree em que $v$ é raiz como a sub-árvore direita de $u$, atualizando os respetivos apontadores e recalculando o valor máximo na splay tree de $u$. Note que, a sub-árvore direita inicial, que constitui a parte do caminho preferido de $u$ que foi substituída, ficará com um apontador \texttt{parent} para $u$.
 
 \subsection{Métodos auxiliares}
 \label{subsection:lct-splay-aux}
 
-Para finalizar, nossa Splay Tree possui quatro métodos auxiliares, o \texttt{reverse\_path}, \texttt{get\_path\_end\_node}, \texttt{get\_parent\_path\_node} e \texttt{get\_maximum\_path\_value}.
+Para finalizar, nossa splay tree possui quatro métodos auxiliares, o \texttt{reverse\_path}, \texttt{get\_path\_end\_node}, \texttt{get\_parent\_path\_node} e \texttt{get\_maximum\_path\_value}.
 
 \begin{programruledcaption}{\label{splay:reverse-path}}
     \begin{lstlisting}[
@@ -412,7 +405,7 @@ Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador de um caminho 
     \end{lstlisting}
 \end{programruledcaption}
 
-A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_path\_node(u)} são usados para acessar o fim e o pai do caminho preferido que contem $u$. Em particular, a primeira rotina retorna o vértice menos profundo do caminho preferido de $u$, fazendo isso ao acessar o vértice mais à esquerda na Splay Tree. Já o segundo método é responsável por retornar o vértice imediatamente acima do fim do caminho preferido que contêm $u$, caso tal caminho contenha a raiz da árvore representada, este método retorna \texttt{null}. Para fazer isso, efetuamos uma operação \texttt{splay} em $u$ e retornamos o valor de \texttt{parent}.
+A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_path\_node(u)} são usados para acessar o fim e o pai do caminho preferido que contem $u$. Em particular, a primeira rotina retorna o vértice menos profundo do caminho preferido de $u$, fazendo isso ao acessar o vértice mais à esquerda na splay tree. Já o segundo método é responsável por retornar o vértice imediatamente acima do fim do caminho preferido que contêm $u$, caso tal caminho contenha a raiz da árvore representada, este método retorna \texttt{null}. Para fazer isso, efetuamos uma operação \texttt{splay} em $u$ e retornamos o valor de \texttt{parent}.
 
 \begin{programruledcaption}{\label{splay:get-maximum-value}}
     \begin{lstlisting}[
@@ -434,4 +427,4 @@ Por último, temos a função \texttt{get\_maximum\_path\_value(u)}, que recebe 
     \textbf{TODO}: Incluir figura de uma Splay antes e depois da reversão do caminho, colocando na legenda o que cada operação retornaria.
 \end{center}
 
-Com isso, temos todas as ferramentas necessárias para manipularmos a Splay Tree em seu uso como árvore auxiliar.
+Com isso, temos todas as ferramentas necessárias para manipularmos a splay tree em seu uso como árvore auxiliar.
