@@ -42,7 +42,7 @@ Ademais, para armazenar os pesos das arestas da floresta, a estrutura usada ter�
 \begin{figure}
     \centering
     \begin{tikzpicture}[
-            nointerno/.style={shape=circle, draw=black},
+            nointerno/.style={shape=circle, draw=black, minimum size=1cm},
             pref/.style={ultra thick},
             pptr/.style={densely dashed},
         ]
@@ -78,12 +78,9 @@ Ademais, para armazenar os pesos das arestas da floresta, a estrutura usada ter�
         \draw[pref] (n) -- (o) node[midway, above] {20};
 
     \end{tikzpicture}
-    \caption{Árvore representada e seus caminhos preferidos. Na figura acima, as arestas escuras representam caminhos preferidos, com isso, temos os seguinte conjunto de caminhos vértice-disjuntos $ \{ \{A,B,D,G,K\}, \{C,E\}, \{F,I,M\}, \{L\}, \{H\}, \{ J\}, \{N,O\} \} $. }
+    \caption{Árvore representada e seus caminhos preferidos. Na figura acima, as arestas escuras representam caminhos preferidos, com isso, temos o seguinte conjunto de caminhos vértice-disjuntos $ \{ \langle K,G,D,B,A \rangle, \langle E,C \rangle, \langle M,I,F \rangle, \langle L \rangle, \langle H \rangle, \langle J \rangle, \langle O,N \rangle \} $. }
+    \label{fig:arvore-simples}
 \end{figure}
-
-% \begin{center}
-%     \textbf{TODO}: colocar imagem de uma árvore representada e seus caminhos preferidos.
-% \end{center}
 
 %% ------------------------------------------------------------------------- %%
 % access e como implementa o resto
@@ -97,9 +94,9 @@ Nessa seção, apresentaremos o código por trás das operações que estamos in
     \item \texttt{split(u)}: recebe um nó $u$ e separa o caminho preferido que contém este nó em dois, quebrando a conexão entre $u$ e seu filho preferido, caso exista. Ao final, tanto $u$ quanto o seu filho preferido inicial serão os identificadores de seus caminhos.
     \item \texttt{join(u, v)}: recebe dois nós, $u$ e $v$ --- identificadores de seus caminhos e sendo $v$ um filho de $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando $uv$ em aresta preferida. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$. Ao final da operação, $u$ será o identificador do novo caminho criado.
     \item \texttt{reverse\_path(u)}: recebe $u$, o identificador de um caminho preferido, e inverte a orientação desse caminho, isto é, o fim se transforma no começo e o começo no fim.
-    \item \texttt{get\_path\_end\_node(u)}: retorna o vértice menos profundo do caminho preferido de $u$, em outras palavras, o vértice no fim do caminho preferido que contém $u$.
-    \item \texttt{get\_parent\_path\_node(u)}: retorna o vértice ma floresta imediatamente acima do fim do caminho preferido que contém $u$; caso tal caminho contenha a raiz da árvore representada, este método retorna \texttt{null}.
-    \item \texttt{get\_maximum\_path\_value(u)}:  recebe $u$, o identificador de um caminho preferido, e retorna o maior valor de uma aresta neste caminho.
+    \item \texttt{get\_path\_end\_node(u)}: retorna o vértice menos profundo do caminho preferido de $u$, em outras palavras, o vértice no fim do caminho preferido que contém $u$. Na árvore da figura \ref{fig:arvore-simples}, a chamada \texttt{get\_path\_end\_node(G)} retorna o vértice \texttt{A}.
+    \item \texttt{get\_parent\_path\_node(u)}: retorna o vértice ma floresta imediatamente acima do fim do caminho preferido que contém $u$; caso tal caminho contenha a raiz da árvore representada, este método retorna \texttt{null}. Aqui, na árvore da figura \ref{fig:arvore-simples}, \texttt{get\_parent\_path\_node(M)} retorna o vértice \texttt{C}.
+    \item \texttt{get\_maximum\_path\_value(u)}: recebe $u$, o identificador de um caminho preferido, e retorna o maior valor de uma aresta neste caminho.
 \end{itemize}
 
 Com tal conjunto de funções, podemos avançar para os métodos da link-cut tree.
@@ -134,9 +131,48 @@ Com estes valores em mãos, podemos ir criando um caminho preferido através de 
 
 Ao final da iteração, colocamos o vértice $u$ como identificador deste novo caminho preferencial, simplificando as operações a seguir.
 
-\begin{center}
-    \textbf{TODO}: Colocar figura 2.1 apos access em H
-\end{center}
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[
+            nointerno/.style={shape=circle, draw=black, minimum size=1cm},
+            pref/.style={ultra thick},
+            pptr/.style={densely dashed},
+        ]
+        \node[nointerno] (a) at (6, 20) {A};
+        \node[nointerno] (b) at (4, 18) {B};
+        \node[nointerno] (c) at (8, 18) {C};
+        \node[nointerno] (d) at (2, 16) {D};
+        \node[nointerno] (e) at (6, 16) {E};
+        \node[nointerno] (f) at (10, 16) {F};
+        \node[nointerno] (g) at (4, 14) {G};
+        \node[nointerno] (h) at (8, 14) {H};
+        \node[nointerno] (i) at (10, 14) {I};
+        \node[nointerno] (j) at (12, 14) {J};
+        \node[nointerno] (k) at (2, 12) {K};
+        \node[nointerno] (l) at (6, 12) {L};
+        \node[nointerno] (m) at (10, 12) {M};
+        \node[nointerno] (n) at (10, 10) {N};
+        \node[nointerno] (o) at (8, 8) {O};
+
+        \draw[pptr] (a) -- (b) node[midway, above] {5};
+        \draw[pref] (a) -- (c) node[midway, above] {1};
+        \draw[pref] (b) -- (d) node[midway, above] {7};
+        \draw[pref] (d) -- (g) node[midway, above] {2};
+        \draw[pref] (g) -- (k) node[midway, above] {10};
+        \draw[pptr] (g) -- (l) node[midway, above] {9};
+        \draw[pref] (c) -- (f) node[midway, above] {7};
+        \draw[pptr] (c) -- (e) node[midway, above] {4};
+        \draw[pref] (f) -- (h) node[midway, left] {12};
+        \draw[pptr] (f) -- (i) node[midway, left] {15};
+        \draw[pptr] (f) -- (j) node[midway, above] {8};
+        \draw[pref] (i) -- (m) node[midway, left] {11};
+        \draw[pptr] (m) -- (n) node[midway, left] {19};
+        \draw[pref] (n) -- (o) node[midway, above] {20};
+
+    \end{tikzpicture}
+    \caption{Caminhos preferidos na árvore da figura \ref{fig:arvore-simples} após uma operação de \texttt{access} no nó $H$. Com isso temos o novo conjunto de caminhos vértice-disjuntos $ \{ \langle H,F,C,A \rangle, \langle K,G,D,B \rangle, \langle M,I \rangle, \langle E \rangle, \langle J \rangle, \langle L \rangle, \langle O,N \rangle \} $. }
+    \label{fig:arvore-access}
+\end{figure}
 
 \subsection{Rotinas Make Root, Link e Cut}
 \label{subsection:lct-make-root}
@@ -248,17 +284,34 @@ Primeiramente, em nosso uso, a ordenação dos nós na splay tree é dada pela p
 
 Ademais, para implementar eficientemente a operação \texttt{get\_maximum\_path\_value}, mantemos o peso máximo dos nós em cada sub-árvore de uma splay tree.
 
-\begin{center}
-    \textbf{TODO}: colocar imagem de um preferred path e sua respectiva splay tree.
-    % splay tree com os campos e arestas como vértices
-    % enraizar splay no centro do caminho e destacar na legenda que essa é apenas umas das possíveis configurações dessa árvore auxiliar em particular
-\end{center}
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[
+            no/.style={shape=circle, draw=black, minimum size=1cm},
+            novertice/.style={shape=rectangle, draw=black, minimum size=1cm},
+            aresta/.style={thick},
+        ]
+        \node[no] (f) at (6, 10) {F};
+        \node[novertice] (ac) at (4, 8) {\shortstack{AC\\$1$}};
+        \node[novertice] (fh) at (8, 8) {\shortstack{FH\\$12$}};
+        \node[no] (a) at (2, 6) {A};
+        \node[no] (c) at (6, 6) {C};
+        \node[no] (h) at (10, 6) {H};
+        \node[novertice] (cf) at (4, 4) {\shortstack{CF\\$7$}};
+
+        \draw[aresta] (f) -- (ac);
+        \draw[aresta] (f) -- (fh);
+        \draw[aresta] (ac) -- (a);
+        \draw[aresta] (ac) -- (c);
+        \draw[aresta] (a) -- (cf);
+        \draw[aresta] (fh) -- (h);
+
+    \end{tikzpicture}
+    \caption{Uma possível configuração da splay tree que armazena o caminho preferido $\langle H,F,C,A \rangle$ da figura \ref{fig:arvore-access}, onde $F$ é identificador do caminho. Os nós em formato retangular mostram as arestas da árvore representada, com o peso de tal aresta na parte inferior.}
+    \label{fig:splay-path}
+\end{figure}
 
 Além disso, como usamos a profundidade dos nós na árvore representada como chave para a árvore auxiliar, temos que todos os nós na sub-árvore esquerda da raiz de uma splay tree têm uma profundidade menor que a raiz, enquanto os nós à direita têm uma profundidade maior. Contudo, ao realizamos uma operação \texttt{make\_root(u)}, fazemos com que todos os nós que estavam acima de $u$ na árvore representada se tornem parte de sua sub-árvore. Para isso, incluímos na splay tree um mecanismo para inverter a ordem de todos os nós de uma árvore auxiliar, efetivamente invertendo a orientação de um caminho preferido.
-
-\begin{center}
-    \textbf{TODO}: colocar imagem de uma splay tree antes e depois da inversão, assim como sua árvore representada.
-\end{center}
 
 Com isso, os nós da árvore auxiliar têm os seguintes campos:
 
@@ -275,10 +328,6 @@ Com isso, os nós da árvore auxiliar têm os seguintes campos:
 
 Com a estrutura apresentada, podemos partir para a explicação de sua principal operação, a \texttt{splay}. Em poucas palavras, este método é responsável por receber um nó e fazer com que ele vire a raiz da splay tree, através de diversas rotações.  Ademais, as operações de \texttt{splay} contribuem para diminuir a altura da árvore, melhorando o seu consumo de tempo.
 
-\begin{center}
-    \textbf{TODO}: Colocar figura de uma Splay antes e depois do Splay em uma folha
-\end{center}
-
 Em particular, podemos dizer que esta operação é responsável por transformar um vértice em identificador de seu caminho, ou seja, entendemos como sinônimos os métodos \texttt{make\_identifier} e \texttt{splay}.
 
 De modo a facilitarmos nossa explicação, chamamos \texttt{parent} o pai de um nó $u$ e de \texttt{grandparent} o pai de \texttt{parent}.
@@ -287,12 +336,57 @@ Primeiramente, uma operação de \texttt{splay} consiste em realizamos diversos 
 
 \begin{itemize}
     \item A propagação do valor booleano $is\_reversed$ de \texttt{grandparent} e em seguida o de \texttt{parent}, fazendo as devidas reversões caso necessárias. Isso nos fornece a invariante de que iremos fazer comparações entre os filhos corretos para determinar qual rotação fazer.
-    \item A orientação que \texttt{grandparent}, \texttt{parent} e $u$ se encontram, isto é, se estão em uma orientação de \textit{zig-zig}, \textit{zag-zag} ou \textit{zig-zag}, como exemplificadas na figura abaixo. Dependendo da orientação, fazemos uma rotação em $u$ ou em \texttt{parent}, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
+    \item A orientação que \texttt{grandparent}, \texttt{parent} e $u$ se encontram, isto é, se estão em uma orientação de \textit{zig}, \textit{zig-zig} ou \textit{zig-zag}, como exemplificadas na figura \ref{fig:zig-oris}. Dependendo da orientação, fazemos uma rotação em $u$ ou em \texttt{parent}, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
 \end{itemize}
 
-\begin{center}
-    \textbf{TODO}: Colocar figura mostrando configurações de zig-zig, zag-zag e zig-zags.
-\end{center}
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[
+                no/.style={shape=circle, draw=black, minimum size=1cm},
+                aresta/.style={thick},
+            ]
+            \node[no] (u) at (0, 0) {U};
+            \node[no] (p) at (2, 2) {P};
+            \draw[aresta] (u) -- (p);
+        \end{tikzpicture}
+        \caption{zig}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[
+                no/.style={shape=circle, draw=black, minimum size=1cm},
+                aresta/.style={thick},
+            ]
+            \node[no] (u) at (0, 0) {U};
+            \node[no] (p) at (2, 2) {P};
+            \node[no] (gp) at (4, 4) {GP};
+            \draw[aresta] (u) -- (p);
+            \draw[aresta] (p) -- (gp);
+        \end{tikzpicture}
+        \caption{zig-zig}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[
+                no/.style={shape=circle, draw=black, minimum size=1cm},
+                aresta/.style={thick},
+            ]
+            \node[no] (u) at (4, 0) {U};
+            \node[no] (p) at (2, 2) {P};
+            \node[no] (gp) at (4, 4) {GP};
+            \draw[aresta] (u) -- (p);
+            \draw[aresta] (p) -- (gp);
+        \end{tikzpicture}
+        \caption{zig-zag}
+    \end{subfigure}
+    \caption{Orientações \textit{zig}, \textit{zig-zig} e \textit{zig-zag} na splay tree. Aqui, \texttt{P} e \texttt{GP} abreviam \texttt{parent} e \texttt{grandparent}, respectivamente.}
+    \label{fig:zig-oris}
+\end{figure}
+
 
 Ao sair da função \texttt{splay}, o nó $u$ estará na raiz de sua árvore auxiliar. Além disso, seu valor booleano $is\_reversed$ estará nulo, pois as reversões já terão sido propagadas aos seus filhos, e seu $max\_subtree\_value$ estará atualizado, contendo o maior valor presente na splay tree.
 
@@ -414,9 +508,5 @@ A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_pa
 \end{algorithm}
 
 Por último, temos a função \texttt{get\_maximum\_path\_value(u)}, que recebe um vértice identificador de caminho $u$ e retorna o maior valor de uma aresta no caminho preferencial de $u$, em termos práticos, retorna o valor de \texttt{max\_subtree\_value}.
-
-\begin{center}
-    \textbf{TODO}: Incluir figura de uma Splay antes e depois da reversão do caminho, colocando na legenda o que cada operação retornaria.
-\end{center}
 
 Com isso, temos todas as ferramentas necessárias para manipularmos a splay tree em seu uso como árvore auxiliar.
