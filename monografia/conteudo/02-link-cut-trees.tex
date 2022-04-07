@@ -104,7 +104,7 @@ Com tal conjunto de funções, podemos avançar para os métodos da link-cut tre
 \subsection{Rotina Access}
 \label{subsection:lct-access}
 
-Uma rotina utilizada por todos os métodos da link-cut tree que vamos implementar é a \texttt{access(u)}, a partir dela conseguimos reorganizar a estrutura interna da árvore representada a nosso favor. Basicamente, a operação \texttt{access(u)} cria um caminho preferido que parte da raiz da árvore representada e vai até $u$. Com isso, todas as arestas preferidas que tinham somente uma das pontas fazendo parte deste novo caminho são destruídas e $u$ termina sem nenhum filho preferido.
+Uma rotina utilizada por todos os métodos da link-cut tree que vamos implementar é a \texttt{access(u)}, a partir dela conseguimos reorganizar a estrutura interna da árvore representada a nosso favor. Basicamente, a operação \texttt{access(u)} cria um caminho preferido que parte de $u$ e vai até a raiz da árvore representada. Com isso, todas as arestas preferidas que tinham somente uma das pontas fazendo parte deste novo caminho são destruídas e $u$ termina sem nenhum filho preferido.
 
 Para isso, começamos uma sequência de iterações, que vão crescendo um caminho preferido desde $u$ até que tal caminho contemple a raiz da árvore representada. A cada iteração, fazemos com que uma variável \texttt{current\_root}, que inicialmente corresponde ao vértice $u$, vire o identificador de seu caminho preferido. Além disso, mantemos uma variável \texttt{last}, que corresponde a \texttt{current\_root} da iteração anterior, no início com valor igual a \texttt{null}.
 
@@ -177,7 +177,7 @@ Ao final da iteração, colocamos o vértice $u$ como identificador deste novo c
 \subsection{Rotinas Make Root, Link e Cut}
 \label{subsection:lct-make-root}
 
-Em seguida, temos a função \texttt{make\_root(u)}, que enraíza em $u$ a árvore representada que o contém. Para isso, criamos um caminho preferencial que vai da raiz da árvore ate $u$, utilizando \texttt{access(u)}. Em seguida, utilizamos a rotina \texttt{reverse\_path(u)}, que inverte a orientação deste caminho preferido recém-criado. Tal inversão coloca $u$ como o vértice de menor profundidade da árvore representada, o que se traduz neste sendo a nova raiz.
+Em seguida, temos a função \texttt{make\_root(u)}, que enraíza em $u$ a árvore representada que o contém. Para isso, criamos um caminho preferencial que vai da raiz da árvore até $u$, utilizando \texttt{access(u)}. Em seguida, utilizamos a rotina \texttt{reverse\_path(u)}, que inverte a orientação deste caminho preferido recém-criado. Tal inversão coloca $u$ como o vértice de menor profundidade da árvore representada, o que se traduz neste sendo a nova raiz.
 
 \begin{algorithm}[h!]
     \caption{Make Root}\label{lct:make-root}
@@ -189,7 +189,7 @@ Em seguida, temos a função \texttt{make\_root(u)}, que enraíza em $u$ a árvo
     \end{algorithmic}
 \end{algorithm}
 
-Como rotinas que dão nome a nossa estrutura, temos \texttt{link(u, v, w)} e \texttt{cut{u, v}}.
+Como rotinas que dão nome a nossa estrutura, temos \texttt{link(u, v, w)} e \texttt{cut(u, v)}.
 
 A primeiro delas, recebe dois vértices $u$ e $v$ que estão em árvores distintas, e cria uma aresta de peso $w$, conectando-os. Primeiramente, devemos lembrar que as arestas da árvore representada viram vértices em nossa representação interna. Com isso, o primeiro passo é criar um vértice que tem seu valor definido como $w$, vamos chama-lo \texttt{uv\_edge}. Dessa forma, criaremos as seguintes conexões: $u \leftrightarrow uv\_edge \leftrightarrow v$.
 
