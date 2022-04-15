@@ -10,20 +10,104 @@ Neste capítulo falaremos do union-find retroativo, introduzida por \citet{10.11
 \section{Ideia}
 \label{sec:uf-ideia}
 
-O union-find é uma estrutura de dados utilizada para manter uma coleção de conjuntos disjuntos, isto é, que não se intersectam. Para isso, ela fornece duas operações principais, são elas:
+O union-find é uma estrutura de dados utilizada para manter uma coleção de conjuntos disjuntos, isto é, que não se intersectam. Para isso, ela fornece duas operações principais:
 
 \begin{itemize}
     \item \texttt{same\_set(a, b)}: retorna \emph{verdadeiro} caso $a$ e $b$ estejam no mesmo conjunto, \emph{falso} caso contrario.
     \item \texttt{union(a, b)}: se $a$ e $b$ estão em conjuntos distintos, realiza a união destes conjuntos.
 \end{itemize}
 
-A primeira versão do union-find foi apresentada por \citet{10.1145/364099.364331}. Posteriormente, \citet{10.1145/62.2160}, utilizam a técnica de compressão de caminhos para mostrar uma implementação com complexidade de $\Oh( \alpha (n) )$, onde $n$ é o número total de elementos nos conjuntos que estamos representando e $\alpha()$ é o inverso da função de Ackermann.
+A primeira versão do union-find foi apresentada por \citet{10.1145/364099.364331}. Posteriormente, \citet{10.1145/62.2160}, utilizam a técnica de compressão de caminhos para mostrar uma implementação com complexidade $\Oh( \alpha (n) )$, onde $n$ é o número total de elementos nos conjuntos que estamos representando e $\alpha$ é o inverso da função de Ackermann.
 
-Na versão retroativa, estamos interessados em realizar as operações em uma linha de tempo, isto é, conseguirmos adicionar e remover operações \texttt{union} em certos instantes de tempo, assim como checar se dois elementos pertenciam a dado conjunto em um certo instante $t$.
+Como ja dissemos, na versão retroativa, estamos interessados em realizar as operações em uma linha de tempo, isto é, conseguirmos adicionar e remover operações do tipo \texttt{union} em certos instantes de tempo. Ademais, queremos ser capazes de checar se dois elementos pertencem a um mesmo conjunto num certo instante $t$.
 
-Para isso, vamos trocar a operação \texttt{union(a, b)} por duas novas rotinas, \texttt{create\_union(a, b, t)} e \texttt{delete\_union(t)}. A primeira delas é responsável por criar uma união dos conjuntos que contém $a$ e $b$ no instante de tempo $t$, enquanto a segunda desfaz a união realizada em $t$. Além disso, colocamos um terceiro parâmetro $t$ na operação \texttt{same\_set}, com isso, conseguimos especificar o instante que estamos interessados em consultar.
+Para isso, vamos trocar a operação \texttt{union(a, b)} da estrutura original por duas novas rotinas, \texttt{create\_union(a, b, t)} e \texttt{delete\_union(t)}. A primeira delas é responsável por criar uma união dos conjuntos que contém $a$ e $b$ no instante de tempo $t$, enquanto a segunda desfaz a união realizada em $t$. Além disso, colocamos um terceiro parâmetro $t$ na operação \texttt{same\_set}, com isso, conseguimos consultar se dois elementos pertenciam ao mesmo conjunto em um dado instante.
 
-Note que, em nenhum momento podemos fazer uma operação que seria invalida em qualquer instante de tempo. Em outras palavras, não podemos remover uma união que não aconteceu, assim como não podemos criar uma união em dois elementos que já pertencem ao mesmo conjunto.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{tikzpicture}[
+                no/.style={shape=circle, minimum size=1cm},
+            ]
+            \node[no] (t) at (1,0) {$t = 1$};
+            \node[no] (a) at (4,0) {A};
+            \node[no] (x) at (5,0) {};
+            \node[no] (b) at (6,0) {B};
+            \node[no] (y) at (7,0) {};
+            \node[no] (c) at (8,0) {C};
+            \node[no] (z) at (9,0) {};
+            \node[no] (d) at (10,0) {D};
+
+            \draw ($(a)$) ellipse ({.7cm} and {.7cm});
+            \draw ($(b)$) ellipse ({.7cm} and {.7cm});
+            \draw ($(c)$) ellipse ({.7cm} and {.7cm});
+            \draw ($(d)$) ellipse ({.7cm} and {.7cm});
+        \end{tikzpicture}
+        \bigskip
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{tikzpicture}[
+                no/.style={shape=circle, minimum size=1cm},
+            ]
+            \node[no] (t) at (1,0) {$t = 3$};
+            \node[no] (a) at (4,0) {A};
+            \node[no] (x) at (5,0) {};
+            \node[no] (b) at (6,0) {B};
+            \node[no] (y) at (7,0) {};
+            \node[no] (c) at (8,0) {C};
+            \node[no] (z) at (9,0) {};
+            \node[no] (d) at (10,0) {D};
+
+            \draw ($(x)$) ellipse ({1.7cm} and {.7cm});
+            \draw ($(z)$) ellipse ({1.7cm} and {.7cm});
+        \end{tikzpicture}
+        \bigskip
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{tikzpicture}[
+                no/.style={shape=circle, minimum size=1cm},
+            ]
+            \node[no] (t) at (1,0) {$t = 4$};
+            \node[no] (a) at (4,0) {A};
+            \node[no] (x) at (5,0) {};
+            \node[no] (b) at (6,0) {B};
+            \node[no] (y) at (7,0) {};
+            \node[no] (c) at (8,0) {C};
+            \node[no] (z) at (9,0) {};
+            \node[no] (d) at (10,0) {D};
+
+            \draw ($(y)$) ellipse ({3.7cm} and {.7cm});
+        \end{tikzpicture}
+        \bigskip
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{tikzpicture}[
+                no/.style={shape=circle, minimum size=1cm},
+            ]
+            \node[no] (t) at (1,0) {$t = 5$};
+            \node[no] (a) at (4,0) {A};
+            \node[no] (x) at (5,0) {};
+            \node[no] (b) at (6,0) {B};
+            \node[no] (y) at (7,0) {};
+            \node[no] (c) at (8,0) {C};
+            \node[no] (z) at (9,0) {};
+            \node[no] (d) at (10,0) {D};
+
+            \draw ($(b)$) ellipse ({2.8cm} and {.7cm});
+            \draw ($(d)$) ellipse ({.7cm} and {.7cm});
+        \end{tikzpicture}
+    \end{subfigure}
+    \caption{Representação dos conjuntos com os elementos $\{A,B,C,D\}$ apos a seguinte sequencia de operações: \texttt{create\_union(a, b, 2)}, \texttt{create\_union(c, d, 3)}, \texttt{create\_union(b, c, 4)} e \texttt{delete\_union(3)}.}
+    \label{fig:uf-sets}
+\end{figure}
+
+\todo{referenciar figura no texto e passar spell check}
+
+Note que, em nenhum momento podemos fazer uma operação que seria invalida em algum instante de tempo. Em outras palavras, não podemos remover uma união que não aconteceu, assim como não podemos criar uma união em dois elementos que já pertencem ao mesmo conjunto.
 
 %% ------------------------------------------------------------------------- %%
 \section{Consultas Same Set}
