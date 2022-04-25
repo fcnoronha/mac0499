@@ -50,7 +50,7 @@
   <div class="container">
     <div class="row">
       <!-- Entries Column -->
-      <div class="col-md-8" style="height: 100vh;">
+      <div class="col-md-8">
         <!-- Main Image -->
         <!-- <img class="img-responsive" src="photo.gif" alt=""><br> -->
         <div style="margin-top:3%; text-align:justify;">
@@ -63,19 +63,226 @@
 
         <div style="margin-top:3%; text-align:justify;">
           <h2 id="proposta"><b>Proposta</b></h2>
+
+          <h3><b>Introdução</b></h3>
+
           <p>
-            Realizarmos um estudo e implementação da versão retroativa da clássica estrutura de dados <b>union-find</b>,
-            usada
-            para responder eficientemente consultas sobre as componentes conexas de um grafo. Tal implementação usa uma
-            estrutura de dados chamada <b>link-cut tree</b>, muito usada na resolução de problemas dinâmicos em grafos.
-            Em particular um grafo dinâmico é um grafo em que podemos adicionar e remover arestas a qualquer momento. A
-            seguir estudaremos a aplicação de estruturas de dados retroativas para resolver de maneira eficiente o
-            problema da <b>árvore geradora mínima</b> (minimum spanning tree) de um grafo dinâmico. A monografia
-            apresentará retroatividade,
-            apresentará as estruturas de dados retroativas estudadas e implementadas, e a aplicação no problema em
-            grafos dinâmicos.
+            A ideia deste trabalho é a realização de um estudo sobre estruturas de dados retroativas, que permitem
+            modificações e consultas não somente no presente, mas também no passado. Em linhas gerais, podemos dividir
+            este trabalho em três partes principais.
           </p>
+          <p>
+            A primeira delas seria o estudo e implementação de uma estrutura de dados chamada <b>link-cut tree</b>, que
+            nos permite manter uma floresta dinâmica, realizando ligações e separações de árvores. Essa estrutura
+            servirá como base para as implementações retroativas a seguir.
+          </p>
+          <p>
+            Inicialmente, estudaremos a versão retroativa da estrutura de dados <b>union-find</b>, usada
+            responder eficientemente consultas sobre elementos de conjuntos disjuntos. A ideia é que possamos realizar
+            a união entre dois elementos em qualquer instante de tempo, assim como consultar se dois elementos faziam
+            parte do mesmo conjunto em um certo instante.
+          </p>
+          <p>
+            Em seguida, estudaremos a versão retroativa do problema da <b>árvore geradora mínima</b> (minimum spanning
+            tree) de um
+            grafo. Nele, podemos realizar modificações na estrutura do grafo e consultar a sua árvore geradora
+            mínima a qualquer momento.
+          </p>
+
+          <h3><b>Tarefas</b></h3>
+
+          <p>
+            A realização do trabalho pode ser dividida nas seguintes atividades:
+          </p>
+
+          <ul>
+            <li><b>Estudo e implementação da link-cut tree</b>: apresentada por Sleator e Tarjan <a
+                href="https://doi.org/10.1145/800076.802464">(1981)</a>, essa estrutura é usada para lidar com florestas
+              dinâmicas, permitindo operações de ligação e separação de duas arvores em tempo O(lg n) amortizado. </li>
+
+            <li><b>Escrita do capítulo sobre link-cut tree</b>: explicação sobre como fazemos para representar a
+              floresta
+              dinâmica internamente, utilizando a ideia de caminhos preferidos implementados com splay trees. </li>
+
+            <li><b>Estudo e implementação do union-find retroativo</b>: mostrada por Demaine e Iacono <a
+                href="https://doi.org/10.1145/1240233.1240236">(2007)</a>, o union-find retroativo permite consultas e
+              modificações em qualquer instante de tempo em uma estrutura que mantém uma coleção de conjuntos disjuntos.
+            </li>
+
+            <li><b>Escrita do capítulo sobre union-find retroativo</b>: explicação sobre como fazemos para implementar o
+              union-find retroativo utilizando a link-cut tree.</li>
+
+            <li><b>Estudo e escrita do capítulo sobre a técnica de square root decomposition</b>: utilizada para fazer
+              com que um conjunto
+              de operações que consumiria tempo O(n) gaste tempo proporcional a O(√N), essa técnica divide a estrutura
+              em blocos. </li>
+
+            <li><b>Implementação da versão retroativa do problema de minimum spanning tree</b>: apresentada por Andrade
+              Júnior e Duarte Seabra <a href="https://doi.org/10.1093/comjnl/bxaa135">(2020)</a>, essa estrutura utiliza
+              a
+              link-cut tree com a técnica de square root decomposition para resolver a versão retroativa do
+              problema de árvore geradora mínima, onde podemos realizar modificações na estrutura do grafo em qualquer
+              instante de tempo, assim como consultar a sua árvore geradora mínima. </li>
+
+            <li><b>Escrita do capítulo sobre a versão retroativa do problema de minimum spanning tree</b>: além da
+              explicação sobre como a versão retroativa do problema da árvore geradora mínima pode ser implementada,
+              vamos também mostrar a como podemos eliminar a necessidade de sabermos de antemão o número de operações a
+              serem realizadas, uma melhoria no trabalho de Andrade Júnior e Duarte Seabra.
+            </li>
+
+            <li><b>Caso haja tempo, estudo e implementação de outro problema relacionado ao trabalho</b>: como por
+              exemplo, o
+              trabalho de Sunita e Garg <a href="https://doi.org/10.1007/s40009-018-0674-6">(2019)</a>, que mostra como
+              podemos utilizar a ideia de retroatividade para resolver o problema de caminho mínimo em um grafo
+              dinâmico. </li>
+
+            <li><b>Escrita da introdução e resumo da monografia, assim como preparação de poster e/ou apresentação</b>:
+              detalhes finais do trabalho. </li>
+          </ul>
+
+          <p>
+            A seguir, temos o cronograma aproximado para a realização das atividades acima, os quados marcados em verde
+            sinalizam o que já foi realizado.
+          </p>
+
         </div>
+
+        <table class="table table-bordered table-hover mt-5" style="text-align: center">
+          <thead>
+            <tr>
+              <th style="text-align:center">Atividade</th>
+              <th style="text-align:center">Mar</th>
+              <th style="text-align:center">Abr</th>
+              <th style="text-align:center">Mai</th>
+              <th style="text-align:center">Jun</th>
+              <th style="text-align:center">Jul</th>
+              <th style="text-align:center">Ago</th>
+              <th style="text-align:center">Set</th>
+              <th style="text-align:center">Out</th>
+              <th style="text-align:center">Nov</th>
+              <th style="text-align:center">Dez</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Estudo e implementação da link-cut tree</td>
+              <td style="background-color:lightgreen">X</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Escrita do capítulo sobre link-cut tree</td>
+              <td style="background-color:lightgreen">X</td>
+              <td style="background-color:lightgreen">X</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Estudo e implementação do union-find retroativo</td>
+              <td></td>
+              <td style="background-color:lightgreen">X</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Escrita do capítulo sobre union-find retroativo</td>
+              <td></td>
+              <td>X</td>
+              <td>X</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Estudo e escrita de capítulo sobre a técnica de square root decomposition</td>
+              <td></td>
+              <td></td>
+              <td>X</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Implementação da versão retroativa do problema de minimum spanning tree</td>
+              <td></td>
+              <td></td>
+              <td>X</td>
+              <td>X</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Escrita do capítulo sobre a versão retroativa do problema de minimum spanning tree</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>X</td>
+              <td>X</td>
+              <td>X</td>
+              <td>X</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Caso haja tempo, estudo e implementação de outro problema relacionado ao trabalho</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>X</td>
+              <td>X</td>
+              <td>X</td>
+              <td>X</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Escrita da introdução e resumo da monografia, assim como preparação de poster e/ou apresentação</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>X</td>
+              <td>X</td>
+              <td>X</td>
+            </tr>
+          </tbody>
+        </table>
 
         <div style="margin-top:3%; text-align:justify;">
           <h2 id="resumo"><b> Resumo </b></h2>
@@ -108,8 +315,8 @@
 
   <!-- Other people may like it too! -->
   <a style="color:#b5bec9;font-size:0.8em; float:right;" href="https://github.com/mavroudisv/plain-academic">Plain
-    Academic</a>
-
+    Academic</a> <br>
 </body>
+
 
 </html>
