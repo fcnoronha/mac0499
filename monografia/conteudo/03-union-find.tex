@@ -4,13 +4,13 @@
 \chapter{Union-Find}
 \label{cap:union-find}
 
-Neste capítulo falaremos do union-find retroativo, introduzida por \citet{10.1145/1240233.1240236}, ela será primeira estrutura retroativa que vamos implementar usando a link-cut tree.
+Neste capítulo falaremos do union-find retroativo, introduzida por \citet{10.1145/1240233.1240236}, ela será a primeira estrutura retroativa que vamos implementar usando a link-cut tree.
 
 %% ------------------------------------------------------------------------- %%
 \section{Ideia}
 \label{sec:uf-ideia}
 
-O union-find é uma estrutura de dados utilizada para manter uma coleção de conjuntos disjuntos, isto é, que não se intersectam. Para isso, ela fornece duas operações principais:
+O union-find é uma estrutura de dados utilizada para manter uma coleção de conjuntos disjuntos, isto é, conjuntos que não se intersectam. Para isso, ela fornece duas operações principais:
 
 \begin{itemize}
     \item \texttt{same\_set(a, b)}: retorna \emph{verdadeiro} caso $a$ e $b$ estejam no mesmo conjunto, \emph{falso} caso contrario.
@@ -19,9 +19,11 @@ O union-find é uma estrutura de dados utilizada para manter uma coleção de co
 
 A primeira versão do union-find foi apresentada por \citet{10.1145/364099.364331}. Posteriormente, \citet{10.1145/62.2160}, utilizam a técnica de compressão de caminhos para mostrar uma implementação com complexidade $\Oh( \alpha (n) )$, onde $n$ é o número total de elementos nos conjuntos que estamos representando e $\alpha$ é o inverso da função de Ackermann.
 
-Como ja dissemos, na versão retroativa, estamos interessados em realizar as operações em uma linha de tempo, isto é, conseguirmos adicionar e remover operações do tipo \texttt{union} em certos instantes de tempo. Ademais, queremos ser capazes de checar se dois elementos pertencem a um mesmo conjunto num certo instante $t$.
+Como já dissemos, na versão retroativa, estamos interessados em realizar as operações em uma linha de tempo, isto é, conseguirmos adicionar ou remover operações do tipo \texttt{union} em certos instantes de tempo. Ademais, queremos conseguir checar se dois elementos pertencem a um mesmo conjunto num certo instante $t$.
 
 Para isso, vamos trocar a operação \texttt{union(a, b)} da estrutura original por duas novas rotinas, \texttt{create\_union(a, b, t)} e \texttt{delete\_union(t)}. A primeira delas é responsável por criar uma união dos conjuntos que contém $a$ e $b$ no instante de tempo $t$, enquanto a segunda desfaz a união realizada em $t$. Além disso, colocamos um terceiro parâmetro $t$ na operação \texttt{same\_set}, com isso, conseguimos consultar se dois elementos pertenciam ao mesmo conjunto em um dado instante.
+
+Por exemplo, a figura \ref{fig:uf-sets} mostra uma coleção de conjuntos disjuntos em quatro instantes de tempo. Neste caso, as consultas \texttt{same\_set(a, b, 3)} e \texttt{same\_set(c, d, 3)} retornariam \emph{verdadeiro}, enquanto \texttt{same\_set(a, d, 3)} e \texttt{same\_set(c, d, 5)} retornariam \emph{falso}.
 
 \begin{figure}[h!]
     \centering
@@ -31,13 +33,13 @@ Para isso, vamos trocar a operação \texttt{union(a, b)} da estrutura original 
                 no/.style={shape=circle, minimum size=1cm},
             ]
             \node[no] (t) at (1,0) {$t = 1$};
-            \node[no] (a) at (4,0) {A};
+            \node[no] (a) at (4,0) {a};
             \node[no] (x) at (5,0) {};
-            \node[no] (b) at (6,0) {B};
+            \node[no] (b) at (6,0) {b};
             \node[no] (y) at (7,0) {};
-            \node[no] (c) at (8,0) {C};
+            \node[no] (c) at (8,0) {c};
             \node[no] (z) at (9,0) {};
-            \node[no] (d) at (10,0) {D};
+            \node[no] (d) at (10,0) {d};
 
             \draw ($(a)$) ellipse ({.7cm} and {.7cm});
             \draw ($(b)$) ellipse ({.7cm} and {.7cm});
@@ -52,13 +54,13 @@ Para isso, vamos trocar a operação \texttt{union(a, b)} da estrutura original 
                 no/.style={shape=circle, minimum size=1cm},
             ]
             \node[no] (t) at (1,0) {$t = 3$};
-            \node[no] (a) at (4,0) {A};
+            \node[no] (a) at (4,0) {a};
             \node[no] (x) at (5,0) {};
-            \node[no] (b) at (6,0) {B};
+            \node[no] (b) at (6,0) {b};
             \node[no] (y) at (7,0) {};
-            \node[no] (c) at (8,0) {C};
+            \node[no] (c) at (8,0) {c};
             \node[no] (z) at (9,0) {};
-            \node[no] (d) at (10,0) {D};
+            \node[no] (d) at (10,0) {d};
 
             \draw ($(x)$) ellipse ({1.7cm} and {.7cm});
             \draw ($(z)$) ellipse ({1.7cm} and {.7cm});
@@ -71,13 +73,13 @@ Para isso, vamos trocar a operação \texttt{union(a, b)} da estrutura original 
                 no/.style={shape=circle, minimum size=1cm},
             ]
             \node[no] (t) at (1,0) {$t = 4$};
-            \node[no] (a) at (4,0) {A};
+            \node[no] (a) at (4,0) {a};
             \node[no] (x) at (5,0) {};
-            \node[no] (b) at (6,0) {B};
+            \node[no] (b) at (6,0) {b};
             \node[no] (y) at (7,0) {};
-            \node[no] (c) at (8,0) {C};
+            \node[no] (c) at (8,0) {c};
             \node[no] (z) at (9,0) {};
-            \node[no] (d) at (10,0) {D};
+            \node[no] (d) at (10,0) {d};
 
             \draw ($(y)$) ellipse ({3.7cm} and {.7cm});
         \end{tikzpicture}
@@ -89,31 +91,75 @@ Para isso, vamos trocar a operação \texttt{union(a, b)} da estrutura original 
                 no/.style={shape=circle, minimum size=1cm},
             ]
             \node[no] (t) at (1,0) {$t = 5$};
-            \node[no] (a) at (4,0) {A};
+            \node[no] (a) at (4,0) {a};
             \node[no] (x) at (5,0) {};
-            \node[no] (b) at (6,0) {B};
+            \node[no] (b) at (6,0) {b};
             \node[no] (y) at (7,0) {};
-            \node[no] (c) at (8,0) {C};
+            \node[no] (c) at (8,0) {c};
             \node[no] (z) at (9,0) {};
-            \node[no] (d) at (10,0) {D};
+            \node[no] (d) at (10,0) {d};
 
             \draw ($(b)$) ellipse ({2.8cm} and {.7cm});
             \draw ($(d)$) ellipse ({.7cm} and {.7cm});
         \end{tikzpicture}
     \end{subfigure}
-    \caption{Representação dos conjuntos com os elementos $\{A,B,C,D\}$ apos a seguinte sequencia de operações: \texttt{create\_union(a, b, 2)}, \texttt{create\_union(c, d, 3)}, \texttt{create\_union(b, c, 4)} e \texttt{delete\_union(3)}.}
+    \caption{Representação dos conjuntos com os elementos $\{a,b,c,d\}$ após a seguinte sequência de operações: \texttt{create\_union(a, b, 2)}, \texttt{create\_union(c, d, 3)}, \texttt{create\_union(b, c, 4)} e \texttt{delete\_union(3)}.}
     \label{fig:uf-sets}
 \end{figure}
 
-\todo{referenciar figura no texto e passar spell check}
-
 Note que, em nenhum momento podemos fazer uma operação que seria invalida em algum instante de tempo. Em outras palavras, não podemos remover uma união que não aconteceu, assim como não podemos criar uma união em dois elementos que já pertencem ao mesmo conjunto.
+
+%% ------------------------------------------------------------------------- %%
+\section{Estrutura interna}
+\label{sec:uf-estrutura}
+
+Para implementarmos o union-find retroativo, vamos utilizar a link-cut tree como estrutura interna. Para isso, fazemos com que os elementos dos conjuntos sejam nós na floresta mantida pela link-cut tree. Com isso, cada conjunto de nossa coleção sera uma árvore na floresta. Note que, essa simples ideia já pode ser utilizada para implementar uma versão não retroativa do union-find, visto que a operação de \texttt{union} pode ser traduzida para uma chamada de \texttt{link}, assim como \texttt{same\_set} vira \texttt{is\_connected}.
+
+Desta forma, para introduzirmos o caráter retroativo da estrutura, vamos utilizar o atributo \texttt{value} que mantemos nas arestas da link-cut tree. Este campo será usado para guardar o tempo em que uma operação de \texttt{union} aconteceu, isto é, uma chamada \texttt{create\_union(a, b, 3)}, cria uma aresta de valor $3$ entre os vértices $a$ e $b$ da link-cut tree. Este valor poderá então ser utilizado para checar se dois elementos já pertenciam a um certo conjunto em um dado instante de tempo.
+
+A seguir, mostramos mais detalhadamente como essas operações são realizadas.
 
 %% ------------------------------------------------------------------------- %%
 \section{Consultas Same Set}
 \label{sec:uf-same-set}
 
 
+
+\begin{algorithm}[h!]
+    \caption{Consulta Same Set}\label{uf:same-set}
+    \begin{algorithmic}
+        \Function{same\_set}{$a, b, t$}
+        \If {$!linkCutTree.is\_connected(a, b)$}
+        \State \Return $false$
+        \EndIf
+        \State \Return $linkCutTree.maximum\_edge(a, b) \leq t$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
 %% ------------------------------------------------------------------------- %%
 \section{Rotinas Create Union e Delete Union}
 \label{sec:uf-union}
+
+\begin{algorithm}[h!]
+    \caption{Rotina Create Union}\label{uf:create-union}
+    \begin{algorithmic}
+        \Function{create\_union}{$a, b, t$}
+        \State $linkCutTree.create\_node(a)$
+        \State $linkCutTree.create\_node(b)$
+        \State $edges\_by\_time[t] \gets (a, b)$
+        \State $linkCutTree.link(a,b,t)$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h!]
+    \caption{Rotina Delete Union}\label{uf:delete-union}
+    \begin{algorithmic}
+        \Function{delete\_union}{$t$}
+        \State $u,v \gets edges\_by\_time[t]$
+        \State $edges\_by\_time.erase(t)$
+        \State $linkCutTree.cut(u,v)$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
