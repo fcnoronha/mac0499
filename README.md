@@ -19,3 +19,15 @@ Ja para executar os testes, execute:
 ```bash
 $ bazel test --test_output=all //implementations:retroactive-union-find-test
 ```
+
+### Incremental Minimum Spanning Forest
+
+```bash
+$ bazel build //implementations:incremental-msf
+```
+
+Ja para executar os testes, execute:
+
+```bash
+$ bazel test --test_output=all //implementations:incremental-msf-test
+```

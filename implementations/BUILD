@@ -32,3 +32,21 @@ cc_test(
         ":retroactive-union-find",
     ],
 )
+
+cc_library(
+    name = "incremental-msf",
+    srcs = ["incrementalMSF/IncrementalMSF.cpp"],
+    hdrs = ["incrementalMSF/IncrementalMSF.hpp"],
+    deps = [":link-cut-tree"],
+    visibility = ["//visibility:public"],
+    copts = ["-O2"],
+)
+
+cc_test(
+    name = "incremental-msf-test",
+    srcs = ["incrementalMSF/IncrementalMSFTest.cpp"],
+    deps = [
+        "@com_google_googletest//:gtest_main",
+        ":incremental-msf",
+    ],
+)
