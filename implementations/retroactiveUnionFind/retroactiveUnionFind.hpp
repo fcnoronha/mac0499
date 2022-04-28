@@ -1,7 +1,7 @@
 #pragma once
 
 #include <bits/stdc++.h>
-#include "linkCutTree.hpp"
+#include "../linkCutTree.hpp"
 
 class RetroactiveUnionFind
 {

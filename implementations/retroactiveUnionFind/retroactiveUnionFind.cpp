@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "linkCutTree.hpp"
+#include "../linkCutTree.hpp"
 #include "retroactiveUnionFind.hpp"
 
 void RetroactiveUnionFind::check_vertices_already_connected(int u, int v)

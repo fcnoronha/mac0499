@@ -17,8 +17,8 @@ cc_library(
 
 cc_library(
     name = "retroactive-union-find",
-    srcs = ["retroactiveUnionFind.cpp"],
-    hdrs = ["retroactiveUnionFind.hpp"],
+    srcs = ["retroactiveUnionFind/retroactiveUnionFind.cpp"],
+    hdrs = ["retroactiveUnionFind/retroactiveUnionFind.hpp"],
     deps = [":link-cut-tree"],
     visibility = ["//visibility:public"],
     copts = ["-O2"],
@@ -26,7 +26,7 @@ cc_library(
 
 cc_test(
     name = "retroactive-union-find-test",
-    srcs = ["retroactiveUnionFindTest.cpp"],
+    srcs = ["retroactiveUnionFind/retroactiveUnionFindTest.cpp"],
     deps = [
         "@com_google_googletest//:gtest_main",
         ":retroactive-union-find",

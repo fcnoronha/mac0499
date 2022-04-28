@@ -11,11 +11,11 @@ Neste projeto, utilizamos a ferramenta de copilação e teste [Bazel](https://ba
 Para copilar, basta usar:
 
 ```bash
-$ bazel build //retroactiveUnionFind:retroactive-union-find
+$ bazel build //implementations:retroactive-union-find
 ```
 
 Ja para executar os testes, execute:
 
 ```bash
-$ bazel test --test_output=all //retroactiveUnionFind:retroactive-union-find-test
+$ bazel test --test_output=all //implementations:retroactive-union-find-test
 ```

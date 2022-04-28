@@ -1,7 +1,7 @@
 %!TeX root=../monografia.tex
 
 %% ------------------------------------------------------------------------- %%
-\chapter{Union-Find}
+\chapter{Union-Find Retroativo}
 \label{cap:union-find}
 
 Neste capítulo falaremos do union-find retroativo, introduzida por \citet{10.1145/1240233.1240236}, ela será a primeira estrutura retroativa que vamos implementar usando a link-cut tree.
@@ -113,7 +113,7 @@ Note que, em nenhum momento podemos fazer uma operação que seria invalida em a
 \section{Estrutura interna}
 \label{sec:uf-estrutura}
 
-Para implementarmos o union-find retroativo, vamos utilizar a link-cut tree como estrutura interna. Para isso, fazemos com que os elementos dos conjuntos sejam nós na floresta mantida pela link-cut tree. Com isso, cada conjunto de nossa coleção sera uma árvore na floresta. Note que, essa simples ideia já pode ser utilizada para implementar uma versão não retroativa do union-find, visto que a operação de \texttt{union} pode ser traduzida para uma chamada de \texttt{link}, assim como \texttt{same\_set} vira \texttt{is\_connected}.
+Para implementarmos o union-find retroativo, vamos utilizar a link-cut tree como estrutura interna. Para isso, fazemos com que os elementos dos conjuntos sejam nós na floresta mantida pela link-cut tree. Com isso, cada conjunto de nossa coleção sera uma árvore na floresta. Note que, essa simples ideia já pode ser utilizada para implementar uma versão não retroativa do union-find, visto que a operação de \texttt{union} pode ser traduzida para uma chamada de \texttt{link}, assim como \texttt{same\_set} para \texttt{is\_connected}.
 
 Desta forma, para introduzirmos o caráter retroativo da estrutura, vamos utilizar o atributo \texttt{value} que mantemos nas arestas da link-cut tree. Este campo será usado para guardar o tempo em que uma operação de \texttt{union} aconteceu, isto é, uma chamada \texttt{create\_union(a, b, 3)}, cria uma aresta de valor $3$ entre os vértices $a$ e $b$ da link-cut tree. Este valor poderá então ser utilizado para checar se dois elementos já pertenciam a um certo conjunto em um dado instante de tempo.
 
@@ -125,7 +125,7 @@ A seguir, mostramos mais detalhadamente como essas operações são realizadas.
 \section{Consultas Same Set}
 \label{sec:uf-same-set}
 
-Primeiramente, para checarmos se dois elementos $a$ e $b$, no instante de tempo $t$, estão em um mesmo conjunto de nossa coleção, temos que conferir se eles estão na mesma arvore da link-cut tree. Para essa verificação inicial, podemos usar a consulta \texttt{is\_connected}. Caso esta consulta retorne \emph{verdadeiro}, prosseguimos para checar se eles já pertenciam ao mesmo conjunto em $t$.
+Primeiramente, para checarmos se dois elementos $a$ e $b$, no instante de tempo $t$, estão em um mesmo conjunto de nossa coleção, temos que conferir se eles estão na mesma árvore da link-cut tree. Para essa verificação inicial, podemos usar a consulta \texttt{is\_connected}. Caso esta consulta retorne \emph{verdadeiro}, prosseguimos para checar se eles já pertenciam ao mesmo conjunto no instante $t$.
 
 Para isso, devemos lembrar que: cada aresta da link-cut tree representa uma operação de \texttt{union}; e que existe apenas um único caminho entre dois vértices quaisquer de uma árvore. Logo, todas as arestas que compõem o caminho entre os vértices que representam os elementos $a$ e $b$ se traduzem na sequência de uniões que resultaram o conjunto que contém estes vértices. Portanto, caso alguma dessas uniões tenha acontecido em um instante maior que $t$, $a$ e $b$ ainda não fariam parte do mesmo conjunto no tempo consultado. Finalmente, para realizar esta checagem, basta usarmos o método \texttt{maximum\_edge} para obter o valor da maior aresta entre $a$ e $b$, e com isso checar se a união mais recente aconteceu em um instante menor ou igual a $t$.
 
@@ -171,5 +171,3 @@ O primeiro deles é a transformação de elementos dos conjuntos em nossa coleç
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
-
-\todo{revisar capitulo}
