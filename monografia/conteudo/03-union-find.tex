@@ -117,13 +117,17 @@ Para implementarmos o union-find retroativo, vamos utilizar a link-cut tree como
 
 Desta forma, para introduzirmos o caráter retroativo da estrutura, vamos utilizar o atributo \texttt{value} que mantemos nas arestas da link-cut tree. Este campo será usado para guardar o tempo em que uma operação de \texttt{union} aconteceu, isto é, uma chamada \texttt{create\_union(a, b, 3)}, cria uma aresta de valor $3$ entre os vértices $a$ e $b$ da link-cut tree. Este valor poderá então ser utilizado para checar se dois elementos já pertenciam a um certo conjunto em um dado instante de tempo.
 
+Ademais, como estamos simplesmente usando métodos já implementados pelas link-cut tree, basicamente sem nenhuma computação adicional, podemos perceber que o union-find retroativo tem uma complexidade de $\Oh(\log n)$ por operação, tanto em consultas quanto em atualizações.
+
 A seguir, mostramos mais detalhadamente como essas operações são realizadas.
 
 %% ------------------------------------------------------------------------- %%
 \section{Consultas Same Set}
 \label{sec:uf-same-set}
 
+Primeiramente, para checarmos se dois elementos $a$ e $b$, no instante de tempo $t$, estão em um mesmo conjunto de nossa coleção, temos que conferir se eles estão na mesma arvore da link-cut tree. Para essa verificação inicial, podemos usar a consulta \texttt{is\_connected}. Caso esta consulta retorne \emph{verdadeiro}, prosseguimos para checar se eles já pertenciam ao mesmo conjunto em $t$.
 
+Para isso, devemos lembrar que: cada aresta da link-cut tree representa uma operação de \texttt{union}; e que existe apenas um único caminho entre dois vértices quaisquer de uma árvore. Logo, todas as arestas que compõem o caminho entre os vértices que representam os elementos $a$ e $b$ se traduzem na sequência de uniões que resultaram o conjunto que contém estes vértices. Portanto, caso alguma dessas uniões tenha acontecido em um instante maior que $t$, $a$ e $b$ ainda não fariam parte do mesmo conjunto no tempo consultado. Finalmente, para realizar esta checagem, basta usarmos o método \texttt{maximum\_edge} para obter o valor da maior aresta entre $a$ e $b$, e com isso checar se a união mais recente aconteceu em um instante menor ou igual a $t$.
 
 \begin{algorithm}[h!]
     \caption{Consulta Same Set}\label{uf:same-set}
@@ -141,14 +145,18 @@ A seguir, mostramos mais detalhadamente como essas operações são realizadas.
 \section{Rotinas Create Union e Delete Union}
 \label{sec:uf-union}
 
+Por último, temos as rotinas de criação e deleção de uniões. Aqui, as implementações são bem diretas, uma vez que essas operações se traduzem na criação e deleção de uma aresta na link-cut tree, respectivamente. Com isso, temos apenas que nos preocupar com dois detalhes extras.
+
+O primeiro deles é a transformação de elementos dos conjuntos em nossa coleção para vértices da link-cut tree. No pseudo-código abaixo, a função \texttt{create\_node(x)} cria um vértice para o elemento $x$ se e somente se ele ainda não possui um vértice correspondente na árvore. Ademais, para suportamentos a deleção de uma união criada em um instante $t$, precisamos criar um mapeamento que guarda o par de elementos unidos em cada instante. No pseudo-código esse mapeamento é realizado pela estrutura \texttt{edges\_by\_time}, que, caso seja uma \emph{hash table}, não muda a complexidade da rotina.
+
 \begin{algorithm}[h!]
     \caption{Rotina Create Union}\label{uf:create-union}
     \begin{algorithmic}
         \Function{create\_union}{$a, b, t$}
         \State $linkCutTree.create\_node(a)$
         \State $linkCutTree.create\_node(b)$
-        \State $edges\_by\_time[t] \gets (a, b)$
         \State $linkCutTree.link(a,b,t)$
+        \State $edges\_by\_time[t] \gets (a, b)$
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -158,8 +166,10 @@ A seguir, mostramos mais detalhadamente como essas operações são realizadas.
     \begin{algorithmic}
         \Function{delete\_union}{$t$}
         \State $u,v \gets edges\_by\_time[t]$
-        \State $edges\_by\_time.erase(t)$
         \State $linkCutTree.cut(u,v)$
+        \State $edges\_by\_time.erase(t)$
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
+
+\todo{revisar capitulo}
