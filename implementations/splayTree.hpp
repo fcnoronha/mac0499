@@ -10,10 +10,12 @@ public:
    Node *r_child = NULL;
    bool is_reversed = false;
    int max_subtree_value;
+   int max_subtree_value_id;
    int value;
+   int id;
 
-   /* Constructor with default value as neutral element in max(). */
-   Node(int = INT_MIN);
+   /* Constructor with default value as neutral element in max() and 0 id. */
+   Node(int = INT_MIN, int = 0);
 
    /* Swap left and right childs of current node and propagate reversed bit
       to childs, reverting the order of the substree. */
@@ -73,4 +75,8 @@ public:
    /* Return the maximum value stored in a vertex of u's preferred path.
       Assumes u is path identifier. */
    int get_maximum_path_value(Node *);
+
+   /* Return the id of the vertex with maximum value in u's preferred path.
+      Assumes u is path identifier. */
+   int get_maximum_path_value_id(Node *);
 };

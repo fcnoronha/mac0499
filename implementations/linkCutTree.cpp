@@ -65,7 +65,7 @@ void LinkCutTree::make_root(int u)
     splayTree.reverse_path(u_node);
 }
 
-void LinkCutTree::link(int u, int v, int w = 0)
+void LinkCutTree::link(int u, int v, int w, int id)
 {
     check_vertex_exist(u);
     check_vertex_exist(v);
@@ -74,7 +74,7 @@ void LinkCutTree::link(int u, int v, int w = 0)
     Node *v_node = vertices[v];
     Node *u_node = vertices[u];
 
-    Node *uv_edge = new Node(w);
+    Node *uv_edge = new Node(w, id);
     edges[{u, v}] = edges[{v, u}] = uv_edge;
 
     // linking (uv_edge)-(v)
@@ -145,6 +145,20 @@ int LinkCutTree::maximum_edge(int u, int v)
     Node *u_node = vertices[u];
 
     make_root(v_node);
-    access(u_node); // now creates a u-v preferred path
+    access(u_node);
     return splayTree.get_maximum_path_value(u_node);
+}
+
+int LinkCutTree::maximum_edge_id(int u, int v)
+{
+    check_vertex_exist(u);
+    check_vertex_exist(v);
+    check_vertices_are_not_connected(u, v);
+
+    Node *v_node = vertices[v];
+    Node *u_node = vertices[u];
+
+    make_root(v_node);
+    access(u_node);
+    return splayTree.get_maximum_path_value_id(u_node);
 }

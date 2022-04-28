@@ -9,8 +9,8 @@ void SplayTree::check_null_node_pointer(Node *u)
     }
 }
 
-Node::Node(int _value)
-    : max_subtree_value(_value), value(_value){};
+Node::Node(int _value, int _id)
+    : max_subtree_value(_value), max_subtree_value_id(_id), value(_value), id(_id){};
 
 void Node::push_reversed_bit()
 {
@@ -29,11 +29,18 @@ void Node::push_reversed_bit()
 void Node::recalculate_max_subtree_value()
 {
     max_subtree_value = value;
+    max_subtree_value_id = id;
 
-    if (l_child)
-        max_subtree_value = std::max(max_subtree_value, l_child->max_subtree_value);
-    if (r_child)
-        max_subtree_value = std::max(max_subtree_value, r_child->max_subtree_value);
+    if (l_child && l_child->max_subtree_value > max_subtree_value)
+    {
+        max_subtree_value = l_child->max_subtree_value;
+        max_subtree_value_id = l_child->max_subtree_value_id;
+    }
+    if (r_child && r_child->max_subtree_value > max_subtree_value)
+    {
+        max_subtree_value = r_child->max_subtree_value;
+        max_subtree_value_id = r_child->max_subtree_value_id;
+    }
 }
 
 bool Node::is_root()
@@ -169,4 +176,9 @@ Node *SplayTree::get_path_end_node(Node *u)
 int SplayTree::get_maximum_path_value(Node *u)
 {
     return u->max_subtree_value;
+}
+
+int SplayTree::get_maximum_path_value_id(Node *u)
+{
+    return u->max_subtree_value_id;
 }

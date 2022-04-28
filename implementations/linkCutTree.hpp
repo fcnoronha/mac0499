@@ -35,7 +35,7 @@ public:
     void make_root(int);
 
     /* Create a new edge between u and v with weight w. */
-    void link(int, int, int);
+    void link(int, int, int = 0, int = 0);
 
     /* Remove the edge between u and v nodes. */
     void cut(int, int);
@@ -45,4 +45,7 @@ public:
 
     /* Return the maximum weight of an edge in the path from u to v. */
     int maximum_edge(int, int);
+
+    /* Return the id of the edge with maximum weight in the path from u to v. */
+    int maximum_edge_id(int, int);
 };
