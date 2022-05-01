@@ -23,6 +23,8 @@ private:
     int current_msf_cost = 0;
     int current_unused_id = 1;
 
+    // ADICIONAR CHECKS
+
     /* Sanitization method used to check . */
     void check_vertices_already_connected(int, int);
 

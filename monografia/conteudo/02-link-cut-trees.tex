@@ -392,10 +392,10 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz de sua árvore aux
     \caption{Rotina Splay}\label{splay:splay}
     \begin{algorithmic}
         \Function{Splay}{$u$}
-        \While{$!u.is\_root()$} \Comment{$u$ não ser raiz da LCT e nem da Splay}
+        \While{$\neg u.is\_root()$} \Comment{$u$ não ser raiz da LCT e nem da Splay}
         \State $parent \gets u.parent$
         \State $grandparent \gets parent.parent$
-        \If{$!parent.is\_root()$}
+        \If{$\neg parent.is\_root()$}
         % \State \Comment{propagamos o \texttt{is\_reversed} bit do \texttt{grandparent} para o \texttt{parent} para garantir que a condicional a seguir usa os filhos corretos para a comparação}
         \State $grandparent.push_reversed_bit()$
         \State $parent.push\_reversed\_bit()$
@@ -464,7 +464,7 @@ Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador de um caminho 
     \begin{algorithmic}
         \Require{$u$ identificador de seu caminho preferido}
         \Function{revese\_path}{$u$}
-        \State $u.is\_reversed \gets !u.is\_reversed$
+        \State $u.is\_reversed \gets \neg u.is\_reversed$
         \State $u.push\_reversed\_bit()$ \Comment{inverte os filhos de $u$ e propaga a inversão do bit}
         \EndFunction
     \end{algorithmic}
