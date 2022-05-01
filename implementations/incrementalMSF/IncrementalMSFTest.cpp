@@ -56,13 +56,12 @@ TEST(IncrementalMSFTest, OperationsTest)
     imsf.add_edge(3, 4, 6);
     imsf.add_edge(4, 5, 7);
     std::vector<edge> initial_msf = imsf.get_msf();
-    std::cerr << "-------------------->" << imsf.get_msf_cost() << "\n";
 
     edge e1 = {1, 4, 2, 0};
     edge e2 = {2, 5, 6, 0};
-    std::vector<edge> operations_msf = imsf.get_msf_after_operations({e1, e2});
+    int operations_msf_cost = imsf.get_msf_cost_after_operations({e1, e2});
+    EXPECT_EQ(operations_msf_cost, 17);
 
-    std::cerr << "-------------------->" << imsf.get_msf_cost() << "\n";
     std::vector<edge> final_msf = imsf.get_msf();
     EXPECT_EQ(initial_msf, final_msf);
 }

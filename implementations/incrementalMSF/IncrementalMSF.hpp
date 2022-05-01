@@ -23,34 +23,26 @@ private:
     int current_msf_cost = 0;
     int current_unused_id = 1;
 
-    // ADICIONAR CHECKS
-
-    /* Sanitization method used to check . */
-    void check_vertices_already_connected(int, int);
-
-    /* Sanitization method used to check . */
-    void check_union_already_exist_at_time(int);
-
-    /* Sanitization method used to check . */
-    void check_union_do_not_exist_at_time(int);
-
     /* Apply a list of add_edge operations into the structure and return a list
        of pairs <bool, edge> that can be used to perform the rollback of these
        operations, where the boolean value tell wether or not we should perform
-       a cut on that edge. */
-    std::vector<std::pair<bool, edge>> apply_operations(std::vector<edge>);
+       a cut on that edge. Assumes every edge in the list doesn't have an id. */
+    std::vector<std::pair<bool, edge>> apply_add_operations(std::vector<edge>);
 
-    /* Apply the rollbacks in the structure. */
+    /* Apply the rollbacks in the structure, undoing the action perfomed by an
+       apply_add_operations call. This mechanism is used for the Retroactive MSF
+       implementation, and is meant to avoid copying the whole structure. */
     void apply_rollback(std::vector<std::pair<bool, edge>>);
 
 public:
-    /* Create a new node in the forest. */
+    /* Create a new node in the graph if it doens't already exist. */
     void create_node(int);
 
-    /* Add edge into the graph, and possibly into the MSF. */
+    /* Add an edge from node u to v, with weigth w, into the graph, and possibly
+       into the MSF. */
     void add_edge(int, int, int);
 
-    /* Return a list of edges that compose the MSF. */
+    /* Return the list of edges that compose the MSF. */
     std::vector<edge> get_msf();
 
     /* Return a list of edges that compose the MSF after a sequence of add_edge
