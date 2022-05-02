@@ -1,3 +1,7 @@
+###############################################################################
+####################################### link-cut tree
+###############################################################################
+
 cc_library(
     name = "splay-tree",
     srcs = ["splayTree.cpp"],
@@ -14,6 +18,18 @@ cc_library(
     visibility = ["//visibility:public"],
     copts = ["-O2"],
 )
+cc_test(
+    name = "link-cut-tree-test",
+    srcs = ["linkCutTreeTest.cpp"],
+    deps = [
+        "@com_google_googletest//:gtest_main",
+        ":link-cut-tree",
+    ],
+)
+
+###############################################################################
+####################################### retroactive union-find
+###############################################################################
 
 cc_library(
     name = "retroactive-union-find",
@@ -29,9 +45,13 @@ cc_test(
     srcs = ["retroactiveUnionFind/retroactiveUnionFindTest.cpp"],
     deps = [
         "@com_google_googletest//:gtest_main",
-        ":retroactive-union-find",
+        ":retroactive-union-find"
     ],
 )
+
+###############################################################################
+####################################### retroactive MSF
+###############################################################################
 
 cc_library(
     name = "incremental-msf",
