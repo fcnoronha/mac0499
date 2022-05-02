@@ -18,16 +18,25 @@ void RetroactiveMSF::check_vertex_exist(int u)
     }
 }
 
+IncrementalMSF RetroactiveMSF::create_blank_imsf()
+{
+    IncrementalMSF newIMSF;
+    for (auto u : vertices)
+    {
+        newIMSF.create_node(u);
+    }
+    return newIMSF;
+}
+
 void RetroactiveMSF::rebuild_structure()
 {
     checkpoints = std::vector<int>();
     incrementalMSF = std::vector<IncrementalMSF>();
-    int n_edges = edges_by_time.size();
-    block_size = ceil(sqrt(n_edges));
+    block_size = ceil(sqrt(edges_by_time.size()));
     insertions_left = (block_size + 1) / 2; // == ceil(block_size/2)
 
     // building the decomposition from right to left in the timeline
-    int position = edges_by_time.size() - 1;
+    int position = edges_by_time.size();
     for (auto op = edges_by_time.rbegin(); op != edges_by_time.rend(); op++)
     {
         int t = (*op).first;
@@ -36,30 +45,31 @@ void RetroactiveMSF::rebuild_structure()
         if (position % block_size == 0)
         {
             checkpoints.push_back(t);
-            incrementalMSF.push_back(IncrementalMSF());
+            incrementalMSF.push_back(create_blank_imsf());
         }
 
         for (auto &imsf : incrementalMSF)
         {
             imsf.add_edge(e.u, e.v, e.w);
         }
-
         position--;
     }
 
     // adding initial empty checkpoint
     checkpoints.push_back(0);
-    incrementalMSF.push_back(IncrementalMSF());
+    incrementalMSF.push_back(create_blank_imsf());
 
     // since we build backwards, now we reverse
     std::reverse(checkpoints.begin(), checkpoints.end());
     std::reverse(incrementalMSF.begin(), incrementalMSF.end());
+
+    n_blocks = checkpoints.size();
 }
 
 int RetroactiveMSF::find_left_checkpoint_index(int t)
 {
     int i = 0;
-    while (i < block_size && checkpoints[i] < t)
+    while (i < n_blocks && checkpoints[i] < t)
     {
         i++;
     }
@@ -90,7 +100,7 @@ void RetroactiveMSF::create_node(int u)
     }
 
     vertices.insert(u);
-    for (auto imsf : incrementalMSF)
+    for (auto &imsf : incrementalMSF)
         imsf.create_node(u);
 }
 
@@ -111,7 +121,7 @@ void RetroactiveMSF::add_edge(int u, int v, int w, int t)
     }
 
     int checkpoint_index = find_left_checkpoint_index(t);
-    for (int i = checkpoint_index; i < block_size; i++)
+    for (int i = checkpoint_index; i < n_blocks; i++)
     {
         incrementalMSF[i].add_edge(u, v, w);
     }

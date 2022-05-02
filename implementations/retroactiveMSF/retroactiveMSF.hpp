@@ -10,8 +10,9 @@ private:
    std::vector<int> checkpoints;
    std::map<int, edge> edges_by_time;
    std::set<int> vertices;
-   int block_size = 1;
    int insertions_left = 1;
+   int block_size = 1;
+   int n_blocks = 1;
 
    /* Sanitization method used to check wether or not we already have an
       add_edge operation at time t. */
@@ -20,6 +21,9 @@ private:
    /* Sanitization method used to check wether or not a vertex exist in the
       structure. */
    void check_vertex_exist(int);
+
+   /* Return a new Incremental MSF with only nodes created. */
+   IncrementalMSF create_blank_imsf();
 
    /* Rebuilds the square-root decomposition of the timeline, changing the
       block_size and defining new checkpoints. This is used to maintain the
