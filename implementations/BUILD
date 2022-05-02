@@ -6,7 +6,7 @@ cc_library(
     name = "splay-tree",
     srcs = ["splayTree.cpp"],
     hdrs = ["splayTree.hpp"],
-    copts = ["-O2"],
+    copts = ["-O2", "-std=c++17", "-Wall", "-Wextra", "-pedantic"],
     visibility = ["//visibility:public"],
 )
 
@@ -16,7 +16,7 @@ cc_library(
     hdrs = ["linkCutTree.hpp"],
     deps = [":splay-tree"],
     visibility = ["//visibility:public"],
-    copts = ["-O2"],
+    copts = ["-O2", "-std=c++17", "-Wall", "-Wextra", "-pedantic"],
 )
 cc_test(
     name = "link-cut-tree-test",
@@ -37,7 +37,7 @@ cc_library(
     hdrs = ["retroactiveUnionFind/retroactiveUnionFind.hpp"],
     deps = [":link-cut-tree"],
     visibility = ["//visibility:public"],
-    copts = ["-O2"],
+    copts = ["-O2", "-std=c++17", "-Wall", "-Wextra", "-pedantic"],
 )
 
 cc_test(
@@ -59,7 +59,7 @@ cc_library(
     hdrs = ["incrementalMSF/incrementalMSF.hpp"],
     deps = [":link-cut-tree"],
     visibility = ["//visibility:public"],
-    copts = ["-O2"],
+    copts = ["-O2", "-std=c++17", "-Wall", "-Wextra", "-pedantic"],
 )
 
 cc_test(
@@ -68,5 +68,22 @@ cc_test(
     deps = [
         "@com_google_googletest//:gtest_main",
         ":incremental-msf",
+    ],
+)
+
+cc_library(
+    name = "retroactive-msf",
+    srcs = ["retroactiveMSF/retroactiveMSF.cpp"],
+    hdrs = ["retroactiveMSF/retroactiveMSF.hpp"],
+    deps = [":incremental-msf"],
+    visibility = ["//visibility:public"],
+    copts = ["-O2", "-std=c++17", "-Wall", "-Wextra", "-pedantic"],
+)
+cc_test(
+    name = "retroactive-msf-test",
+    srcs = ["retroactiveMSF/retroactiveMSFTest.cpp"],
+    deps = [
+        "@com_google_googletest//:gtest_main",
+        ":retroactive-msf",
     ],
 )

@@ -67,7 +67,7 @@ void IncrementalMSF::create_node(int u)
 
 void IncrementalMSF::add_edge(int u, int v, int w)
 {
-    edge newEdge = {u, v, w};
+    edge newEdge = {u, v, w, 0};
     auto _ = apply_add_operations({newEdge});
 }
 

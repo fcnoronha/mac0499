@@ -10,7 +10,7 @@ void SplayTree::check_null_node_pointer(Node *u)
 }
 
 Node::Node(int _value, int _id)
-    : max_subtree_value(_value), max_subtree_value_id(_id), value(_value), id(_id){};
+    : max_subtree_value(_value), max_subtree_value_id(_id), value(_value), id(_id) {}
 
 void Node::push_reversed_bit()
 {
