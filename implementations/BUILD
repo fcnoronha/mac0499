@@ -55,8 +55,8 @@ cc_test(
 
 cc_library(
     name = "incremental-msf",
-    srcs = ["incrementalMSF/IncrementalMSF.cpp"],
-    hdrs = ["incrementalMSF/IncrementalMSF.hpp"],
+    srcs = ["incrementalMSF/incrementalMSF.cpp"],
+    hdrs = ["incrementalMSF/incrementalMSF.hpp"],
     deps = [":link-cut-tree"],
     visibility = ["//visibility:public"],
     copts = ["-O2"],
@@ -64,7 +64,7 @@ cc_library(
 
 cc_test(
     name = "incremental-msf-test",
-    srcs = ["incrementalMSF/IncrementalMSFTest.cpp"],
+    srcs = ["incrementalMSF/incrementalMSFTest.cpp"],
     deps = [
         "@com_google_googletest//:gtest_main",
         ":incremental-msf",

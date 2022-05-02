@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include "gtest/gtest.h"
-#include "IncrementalMSF.hpp"
+#include "incrementalMSF.hpp"
 
 using namespace std;
 

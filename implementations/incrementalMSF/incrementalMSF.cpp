@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include "../linkCutTree.hpp"
-#include "IncrementalMSF.hpp"
+#include "incrementalMSF.hpp"
 
 std::vector<std::pair<bool, edge>> IncrementalMSF::apply_add_operations(std::vector<edge> edges_to_add)
 {
