@@ -6,7 +6,7 @@ void RetroactiveMSF::check_time_is_available(int t)
 {
     if (edges_by_time.find(t) != edges_by_time.end())
     {
-        throw std::invalid_argument("An operation already exist at this time!");
+        throw std::invalid_argument("an operation already exist at this time!");
     }
 }
 
@@ -30,10 +30,10 @@ IncrementalMSF RetroactiveMSF::create_blank_imsf()
 
 void RetroactiveMSF::rebuild_structure()
 {
-    checkpoints = std::vector<int>();
-    incrementalMSF = std::vector<IncrementalMSF>();
     block_size = ceil(sqrt(edges_by_time.size()));
-    insertions_left = (block_size + 1) / 2; // == ceil(block_size/2)
+    insertions_left = (block_size + 1) / 2;
+    checkpoint_time.clear();
+    checkpoint_structure.clear();
 
     // building the decomposition from right to left in the timeline
     int position = edges_by_time.size();
@@ -44,11 +44,10 @@ void RetroactiveMSF::rebuild_structure()
 
         if (position % block_size == 0)
         {
-            checkpoints.push_back(t);
-            incrementalMSF.push_back(create_blank_imsf());
+            checkpoint_time.push_back(t);
+            checkpoint_structure.push_back(create_blank_imsf());
         }
-
-        for (auto &imsf : incrementalMSF)
+        for (auto &imsf : checkpoint_structure)
         {
             imsf.add_edge(e.u, e.v, e.w);
         }
@@ -56,20 +55,20 @@ void RetroactiveMSF::rebuild_structure()
     }
 
     // adding initial empty checkpoint
-    checkpoints.push_back(0);
-    incrementalMSF.push_back(create_blank_imsf());
+    checkpoint_time.push_back(0);
+    checkpoint_structure.push_back(create_blank_imsf());
 
-    // since we build backwards, now we reverse
-    std::reverse(checkpoints.begin(), checkpoints.end());
-    std::reverse(incrementalMSF.begin(), incrementalMSF.end());
+    // since we built backwards, now we reverse
+    std::reverse(checkpoint_time.begin(), checkpoint_time.end());
+    std::reverse(checkpoint_structure.begin(), checkpoint_structure.end());
 
-    n_blocks = checkpoints.size();
+    n_blocks = checkpoint_time.size();
 }
 
 int RetroactiveMSF::find_left_checkpoint_index(int t)
 {
     int i = 0;
-    while (i < n_blocks && checkpoints[i] < t)
+    while (i < n_blocks && checkpoint_time[i] <= t)
     {
         i++;
     }
@@ -79,7 +78,7 @@ int RetroactiveMSF::find_left_checkpoint_index(int t)
 std::vector<edge> RetroactiveMSF::get_delta_edge_operations(int t)
 {
     int last_checkpoint_index = find_left_checkpoint_index(t);
-    int last_checkpoint = checkpoints[last_checkpoint_index];
+    int last_checkpoint = checkpoint_time[last_checkpoint_index];
 
     std::vector<edge> delta_edge_operations;
     for (auto it = edges_by_time.upper_bound(last_checkpoint);
@@ -100,15 +99,15 @@ void RetroactiveMSF::create_node(int u)
     }
 
     vertices.insert(u);
-    for (auto &imsf : incrementalMSF)
+    for (auto &imsf : checkpoint_structure)
         imsf.create_node(u);
 }
 
 void RetroactiveMSF::add_edge(int u, int v, int w, int t)
 {
+    check_time_is_available(t);
     check_vertex_exist(u);
     check_vertex_exist(v);
-    check_time_is_available(t);
 
     edge newEdge = {u, v, w, 0};
     edges_by_time[t] = newEdge;
@@ -120,10 +119,9 @@ void RetroactiveMSF::add_edge(int u, int v, int w, int t)
         return;
     }
 
-    int checkpoint_index = find_left_checkpoint_index(t);
-    for (int i = checkpoint_index; i < n_blocks; i++)
+    for (int i = find_left_checkpoint_index(t); i < n_blocks; i++)
     {
-        incrementalMSF[i].add_edge(u, v, w);
+        checkpoint_structure[i].add_edge(u, v, w);
     }
 }
 
@@ -131,12 +129,12 @@ std::vector<edge> RetroactiveMSF::get_msf(int t)
 {
     int last_checkpoint_index = find_left_checkpoint_index(t);
     auto delta_edge_operations = get_delta_edge_operations(t);
-    return incrementalMSF[last_checkpoint_index].get_msf_after_operations(delta_edge_operations);
+    return checkpoint_structure[last_checkpoint_index].get_msf_after_operations(delta_edge_operations);
 }
 
 int RetroactiveMSF::get_msf_cost(int t)
 {
     int last_checkpoint_index = find_left_checkpoint_index(t);
     auto delta_edge_operations = get_delta_edge_operations(t);
-    return incrementalMSF[last_checkpoint_index].get_msf_cost_after_operations(delta_edge_operations);
+    return checkpoint_structure[last_checkpoint_index].get_msf_cost_after_operations(delta_edge_operations);
 }

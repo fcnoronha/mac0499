@@ -3,11 +3,13 @@
 #include <bits/stdc++.h>
 #include "../incrementalMSF/incrementalMSF.hpp"
 
+#define dbg(x) std::cerr << "-- BDG -- " << #x << " = " << x << std::endl
+
 class RetroactiveMSF
 {
 private:
-   std::vector<IncrementalMSF> incrementalMSF;
-   std::vector<int> checkpoints;
+   std::vector<IncrementalMSF> checkpoint_structure;
+   std::vector<int> checkpoint_time;
    std::map<int, edge> edges_by_time;
    std::set<int> vertices;
    int insertions_left = 1;
@@ -28,17 +30,17 @@ private:
    /* Rebuilds the square-root decomposition of the timeline, changing the
       block_size and defining new checkpoints. This is used to maintain the
       O(√N lgN) complexity of the add_edge method. This will also add a
-      O(√N lgN) amortized constraint to all calls. */
+      O(√N lgN) amortized constraint to all add_edge calls. */
    void rebuild_structure();
 
    /* Return the index of the checkpoint to the left of time t in the timeline,
-      that is, the last checkpoint smaller than t. */
+      that is, the last checkpoint smaller than or equal to t. */
    int find_left_checkpoint_index(int);
 
    /* Return a vector containing all the edges that were added after the last
       checkpoint smaller than t and t. In other words, let ct be the time of
       the last checkpoint smaller than t, then it will return all the edges
-      added in the range [tc+1, t]. */
+      added in the range (tc, t]. */
    std::vector<edge> get_delta_edge_operations(int);
 
 public:
