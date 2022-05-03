@@ -111,17 +111,17 @@ Com estes valores em mãos, podemos ir criando um caminho preferido através de 
 \begin{algorithm}[h!]
     \caption{Rotina Access}\label{lct:access}
     \begin{algorithmic}
-        \Function{access}{$u$}
-        \State $last \gets NULL$
-        \State $current\_root \gets u$
+        \Function{access}{\emph{u}}
+        \State \emph{last $\gets$ NULL}
+        \State \emph{current\_root $\gets$ u}
         \State \Comment{concatena todos os caminhos preferidos de $u$ até a raiz da árvore representada}
-        \While{$current\_root \neq NULL$}
-        \State $make\_identifier(current\_root)$
+        \While{\emph{current\_root $\neq$ NULL}}
+        \State \emph{make\_identifier(current\_root)}
         \State \Comment{concatena um novo pedaço de caminho preferido ao caminho em que \texttt{last} é identificador}
-        \State $join(current\_root, last)$
-        \State $last \gets current\_root$
-        \State $current\_root \gets get\_parent\_path\_node(current\_root)$
-        \State $make\_identifier(u)$
+        \State \emph{join(current\_root, last)}
+        \State \emph{last $\gets$ current\_root}
+        \State \emph{current\_root $\gets$ get\_parent\_path\_node(current\_root)}
+        \State \emph{make\_identifier(u)}
         \EndWhile
         \EndFunction
     \end{algorithmic}
@@ -180,9 +180,9 @@ Em seguida, temos a função \texttt{make\_root(u)}, que enraíza em $u$ a árvo
 \begin{algorithm}[h!]
     \caption{Rotina Make Root}\label{lct:make-root}
     \begin{algorithmic}
-        \Function{make\_root}{$u$}
-        \State $access(u)$
-        \State $reverse\_path(u)$
+        \Function{make\_root}{\emph{u}}
+        \State \emph{access(u)}
+        \State \emph{reverse\_path(u)}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -197,17 +197,17 @@ Inicialmente, colocamos $v$ como raiz de sua árvore representada, e criamos um 
     \caption{Rotina Link}\label{lct:link}
     \begin{algorithmic}
         \Require{$u$ e $v$ em árvores distintas}
-        \Function{link}{$u, v, w$}
-        \State $uv\_edge := new Node(w)$ \Comment{cria nó com peso $w$, representando a aresta}
+        \Function{link}{\emph{u, v, w}}
+        \State \emph{uv\_edge $\gets$ new Node(w)} \Comment{cria nó com peso $w$, representando a aresta}
         \State \Comment{ligando $(v) - (uv\_edge)$}
-        \State $make\_root(v)$
-        \State $access(v)$
-        \State $join(v, uv\_edge)$
+        \State \emph{make\_root(v)}
+        \State \emph{access(v)}
+        \State \emph{join(v, uv\_edge)}
         \State \Comment{ligando $(uv\_edge)-(u)$}
-        \State $make\_root(u);$
-        \State $access(u)$
-        \State $access(uv\_edge)$
-        \State $join(uv\_edge, u)$
+        \State \emph{make\_root(u)}
+        \State \emph{access(u)}
+        \State \emph{access(uv\_edge)}
+        \State \emph{join(uv\_edge, u)}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -220,15 +220,15 @@ A ideia é colocarmos $u$ como raiz de nossa árvore representada. Com isso, pod
     \caption{Rotina Cut}\label{lct:cut}
     \begin{algorithmic}
         \Require{$u$ e $v$ na mesma árvore}
-        \Function{cut}{$u, v$}
+        \Function{cut}{\emph{u, v}}
         \State \Comment{cortando $(u) - (uv\_edge)$}
-        \State $make\_root(u)$
-        \State $access(uv\_edge)$
-        \State $split(uv\_edge)$
+        \State \emph{make\_root(u)}
+        \State \emph{access(uv\_edge)}
+        \State \emph{split(uv\_edge)}
         \State \Comment{cortando $(v) - (uv\_edge)$}
-        \State $make\_root(v)$
-        \State $access(uv\_edge)$
-        \State $split(uv\_edge)$
+        \State \emph{make\_root(v)}
+        \State \emph{access(uv\_edge)}
+        \State \emph{split(uv\_edge)}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -241,12 +241,12 @@ A função \texttt{is\_connected(u, v)}, que nos informa se $u$ e $v$ pertencem 
 \begin{algorithm}[h!]
     \caption{Consulta Is Connected}\label{lct:is-connected}
     \begin{algorithmic}
-        \Function{is\_connected}{$u, v$}
-        \State $access(u)$
-        \State $u\_tree\_root \gets get\_path\_end\_node(u)$
-        \State $access(v)$
-        \State $v\_tree\_root \gets get\_path\_end\_node(v)$
-        \State \Return $(u\_tree\_root = v\_tree\_root)$
+        \Function{is\_connected}{\emph{u, v}}
+        \State \emph{access(u)}
+        \State \emph{u\_tree\_root $\gets$ get\_path\_end\_node(u)}
+        \State \emph{access(v)}
+        \State \emph{v\_tree\_root $\gets$ get\_path\_end\_node(v)}
+        \State \Return \emph{(u\_tree\_root = v\_tree\_root)}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -257,10 +257,10 @@ Por último, temos a função \texttt{maximum\_edge(u, v)}, que retorna o peso d
     \caption{Consulta Maximum Edge}\label{lct:max-edge}
     \begin{algorithmic}
         \Require{$u$ e $v$ na mesma árvore}
-        \Function{maximum\_edge}{$u, v$}
-        \State $make\_root(v)$
-        \State $access(u)$
-        \State \Return $get\_maximum\_path\_value(u)$
+        \Function{maximum\_edge}{\emph{u, v}}
+        \State \emph{make\_root(v)}
+        \State \emph{access(u)}
+        \State \Return \emph{get\_maximum\_path\_value(u)}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -391,23 +391,22 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz de sua árvore aux
 \begin{algorithm}[h!]
     \caption{Rotina Splay}\label{splay:splay}
     \begin{algorithmic}
-        \Function{Splay}{$u$}
-        \While{$\neg u.is\_root()$} \Comment{$u$ não ser raiz da LCT e nem da Splay}
-        \State $parent \gets u.parent$
-        \State $grandparent \gets parent.parent$
-        \If{$\neg parent.is\_root()$}
-        % \State \Comment{propagamos o \texttt{is\_reversed} bit do \texttt{grandparent} para o \texttt{parent} para garantir que a condicional a seguir usa os filhos corretos para a comparação}
-        \State $grandparent.push_reversed_bit()$
-        \State $parent.push\_reversed\_bit()$
-        \If{$(grandparent.r\_child = parent) = (parent.r\_child = u)$}
-        \State $rotate(parent)$\Comment{zig-zig ou zag-zag}
+        \Function{Splay}{\emph{u}}
+        \While{\emph{$\neg$u.is\_root()}} \Comment{$u$ não ser raiz da LCT e nem da Splay}
+        \State \emph{parent $\gets$ u.parent}
+        \State \emph{grandparent $\gets$ parent.parent}
+        \If{\emph{$\neg$parent.is\_root()}}
+        \State \emph{grandparent.push\_reversed\_bit()}
+        \State \emph{parent.push\_reversed\_bit()}
+        \If{\emph{(grandparent.r\_child = parent) = (parent.r\_child = u)}}
+        \State \emph{rotate(parent)} \Comment{zig-zig ou zag-zag}
         \Else
-        \State $rotate(u)$\Comment{zig-zag}
+        \State \emph{rotate(u)} \Comment{zig-zag}
         \EndIf
         \EndIf
-        \State $rotate(u)$
+        \State \emph{rotate(u)}
         \EndWhile
-        \State $u.push\_reversed\_bit()$
+        \State \emph{u.push\_reversed\_bit()}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -422,11 +421,11 @@ Temos também dois métodos importantes das splay trees usados na manutenção d
 \begin{algorithm}[h!]
     \caption{Rotina Split}\label{splay:split}
     \begin{algorithmic}
-        \Function{split}{$u$}
-        \If{$u.l\_child \neq NULL$}
-        \State $u.l\_child.parent \gets NULL$
+        \Function{split}{\emph{u}}
+        \If{\emph{u.l\_child $\neq$ NULL}}
+        \State \emph{u.l\_child.parent $\gets$ NULL}
         \EndIf
-        \State $u.l\_child \gets NULL$
+        \State \emph{u.l\_child $\gets$ NULL}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -437,13 +436,13 @@ Primeiramente, falaremos do método \texttt{split(u)}, que recebe um nó $u$ e s
     \caption{Rotina Join}\label{splay:join}
     \begin{algorithmic}
         \Require{$u$ e $v$ identificadores de seus caminhos preferidos}
-        \Function{join}{$u, v$}
-        \If{$v \neq NULL$}
-        \State $v.parent \gets u$
+        \Function{join}{\emph{u, v}}
+        \If{\emph{v $\neq$ NULL}}
+        \State \emph{v.parent $\gets$ u}
         \EndIf
-        \State $u.r\_child \gets v$
+        \State \emph{u.r\_child $\gets$ v}
         \State \Comment{atualiza \texttt{max\_subtree\_value} com o máximo entre o \texttt{value} dos dois filhos de $u$}
-        \State $u.recalculate\_max\_subtree\_value()$
+        \State \emph{u.recalculate\_max\_subtree\_value()}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -463,9 +462,9 @@ Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador de um caminho 
     \caption{Rotina Revese Path}\label{splay:reverse-path}
     \begin{algorithmic}
         \Require{$u$ identificador de seu caminho preferido}
-        \Function{revese\_path}{$u$}
-        \State $u.is\_reversed \gets \neg u.is\_reversed$
-        \State $u.push\_reversed\_bit()$ \Comment{inverte os filhos de $u$ e propaga a inversão do bit}
+        \Function{revese\_path}{\emph{u}}
+        \State \emph{u.is\_reversed $\gets \neg$u.is\_reversed}
+        \State \emph{u.push\_reversed\_bit()} \Comment{inverte os filhos de $u$ e propaga a inversão do bit}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -473,14 +472,14 @@ Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador de um caminho 
 \begin{algorithm}[h!]
     \caption{Consulta Get Path End Node}\label{splay:get-path-end}
     \begin{algorithmic}
-        \Function{get\_path\_end\_node}{$u$}
-        \State $splay(u)$
-        \State $smallest\_value \gets u$
-        \While{$smallest\_value.l\_child \neq NULL$}
-        \State $smallest\_value \gets smallest\_value.l\_child$
+        \Function{get\_path\_end\_node}{\emph{u}}
+        \State \emph{splay(u)}
+        \State \emph{smallest\_value $\gets$ u}
+        \While{\emph{smallest\_value.l\_child $\neq$ NULL}}
+        \State \emph{smallest\_value $\gets$ smallest\_value.l\_child}
         \EndWhile
-        \State $splay(smallest\_value)$
-        \State \Return $smallest\_value$
+        \State \emph{splay(smallest\_value)}
+        \State \Return \emph{smallest\_value}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -488,9 +487,9 @@ Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador de um caminho 
 \begin{algorithm}[h!]
     \caption{Consulta Get Parent Path Node}\label{splay:get-parent-path}
     \begin{algorithmic}
-        \Function{get\_parent\_path\_node}{$u$}
-        \State $splay(u)$
-        \State \Return $u.parent$
+        \Function{get\_parent\_path\_node}{\emph{u}}
+        \State \emph{splay(u)}
+        \State \Return \emph{u.parent}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -501,8 +500,8 @@ A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_pa
     \caption{Consulta Get Maximum Path Value}\label{splay:get-maximum-value}
     \begin{algorithmic}
         \Require{$u$ identificador de seu caminho preferido}
-        \Function{get\_maximum\_path\_value}{$u$}
-        \State \Return $u.max\_subtree\_value$
+        \Function{get\_maximum\_path\_value}{\emph{u}}
+        \State \Return \emph{u.max\_subtree\_value}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
