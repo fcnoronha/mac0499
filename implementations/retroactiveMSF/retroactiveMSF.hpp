@@ -10,7 +10,7 @@ class RetroactiveMSF
 private:
    std::vector<IncrementalMSF> checkpoint_structure;
    std::vector<int> checkpoint_time;
-   std::map<int, edge> edges_by_time;
+   std::map<int, Edge> edges_by_time;
    std::set<int> vertices;
    int insertions_left = 1;
    int block_size = 1;
@@ -19,6 +19,10 @@ private:
    /* Sanitization method used to check wether or not we already have an
       add_edge operation at time t. */
    void check_time_is_available(int);
+
+   /* Sanitization method used to check wether or not the time t is valid for
+      an operation, that is, it is grater than 0. */
+   void check_time_is_valid(int);
 
    /* Sanitization method used to check wether or not a vertex exist in the
       structure. */
@@ -40,8 +44,8 @@ private:
    /* Return a vector containing all the edges that were added after the last
       checkpoint smaller than t and t. In other words, let ct be the time of
       the last checkpoint smaller than t, then it will return all the edges
-      added in the range (tc, t]. */
-   std::vector<edge> get_delta_edge_operations(int);
+      added in Edge range (tc, t]. */
+   std::vector<Edge> get_delta_edge_operations(int);
 
 public:
    /* Create a new node in the graph if it doens't already exist. */
@@ -51,7 +55,7 @@ public:
    void add_edge(int, int, int, int);
 
    /* Return the list of edges that compose the MSF at time t. */
-   std::vector<edge> get_msf(int);
+   std::vector<Edge> get_msf(int);
 
    /* Return the cost of the MSF at time t. */
    int get_msf_cost(int);

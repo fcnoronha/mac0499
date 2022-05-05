@@ -10,6 +10,14 @@ void RetroactiveMSF::check_time_is_available(int t)
     }
 }
 
+void RetroactiveMSF::check_time_is_valid(int t)
+{
+    if (t <= 0)
+    {
+        throw std::invalid_argument("union time is invalid, must be greater than 0!");
+    }
+}
+
 void RetroactiveMSF::check_vertex_exist(int u)
 {
     if (vertices.count(u) == 0)
@@ -39,17 +47,17 @@ void RetroactiveMSF::rebuild_structure()
     int position = edges_by_time.size();
     for (auto op = edges_by_time.rbegin(); op != edges_by_time.rend(); op++)
     {
-        int t = (*op).first;
-        edge e = (*op).second;
+        int time = (*op).first;
+        Edge edge = (*op).second;
 
         if (position % block_size == 0)
         {
-            checkpoint_time.push_back(t);
+            checkpoint_time.push_back(time);
             checkpoint_structure.push_back(create_blank_imsf());
         }
         for (auto &imsf : checkpoint_structure)
         {
-            imsf.add_edge(e.u, e.v, e.w);
+            imsf.add_edge(edge.u, edge.v, edge.w);
         }
         position--;
     }
@@ -75,13 +83,14 @@ int RetroactiveMSF::find_left_checkpoint_index(int t)
     return i - 1;
 }
 
-std::vector<edge> RetroactiveMSF::get_delta_edge_operations(int t)
+std::vector<Edge> RetroactiveMSF::get_delta_edge_operations(int t)
 {
     int last_checkpoint_index = find_left_checkpoint_index(t);
     int last_checkpoint = checkpoint_time[last_checkpoint_index];
+    auto edge_added_after_checkpoint = edges_by_time.upper_bound(last_checkpoint);
 
-    std::vector<edge> delta_edge_operations;
-    for (auto it = edges_by_time.upper_bound(last_checkpoint);
+    std::vector<Edge> delta_edge_operations;
+    for (auto it = edge_added_after_checkpoint;
          it != edges_by_time.end() && (*it).first <= t;
          it++)
     {
@@ -106,10 +115,11 @@ void RetroactiveMSF::create_node(int u)
 void RetroactiveMSF::add_edge(int u, int v, int w, int t)
 {
     check_time_is_available(t);
+    check_time_is_valid(t);
     check_vertex_exist(u);
     check_vertex_exist(v);
 
-    edge newEdge = {u, v, w, 0};
+    Edge newEdge = Edge(u, v, w);
     edges_by_time[t] = newEdge;
     insertions_left--;
 
@@ -125,8 +135,10 @@ void RetroactiveMSF::add_edge(int u, int v, int w, int t)
     }
 }
 
-std::vector<edge> RetroactiveMSF::get_msf(int t)
+std::vector<Edge> RetroactiveMSF::get_msf(int t)
 {
+    check_time_is_valid(t);
+
     int last_checkpoint_index = find_left_checkpoint_index(t);
     auto delta_edge_operations = get_delta_edge_operations(t);
     return checkpoint_structure[last_checkpoint_index].get_msf_after_operations(delta_edge_operations);
@@ -134,6 +146,8 @@ std::vector<edge> RetroactiveMSF::get_msf(int t)
 
 int RetroactiveMSF::get_msf_cost(int t)
 {
+    check_time_is_valid(t);
+
     int last_checkpoint_index = find_left_checkpoint_index(t);
     auto delta_edge_operations = get_delta_edge_operations(t);
     return checkpoint_structure[last_checkpoint_index].get_msf_cost_after_operations(delta_edge_operations);
