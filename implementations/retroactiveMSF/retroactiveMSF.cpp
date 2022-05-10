@@ -18,24 +18,6 @@ void RetroactiveMSF::check_time_is_valid(int t)
     }
 }
 
-void RetroactiveMSF::check_vertex_exist(int u)
-{
-    if (vertices.count(u) == 0)
-    {
-        throw std::invalid_argument("vertex does not exist!");
-    }
-}
-
-IncrementalMSF RetroactiveMSF::create_blank_imsf()
-{
-    IncrementalMSF newIMSF;
-    for (auto u : vertices)
-    {
-        newIMSF.create_node(u);
-    }
-    return newIMSF;
-}
-
 void RetroactiveMSF::rebuild_structure()
 {
     block_size = ceil(sqrt(edges_by_time.size()));
@@ -53,7 +35,7 @@ void RetroactiveMSF::rebuild_structure()
         if (position % block_size == 0)
         {
             checkpoint_time.push_back(time);
-            checkpoint_structure.push_back(create_blank_imsf());
+            checkpoint_structure.push_back(IncrementalMSF());
         }
         for (auto &imsf : checkpoint_structure)
         {
@@ -64,7 +46,7 @@ void RetroactiveMSF::rebuild_structure()
 
     // adding initial empty checkpoint
     checkpoint_time.push_back(0);
-    checkpoint_structure.push_back(create_blank_imsf());
+    checkpoint_structure.push_back(IncrementalMSF());
 
     // since we built backwards, now we reverse
     std::reverse(checkpoint_time.begin(), checkpoint_time.end());
@@ -100,24 +82,10 @@ std::vector<Edge> RetroactiveMSF::get_delta_edge_operations(int t)
     return delta_edge_operations;
 }
 
-void RetroactiveMSF::create_node(int u)
-{
-    if (vertices.count(u) != 0)
-    {
-        return;
-    }
-
-    vertices.insert(u);
-    for (auto &imsf : checkpoint_structure)
-        imsf.create_node(u);
-}
-
 void RetroactiveMSF::add_edge(int u, int v, int w, int t)
 {
     check_time_is_available(t);
     check_time_is_valid(t);
-    check_vertex_exist(u);
-    check_vertex_exist(v);
 
     Edge newEdge = Edge(u, v, w);
     edges_by_time[t] = newEdge;

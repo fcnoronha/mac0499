@@ -10,6 +10,9 @@ std::vector<std::pair<bool, Edge>> IncrementalMSF::apply_add_operations(std::vec
         edge.id = current_unused_id++;
         edges_by_id[edge.id] = edge;
 
+        linkCutTree.create_node(edge.u);
+        linkCutTree.create_node(edge.v);
+
         if (!linkCutTree.is_connected(edge.u, edge.v))
         {
             linkCutTree.link(edge.u, edge.v, edge.w, edge.id);
@@ -58,11 +61,6 @@ void IncrementalMSF::apply_rollback(std::vector<std::pair<bool, Edge>> rollback_
             current_msf_cost += edge.w;
         }
     }
-}
-
-void IncrementalMSF::create_node(int u)
-{
-    linkCutTree.create_node(u);
 }
 
 void IncrementalMSF::add_edge(int u, int v, int w)

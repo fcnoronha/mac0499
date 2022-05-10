@@ -7,8 +7,6 @@ using namespace std;
 TEST(IncrementalMSFTest, SimpleTest)
 {
     IncrementalMSF imsf;
-    for (int i = 1; i <= 5; i++)
-        imsf.create_node(i);
 
     imsf.add_edge(1, 2, 4);
     EXPECT_EQ(imsf.get_msf_cost(), 4);
@@ -28,8 +26,6 @@ TEST(IncrementalMSFTest, SimpleTest)
 TEST(IncrementalMSFTest, ComplexTest)
 {
     IncrementalMSF imsf;
-    for (int i = 1; i <= 6; i++)
-        imsf.create_node(i);
 
     imsf.add_edge(1, 2, 6);
     imsf.add_edge(1, 3, 4);
@@ -48,8 +44,6 @@ TEST(IncrementalMSFTest, ComplexTest)
 TEST(IncrementalMSFTest, OperationsTest)
 {
     IncrementalMSF imsf;
-    for (int i = 1; i <= 5; i++)
-        imsf.create_node(i);
 
     imsf.add_edge(1, 2, 4);
     imsf.add_edge(2, 3, 5);

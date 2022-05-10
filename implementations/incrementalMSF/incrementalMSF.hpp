@@ -39,9 +39,6 @@ private:
    void apply_rollback(std::vector<std::pair<bool, Edge>>);
 
 public:
-   /* Create a new node in the graph if it doens't already exist. */
-   void create_node(int);
-
    /* Add an edge from node u to v, with weigth w, into the graph, and possibly
       into the MSF. */
    void add_edge(int, int, int);

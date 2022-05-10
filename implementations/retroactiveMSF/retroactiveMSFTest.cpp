@@ -7,8 +7,6 @@ using namespace std;
 TEST(RetroactiveMSFTest, SimpleTest)
 {
     RetroactiveMSF rmsf;
-    for (int i = 1; i <= 6; i++)
-        rmsf.create_node(i);
 
     rmsf.add_edge(1, 2, 6, 1);
     rmsf.add_edge(1, 3, 4, 2);
@@ -27,8 +25,6 @@ TEST(RetroactiveMSFTest, SimpleTest)
 TEST(RetroactiveMSFTest, GrowingTimeTest)
 {
     RetroactiveMSF rmsf;
-    for (int i = 1; i <= 10; i++)
-        rmsf.create_node(i);
 
     // creating just a tree
     rmsf.add_edge(1, 2, 3, 1);
@@ -79,8 +75,6 @@ TEST(RetroactiveMSFTest, GrowingTimeTest)
 TEST(RetroactiveMSFTest, ShuffledTimeTest)
 {
     RetroactiveMSF rmsf;
-    for (int i = 1; i <= 10; i++)
-        rmsf.create_node(i);
 
     // creating the same graph as above, but with edges shuffled
     rmsf.add_edge(1, 4, 5, 3);
