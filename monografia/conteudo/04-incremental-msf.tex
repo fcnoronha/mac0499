@@ -1,0 +1,33 @@
+%!TeX root=../monografia.tex
+
+%% ------------------------------------------------------------------------- %%
+\chapter{Floresta Geradora Minima incremental}
+\label{cap:incremental-msf}
+
+Neste capítulo, falaremos do problema da floresta geradora mínima incremental --- \emph{incremental minimum spanning forest}, em inglês. A solução deste problema é utilizada por \citet{10.1093/comjnl/bxaa135} para implementar a versão retroativa da floresta geradora mínima, que estudaremos no próximo capítulo.
+
+%% ------------------------------------------------------------------------- %%
+\section{Ideia}
+\label{sec:imsf-ideia}
+
+Primeiramente, a árvore geradora minima de uma grafo é um conjunto de arestas que conecta todos os vértices do grafo e tem peso mínimo. Em geral, caso o grafo não seja conexo, a floresta geradora mínima é o conjunto de árvores geradoras mínimas de cada uma das componentes do grafo.
+
+Em linhas gerais, para resolver este problema, queremos uma estrutura que consiga manter um grafo não direcionado, com pesos nas arestas e que está sempre sofrendo a adição de novas arestas. Essa estrutura também deve ser capaz de calcular, de maneira eficiente, a floresta geradora mínima deste grafo. Desta forma, estamos interessados na seguinte interface.
+
+\begin{itemize}
+    \item \texttt{add\_edge(u, v, w)}: adiciona no grafo a aresta com pontas em $u$ e $v$ com peso $w$, possivelmente alterando a floresta geradora mínima.
+    \item \texttt{get\_msf()}: retorna uma lista com todas as arestas que compõem a floresta geradora mínima no momento atual.
+    \item \texttt{get\_msf\_cost()}: retorna o custo da floresta geradora mínima no momento atual.
+\end{itemize}
+
+Com isso, é possível construir um grafo de maneira incremental --- isto é, adicionando aresta por aresta --- tendo sempre em mãos a sua respectiva floresta geradora mínima. Tudo isso com um custo $\Oh (\log n)$ para a adição de novas arestas, um custo linearmente proporcional ao tamanho da floresta geradora para a consulta das arestas que a compõem e um custo constante para a consulta do custo total da floresta.
+
+%% ------------------------------------------------------------------------- %%
+\section{Estrutura interna}
+\label{sec:imsf-est-int}
+
+
+
+% falar da adaptacao feita na LCT para devolver o id de um no com o maior pesos
+
+% falar das duas rotinas extras necessarias para a versao retroativa
