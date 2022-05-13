@@ -26,8 +26,54 @@ Com isso, é possível construir um grafo de maneira incremental --- isto é, ad
 \section{Estrutura interna}
 \label{sec:imsf-est-int}
 
+Assim como no union-find retroativo, vamos utilizar a link-cut tree como a estrutura interna da solução deste problema. Para isso, queremos que a link-cut tree seja utilizada para manter a floresta geradora mínima do grafo corrente. De modo que, ao adicionarmos uma nova aresta, com peso $w$ e pontas em $u$ e $v$, ao grafo, podemos usar as rotinas \texttt{is\_connected(u,v)} e \texttt{maximum\_edge(u,v)} para decidir se incluímos ou não a aresta à floresta geradora mínima.
+
+Um detalhe importante é que para essa implementação, necessitamos de uma maneira de consultar qual a aresta com maior custo no caminho entre dois vértices na link-cut tree, não apenas o seu respectivo valor. Para isso, adicionamos um novo parâmetro opcional \texttt{id} na rotina \texttt{link}, além do novo método \texttt{maximum\_edge\_id}, que retorna o \texttt{id} da maior aresta no caminho entre dois vértices. Este \texttt{id} sera definido por nossa estrutura, e a partir dele, utilizando um mapa \texttt{edges\_by\_id}, conseguimos recuperar em quais vértices tal aresta incide.
+
+Finalmente, mantemos uma lista \texttt{current\_msf} de \texttt{id}'s das arestas que compõem a floresta geradora minima, assim como um inteiro \texttt{current\_msf\_cost}, que armazena o respectivo custo. Estes atributos nos permitem responder de maneira eficiente as consultas de nossa estrutura, como mostraremos a seguir.
+
+%% ------------------------------------------------------------------------- %%
+\section{Consultas Get MSF e Get MST Cost}
+\label{sec:imsf-get-msf}
+
+Primeiramente, para realizarmos a consulta acerca da composição da floresta geradora mínima, simplesmente percorremos a lista dos \texttt{id}'s das arestas que compõem a floresta e criamos uma nova lista com as arestas em si, utilizando o mapeamento fornecido pelo \texttt{edges\_by\_id[id]}.
+
+\begin{algorithm}[h!]
+    \caption{Consulta Get MSF}\label{imsf-get-msf}
+    \begin{algorithmic}
+        \Function{get\_msf}{}
+        \State \emph{msf $\gets$ []}
+        \ForEach{\emph{id in current\_msf}}
+        \State \emph{msf.append(edges\_by\_id[id])}
+        \EndFor
+        \State \Return \emph{msf}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Já a consulta sobre o custo da floresta geradora mínima pode ser facilmente respondida retornando o inteiro \texttt{current\_msf\_cost} mantido pela rotina \texttt{add\_edge}, explicada na seção a seguir.
+
+\begin{algorithm}[h!]
+    \caption{Consulta Get MSF Cost}\label{imsf-get-msf-cost}
+    \begin{algorithmic}
+        \Function{get\_msf\_cost}{}
+        \State \Return \emph{current\_msf\_cost}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Com isso, a primeira consulta tem um custo proporcional a $\Oh(m)$, onde $m$ é o número de arestas inseridas no grafo, pois no pior caso o grafo pode ser a própria floresta geradora mínima e a segunda consulta tem um custo $\Oh(1)$.
+
+%% ------------------------------------------------------------------------- %%
+\section{Rotina Add Edge}
+\label{sec:imsf-add-edge}
+
+Como a parte mais importante da nossa estrutura, a rotina \texttt{add\_edge(u, v, w)} é responsável por adicionar uma nova aresta ao grafo, possivelmente modificando a sua respectiva floresta geradora mínima.
 
 
-% falar da adaptacao feita na LCT para devolver o id de um no com o maior pesos
+
+
+
+
 
 % falar das duas rotinas extras necessarias para a versao retroativa
