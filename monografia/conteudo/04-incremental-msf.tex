@@ -12,7 +12,7 @@ Neste capítulo, falaremos do problema da floresta geradora mínima incremental 
 
 Primeiramente, a árvore geradora minima de uma grafo é um conjunto de arestas que conecta todos os vértices do grafo e tem peso mínimo. Em geral, caso o grafo não seja conexo, a floresta geradora mínima é o conjunto de árvores geradoras mínimas de cada uma das componentes do grafo.
 
-Em linhas gerais, para resolver este problema, queremos uma estrutura que consiga manter um grafo não direcionado, com pesos nas arestas e que está sempre sofrendo a adição de novas arestas. Essa estrutura também deve ser capaz de calcular, de maneira eficiente, a floresta geradora mínima deste grafo. Desta forma, estamos interessados na seguinte interface.
+Em linhas gerais, para resolver este problema, queremos uma estrutura que consiga manter um grafo não direcionado, com pesos nas arestas e que está sempre sofrendo a adição de novas arestas. Essa estrutura também deve ser capaz de calcular, de maneira eficiente, a floresta geradora mínima deste grafo. Desta forma, estamos interessados na seguinte interface:
 
 \begin{itemize}
     \item \texttt{add\_edge(u, v, w)}: adiciona no grafo a aresta com pontas em $u$ e $v$ com peso $w$, possivelmente alterando a floresta geradora mínima.
@@ -20,15 +20,15 @@ Em linhas gerais, para resolver este problema, queremos uma estrutura que consig
     \item \texttt{get\_msf\_cost()}: retorna o custo da floresta geradora mínima no momento atual.
 \end{itemize}
 
-Com isso, é possível construir um grafo de maneira incremental --- isto é, adicionando aresta por aresta --- tendo sempre em mãos a sua respectiva floresta geradora mínima. Tudo isso com um custo $\Oh (\log n)$ para a adição de novas arestas, um custo linearmente proporcional ao tamanho da floresta geradora para a consulta das arestas que a compõem e um custo constante para a consulta do custo total da floresta.
+A partir destes métodos, é possível construir um grafo de maneira incremental, isto é, adicionando aresta por aresta, com o advento de termos sempre em mãos a sua respectiva floresta geradora mínima. Tudo isso com um custo $\Oh (\log n)$ para a adição de novas arestas, um custo linearmente proporcional ao tamanho da floresta geradora para a consulta das arestas que a compõem e um custo constante para a consulta do custo total da floresta.
 
 %% ------------------------------------------------------------------------- %%
 \section{Estrutura interna}
 \label{sec:imsf-est-int}
 
-Assim como no union-find retroativo, vamos utilizar a link-cut tree como a estrutura interna da solução deste problema. Para isso, queremos que a link-cut tree seja utilizada para manter a floresta geradora mínima do grafo corrente. De modo que, ao adicionarmos uma nova aresta, com peso $w$ e pontas em $u$ e $v$, ao grafo, podemos usar as rotinas \texttt{is\_connected(u,v)} e \texttt{maximum\_edge(u,v)} para decidir se incluímos ou não a aresta à floresta geradora mínima.
+Assim como no union-find retroativo, vamos utilizar a link-cut tree como a estrutura interna da solução deste problema. Para isso, queremos que a link-cut tree seja utilizada para manter a floresta geradora mínima do grafo corrente, de modo que, ao adicionarmos uma nova aresta, com peso $w$ e pontas em $u$ e $v$, ao grafo, podemos usar as rotinas \texttt{is\_connected(u,v)} e \texttt{maximum\_edge(u,v)} para decidir se incluímos ou não a aresta à floresta geradora mínima.
 
-Um detalhe importante é que para essa implementação, necessitamos de uma maneira de consultar qual a aresta com maior custo no caminho entre dois vértices na link-cut tree, não apenas o seu respectivo valor. Para isso, adicionamos um novo parâmetro opcional \texttt{id} na rotina \texttt{link}, além do novo método \texttt{maximum\_edge\_id}, que retorna o \texttt{id} da maior aresta no caminho entre dois vértices. Este \texttt{id} sera definido por nossa estrutura, e a partir dele, utilizando um mapa \texttt{edges\_by\_id}, conseguimos recuperar em quais vértices tal aresta incide.
+Um detalhe importante é que, para essa implementação, necessitamos de uma maneira de consultar qual a aresta com maior custo no caminho entre dois vértices na árvore, não apenas o seu respectivo valor. Para isso, modificamos a implementação da link-cut tree para incluir um novo parâmetro opcional \texttt{id} na rotina \texttt{link}, além de um novo  método \texttt{maximum\_edge\_id}, que retorna o \texttt{id} da maior aresta no caminho entre dois vértices. Este \texttt{id} será definido por nossa estrutura, e a partir dele, utilizando um mapa \texttt{edges\_by\_id}, conseguimos recuperar em quais vértices tal aresta incide.
 
 Finalmente, mantemos uma lista \texttt{current\_msf} de \texttt{id}'s das arestas que compõem a floresta geradora minima, assim como um inteiro \texttt{current\_msf\_cost}, que armazena o respectivo custo. Estes atributos nos permitem responder de maneira eficiente as consultas de nossa estrutura, como mostraremos a seguir.
 
@@ -68,12 +68,45 @@ Com isso, a primeira consulta tem um custo proporcional a $\Oh(m)$, onde $m$ é 
 \section{Rotina Add Edge}
 \label{sec:imsf-add-edge}
 
-Como a parte mais importante da nossa estrutura, a rotina \texttt{add\_edge(u, v, w)} é responsável por adicionar uma nova aresta ao grafo, possivelmente modificando a sua respectiva floresta geradora mínima.
+Como a parte mais importante da nossa estrutura, a rotina \texttt{add\_edge(u, v, w)} é responsável por adicionar uma nova aresta $e$ ao grafo, possivelmente modificando a sua respectiva floresta geradora mínima. Para isso, vamos checar se a aresta deve ser adicionada à link-cut tree ou não, pois caso contrario, simplesmente a descartamos. Desta forma, este processo pode ser divido em duas partes.
 
+A primeira delas consiste em verificar se $u$ e $v$ pertencem a componentes distintas do grafo. Neste caso, simplesmente adicionamos a aresta $e$ na floresta geradora mínima, o que representa uma ligação entre as árvores geradoras mínimas em que $u$ e $v$ pertencem.
 
+Caso $u$ e $v$ façam parte da mesma componente, devemos decidir se essa aresta $e$ deve ou não substituir alguma aresta na árvore geradora mínima que acomoda estes vértices. Note que, ao adicionar essa nova aresta na árvore, estamos criando um ciclo, que consiste em todas as arestas no caminho simples de $u$ até $v$ mais $e$. Ademais, a adição da aresta $e$ somente faz sentido caso ela diminua o custo total da árvore, em outras palavras, caso ela não seja a maior aresta deste ciclo. Dessa forma podemos simplesmente excluir a aresta com maior peso do ciclo, preservando a estrutura de árvore e contribuindo para uma diminuição de seu custo total.
 
+\begin{algorithm}[h!]
+    \caption{Rotina Add Edge}\label{imsf-add-edge}
+    \begin{algorithmic}
+        \Function{add\_edge}{\emph{u,v,w}}
+        \State \emph{edge\_id $\gets$ create\_unique\_edge\_id()}
+        \State \emph{edges\_by\_id[edge\_id] $\gets$ new edge(u, v, w, edge\_id)}
+        \If{\emph{$\neg$linkCutTree.is\_connected(u, v)}}
+        \State \emph{linkCutTree.link(u, v, w, edge\_id)}
+        \State \emph{current\_msf.append(edge\_id)}
+        \State \emph{current\_msf\_cost += w}
+        \ElsIf{\emph{linkCutTree.maximum\_edge(u, v) $>$ w}}
+        \State \emph{maximum\_edge\_id $\gets$ linkCutTree.maximum\_edge\_id(u, v)}
+        \State \emph{maximum\_edge $\gets$ edges\_by\_id[maximum\_edge\_id]}
+        \State \emph{linkCutTree.cut(maximum\_edge.u, maximum\_edge.v)}
+        \State \emph{current\_msf.erase(maximum\_edge.id)}
+        \State \emph{current\_msf\_cost -= maximum\_edge.w}
+        \State \emph{linkCutTree.link(u, v, w, edge\_id)}
+        \State \emph{current\_msf.append(edge\_id)}
+        \State \emph{current\_msf\_cost += w}
+        \EndIf
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
 
+Com isso, como esta rotina usa apenas os métodos fornecidos pela link-cut tree de uma maneira limitada, podemos concluir que ela tem uma complexidade proporcional $\Oh(\log m)$.
 
+%% ------------------------------------------------------------------------- %%
+\section{Rotinas Extras}
+\label{sec:imsf-extras}
 
+Por último, vamos falar de duas rotinas que serão uteis para a estrutura apresentada no próximo capítulo. Em particular, ambas possuem o mesmo objetivo, possibilitar consultas acerca da floresta geradora mínima apos a adição de um conjunto de arestas sem que tais modificações persistam na estrutura original. Em outras palavras, elas simulam o que poderia ser consultado caso fizéssemos estas adições de arestas em uma cópia da estrutura, porem, sem o custo adicional que tal cópia implica.
 
-% falar das duas rotinas extras necessarias para a versao retroativa
+Essas rotinas são as \texttt{get\_msf\_after\_operations(edge[])} e \\ \texttt{get\_msf\_cost\_after\_operations(edge[])}, que recebem uma lista de arestas e retornam, respectivamente, as arestas que fazem parte da floresta geradora mínima e seu custo caso as arestas da lista fossem adicionas à estrutura.
+
+% falar como funciona, ideia de rollback
+% falar da complexidade
