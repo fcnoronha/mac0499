@@ -2,7 +2,7 @@
 #include "../linkCutTree.hpp"
 #include "incrementalMSF.hpp"
 
-std::vector<std::pair<bool, Edge>> IncrementalMSF::apply_add_operations(std::vector<Edge> edges_to_add)
+std::vector<std::pair<bool, Edge>> IncrementalMSF::apply_add_edge_operations(std::vector<Edge> edges_to_add)
 {
     std::vector<std::pair<bool, Edge>> rollback_operations;
     for (Edge edge : edges_to_add)
@@ -66,7 +66,7 @@ void IncrementalMSF::apply_rollback(std::vector<std::pair<bool, Edge>> rollback_
 void IncrementalMSF::add_edge(int u, int v, int w)
 {
     Edge newEdge = Edge(u, v, w);
-    auto _ = apply_add_operations({newEdge});
+    auto _ = apply_add_edge_operations({newEdge});
 }
 
 std::vector<Edge> IncrementalMSF::get_msf()
@@ -79,7 +79,7 @@ std::vector<Edge> IncrementalMSF::get_msf()
 
 std::vector<Edge> IncrementalMSF::get_msf_after_operations(std::vector<Edge> edges_to_add)
 {
-    auto rollback_operations = apply_add_operations(edges_to_add);
+    auto rollback_operations = apply_add_edge_operations(edges_to_add);
     auto msf = get_msf();
     apply_rollback(rollback_operations);
     return msf;
@@ -92,7 +92,7 @@ int IncrementalMSF::get_msf_cost()
 
 int IncrementalMSF::get_msf_cost_after_operations(std::vector<Edge> edges_to_add)
 {
-    auto rollback_operations = apply_add_operations(edges_to_add);
+    auto rollback_operations = apply_add_edge_operations(edges_to_add);
     int msf_cost = get_msf_cost();
     apply_rollback(rollback_operations);
     return msf_cost;

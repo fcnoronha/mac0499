@@ -112,6 +112,9 @@
 \algnewcommand\algorithmicforeach{\textbf{for each}}
 \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
 
+% para habilitar quebra de linha dentro do \texttt{} 
+\usepackage{lipsum}
+\usepackage[htt]{hyphenat}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% METADADOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,9 +248,9 @@
 % A bibliografia é obrigatória
 
 \printbibliography[
-  title=\refname\label{bibliografia}, % "Referências", recomendado pela ABNT
-  %title=\bibname\label{bibliografia}, % "Bibliografia"
-  heading=bibintoc, % Inclui a bibliografia no sumário
+    title=\refname\label{bibliografia}, % "Referências", recomendado pela ABNT
+    %title=\bibname\label{bibliografia}, % "Bibliografia"
+    heading=bibintoc, % Inclui a bibliografia no sumário
 ]
 
 % \printindex % imprime o índice remissivo no documento (opcional)

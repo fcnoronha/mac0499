@@ -31,7 +31,7 @@ private:
       of pairs <bool, edge> that can be used to perform the rollback of these
       operations, where the boolean value tell wether or not we should perform
       a cut on that edge. Assumes every edge in the list doesn't have an id. */
-   std::vector<std::pair<bool, Edge>> apply_add_operations(std::vector<Edge>);
+   std::vector<std::pair<bool, Edge>> apply_add_edge_operations(std::vector<Edge>);
 
    /* Apply the rollbacks in the structure, undoing the action perfomed by an
       apply_add_operations call. This mechanism is used for the Retroactive MSF
