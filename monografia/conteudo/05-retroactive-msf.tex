@@ -1,0 +1,68 @@
+%!TeX root=../monografia.tex
+
+%% ------------------------------------------------------------------------- %%
+\chapter{Floresta Geradora Mínima retroativa}
+\label{cap:retroactive-msf}
+
+Neste capitulo, estudaremos a solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima retroativa --- \emph{retroactive minimum spanning forest}, em inglês. Esta versão, utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do capítulo anterior para solucionar o problema, oferecendo uma alternativa mais simples, porém mais limitada, a outras implementações na literatura, como a de \citet{10.1145/502090.502095}.
+
+%% ------------------------------------------------------------------------- %%
+\section{Square-root decomposition}
+\label{sec:sqrt-decomp}
+
+Inicialmente, vamos conhecer a técnica de \emph{square-root decomposition}, utilizada para transformar operações que consomem tempo proporcional a $\Oh(\log n)$, onde $n$ é o número de elementos no problema em questão, em operações que gastam $\Oh(\sqrt{n})$. Para nossa explicação, vamos utilizar o seguinte problema: dado uma lista de inteiros $ [ a_1, a_2, a_3, \dots, a_n ] $, queremos conseguir efetuar as duas operações a seguir.
+
+\begin{itemize}
+    \item \texttt{find\_sum(l, r)}: encontra a soma de todos os valores no intervalo $[l,r]$;
+    \item \texttt{update\_value(i, x)}: atualiza o valor da posição $i$ para $x$.
+\end{itemize}
+
+Este problema possui duas soluções \emph{ingênuas}, cada uma favorecendo uma das operações. A primeira, e mais simples, consiste em utilizar um \emph{loop} para responder consultas \texttt{find\_sum}, o que acaba custando $\Oh(n)$, e apenas atualizando a respectiva posição para a operação \texttt{update\_value}, o que consome tempo $\Oh(1)$.
+
+Já a segunda solução se resume a utilizarmos um vetor de soma de prefixos --- isto é, um vetor tal que \texttt{prefix\_sum[i]} equivale a $\Sigma_{j=1}^{i} a_j$ --- para respondermos as consultas \texttt{find\_sum} em tempo constante, porém, acarretando a reconstrução de \texttt{prefix\_sum} em toda chamada de \texttt{update\_value}, o que consome $\Oh(n)$.
+
+
+% explicar ideia de blocos 
+
+\begin{equation*}
+    \underbrace{a_1, a_2, a_3, a_4}_{block_1} \quad
+    \underbrace{a_5, a_6, a_7, a_8}_{block_2} \quad
+    \dots \quad
+    \underbrace{a_{n-3}, a_{n-2}, a_{n-1}, a_n}_{block_x}
+\end{equation*}
+
+% deduzir qual o melhor tamanho de um bloco
+% mostrar complexidade final 
+% mostrar como soluciona o problema utilizando isso
+
+
+
+
+%% ------------------------------------------------------------------------- %%
+\section{Ideia}
+\label{sec:rmsf-ideia}
+% mostrar implementação de 1 ou 2 métodos internos
+
+
+
+%% ------------------------------------------------------------------------- %%
+\section{Consultas Get MSF e Get MST Cost}
+\label{sec:rmsf-get-msf}
+
+
+
+
+
+
+%% ------------------------------------------------------------------------- %%
+\section{Rotina Add Edge}
+\label{sec:rmsf-add-edge}
+
+
+
+%% ------------------------------------------------------------------------- %%
+\section{Complexidade}
+\label{sec:rmsf-complexidade}
+%   falar da alternativa usada no paper do andre para contornar
+%   falar da maneira implemetada, seguindo as linhas sugeridas pelo demaine
+%   falar o que falta e citar paper que a cris mandou

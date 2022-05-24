@@ -116,6 +116,9 @@
 \usepackage{lipsum}
 \usepackage[htt]{hyphenat}
 
+% para usar o \underbrace no math mode
+\usepackage{mathtools}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% METADADOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,9 +251,9 @@
 % A bibliografia é obrigatória
 
 \printbibliography[
-    title=\refname\label{bibliografia}, % "Referências", recomendado pela ABNT
-    %title=\bibname\label{bibliografia}, % "Bibliografia"
-    heading=bibintoc, % Inclui a bibliografia no sumário
+  title=\refname\label{bibliografia}, % "Referências", recomendado pela ABNT
+  %title=\bibname\label{bibliografia}, % "Bibliografia"
+  heading=bibintoc, % Inclui a bibliografia no sumário
 ]
 
 % \printindex % imprime o índice remissivo no documento (opcional)
