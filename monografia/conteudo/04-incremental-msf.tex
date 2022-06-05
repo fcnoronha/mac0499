@@ -6,6 +6,8 @@
 
 Neste capítulo, falaremos do problema da floresta geradora mínima incremental --- \emph{incremental minimum spanning forest}, em inglês. A solução deste problema é utilizada por \citet{10.1093/comjnl/bxaa135} para implementar a versão retroativa da floresta geradora mínima, que estudaremos no próximo capítulo.
 
+\todo{citar frederickson1985data ao inves do andrade}
+
 %% ------------------------------------------------------------------------- %%
 \section{Ideia}
 \label{sec:imsf-ideia}
@@ -80,7 +82,7 @@ Caso $u$ e $v$ façam parte da mesma componente, devemos decidir se essa aresta 
         \Function{add\_edge}{\emph{u,v,w}}
         \State \emph{edge\_id $\gets$ create\_unique\_edge\_id()}
         \State \emph{edges\_by\_id[edge\_id] $\gets$ new edge(u, v, w, edge\_id)}
-        \If{\emph{$\neg$linkCutTree.is\_connected(u, v)}}
+        \IfNot{\emph{linkCutTree.is\_connected(u, v)}}
         \State \emph{linkCutTree.link(u, v, w, edge\_id)}
         \State \emph{current\_msf.append(edge\_id)}
         \State \emph{current\_msf\_cost += w}

@@ -10,7 +10,7 @@ Neste capítulo, apresentaremos as \emph{link-cut tree}, introduzida por ~\citet
 \section{Ideia}
 \label{sec:lct-ideia}
 
-As \emph{link-cut trees} são uma estrutura de dados que nos permite manter uma floresta de árvores enraizadas com peso nas arestas, onde os nós de cada árvore possuem um número arbitrário de filhos. Ademais, essa estrutura nos fornece o seguinte conjunto de operações:
+As \emph{link-cut trees} são uma estrutura de dados que nos permite manter uma floresta de árvores enraizadas com peso nas arestas, onde os nós de cada árvore possuem um número arbitrário de filhos. Ademais, a floresta armazenada por essa estrutura não é orientada --- isto é, suas arestas não possuem uma direção --- e devido à maneira que ela é usada para nas implementações a seguir, sua raiz é constantemente redefinida, de modo que perdemos o arranjo original das árvores. Com isso, essa estrutura nos fornece o seguinte conjunto de operações:
 
 \begin{itemize}
     \item \texttt{make\_root(u)}: enraíza no vértice $u$ a árvore que o contém.
@@ -89,7 +89,7 @@ Nessa seção, apresentaremos o código por trás das operações que estamos in
 
 \begin{itemize}
     \item \texttt{make\_identifier(u)}: transforma um nó $u$ em identificador de seu caminho preferido.
-    \item \texttt{split(u)}: separa o caminho preferido que contém o nó $u$ em dois, quebrando a conexão entre $u$ e seu filho preferido, caso exista. Ao final, tanto $u$ quanto o seu filho preferido inicial serão os identificadores de seus caminhos preferidos.
+    \item \texttt{split(u)}: separa o caminho preferido em que o nó $u$ é identificador em dois, quebrando a conexão entre $u$ e seu filho preferido, caso exista. Ao final, tanto $u$ quanto o seu filho preferido inicial serão os identificadores de seus caminhos preferidos.
     \item \texttt{join(u, v)}: recebe dois nós, $u$ e $v$ --- identificadores de seus caminhos e sendo $v$ um filho de $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando $uv$ em aresta preferida. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$. Ao final da operação, $u$ será o identificador do novo caminho criado.
     \item \texttt{reverse\_path(u)}: recebe $u$, o identificador de um caminho preferido, e inverte a orientação desse caminho na árvore representada, isto é, o fim se transforma no começo e o começo no fim.
     \item \texttt{get\_path\_end\_node(u)}: retorna o vértice menos profundo do caminho preferido de $u$, em outras palavras, o vértice no fim do caminho preferido que contém $u$. Na árvore da Figura \ref{fig:arvore-simples}, a chamada \texttt{get\_path\_end\_node(G)} retorna o vértice \texttt{A}.
@@ -97,37 +97,37 @@ Nessa seção, apresentaremos o código por trás das operações que estamos in
     \item \texttt{get\_maximum\_path\_value(u)}: recebe $u$, o identificador de um caminho preferido, e retorna o maior valor de uma aresta neste caminho.
 \end{itemize}
 
-Com tal conjunto de funções, podemos avançar para os métodos das \emph{link-cut trees}.
+Além disso, de modo a determinarmos a complexidade dos métodos das \emph{link-cut trees}, temos que \texttt{split}, \texttt{join}, \texttt{reverse\_path} e \texttt{get\_maximum\_path\_value} consomem tempo constante, enquanto \texttt{make\_identifier}, \texttt{get\_path\_end\_node} e \texttt{get\_parent\_path\_node} gastam tempo proporcional a $\Oh(\log n)$ amortizado, onde $n$ é o número de elementos nos caminhos preferidos.
 
 \subsection{Rotina Access}
 \label{subsection:lct-access}
 
-Uma rotina utilizada por todos os métodos das \emph{link-cut trees} que vamos implementar é a \texttt{access(u)}. A partir dela conseguimos reorganizar a estrutura interna de uma árvore representada a nosso favor. Basicamente, a operação \texttt{access(u)} cria um caminho preferido que parte de $u$ e vai até a raiz da árvore representada de $u$. Com isso, todas as arestas preferidas que tinham somente uma das pontas fazendo parte deste novo caminho deixam de ser preferidas e $u$ termina sem nenhum filho preferido.
+Uma rotina utilizada por todos os métodos das \emph{link-cut trees} que vamos implementar é a \texttt{access}. A partir dela conseguimos reorganizar a estrutura interna de uma árvore representada a nosso favor. Basicamente, a operação \texttt{access(u)} cria um caminho preferido que parte de $u$ e vai até a raiz da árvore representada de $u$. Com isso, todas as arestas preferidas que tinham somente uma das pontas fazendo parte deste novo caminho deixam de ser preferidas e $u$ termina sem nenhum filho preferido.
 
-Para isso, começamos uma sequência de iterações, que vão crescendo um caminho preferido desde $u$ até que tal caminho contemple a raiz da árvore representada. A cada iteração, fazemos com que uma variável \texttt{current\_root}, que inicialmente corresponde ao vértice $u$, vire o identificador de seu caminho preferido. Além disso, mantemos uma variável \texttt{last}, que corresponde a \texttt{current\_root} da iteração anterior, no início com valor igual a \texttt{null}.
+Para isso, começamos uma sequência de iterações, que vão crescendo um caminho preferido desde $u$ até que tal caminho contemple a raiz da árvore representada. Inicialmente, separamos a parte superior do caminho preferido de $u$ da parte inferior, fazendo com que este caminho comece pelo vértice $u$.
 
-Com estes valores em mãos, podemos ir criando um caminho preferido através de sucessivas concatenações, unindo a parte superior do caminho que \texttt{current\_root} identifica ao caminho mantido por \texttt{last}. Ao final dessa concatenação, temos que \texttt{current\_root} é o identificador deste caminho que está sendo construído, e após guardarmos seu valor em \texttt{last}, podemos prosseguir para o próximo passo, onde \texttt{current\_root} agora corresponde ao nó imediatamente em cima do caminho preferido que estamos construindo.
+Com isso, a rotina agora realiza uma série de iterações, mantendo a seguinte invariante: $u$ é identificador de um caminho preferido que começa nele e vai até um dos filhos de \texttt{above\_path}. Com essa invariante, conseguimos concatenar o caminho que começa em $u$ com o caminho preferido imediatamente acima dele, o qual é representado por \texttt{above\_path}. Desta maneira, sabemos que atingimos a raiz da árvore quando o caminho imediatamente acima é vazio, ou seja, \texttt{above\_path} é nulo.
 
 \begin{algorithm}[h!]
     \caption{Rotina Access}\label{lct:access}
     \begin{algorithmic}
         \Function{access}{\emph{u}}
-        \State \emph{last $\gets$ NULL}
-        \State \emph{current\_root $\gets$ u}
-        \State \Comment{concatena todos os caminhos preferidos de $u$ até a raiz da árvore representada}
-        \While{\emph{current\_root $\neq$ NULL}}
-        \State \emph{make\_identifier(current\_root)}
-        \State \Comment{concatena a parte superior do caminho preferido de $u$ ao caminho de \texttt{last}}
-        \State \emph{join(current\_root, last)}
-        \State \emph{last $\gets$ current\_root}
-        \State \emph{current\_root $\gets$ get\_parent\_path\_node(current\_root)}
         \State \emph{make\_identifier(u)}
+        \State \emph{join(u, NULL)}
+        \State \emph{above\_path $\gets$ get\_parent\_path\_node(u)}
+        \State \Comment{concatena todos os caminhos preferidos de $u$ até a raiz da árvore representada}
+        \While{\emph{above\_path $\neq$ NULL}}
+        \State \emph{make\_identifier(above\_path)}
+        \State \Comment{concatena a parte superior do caminho de \texttt{above\_path} ao caminho de $u$}
+        \State \emph{join(above\_path, u)}
+        \State \emph{make\_identifier(u)}
+        \State \emph{above\_path $\gets$ get\_parent\_path\_node(u)}
         \EndWhile
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
 
-Ao final da iteração, colocamos o vértice $u$ como identificador deste novo caminho preferencial, simplificando as operações a seguir.
+Logo, fica claro que o consumo de tempo dessa rotina é algo proporcional ao número de iterações realizadas vezes o custo das chamadas que operam sob os caminhos preferidos. Em particular, \citet{demaine_holmgren_jian_stepanenko_ishaque} usam a técnica de \emph{heavy-light decomposition} para mostrar que, em uma sequência de $m$ operações \texttt{access}, são realizadas $\Oh(m \log n)$ iterações. Ademais, eles mostram que as chamadas realizadas a cada iteração custam $\Oh(1)$ amortizado. Portanto, a rotina \texttt{access} consome tempo $\Oh(log n)$ amortizado.
 
 \begin{figure}
     \centering
@@ -214,8 +214,6 @@ Inicialmente, colocamos $v$ como raiz de sua árvore representada, e criamos um 
 
 Já a operação \texttt{cut(u, v)}, que separa dois nós ligados por uma aresta, é um pouco mais simples. Note que temos que separar as conexões entre $u$ e \texttt{uv\_edge}, assim como entre \texttt{uv\_edge} e $v$. O processo de separação é igual para as duas partes, por isso vamos explicar somente a separação de $u$ e \texttt{uv\_edge}.
 
-A ideia é colocarmos $u$ como raiz de nossa árvore representada. Com isso, podemos criar um caminho preferido que vai de \texttt{uv\_edge} até $u$ . Agora, basta usarmos nossa operação \texttt{split(uv\_edge)}, que separa \texttt{uv\_edge} da parte superior de seu caminho preferido, efetivamente quebrando sua conexão com $u$.
-
 \begin{algorithm}[h!]
     \caption{Rotina Cut}\label{lct:cut}
     \begin{algorithmic}
@@ -232,6 +230,8 @@ A ideia é colocarmos $u$ como raiz de nossa árvore representada. Com isso, pod
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
+
+A ideia é colocarmos $u$ como raiz de nossa árvore representada. Com isso, podemos criar um caminho preferido que vai de \texttt{uv\_edge} até $u$ . Agora, basta usarmos nossa operação \texttt{split(uv\_edge)}, que separa \texttt{uv\_edge} da parte superior de seu caminho preferido, efetivamente quebrando sua conexão com $u$.
 
 \subsection{Consultas Is Connected e Maximum Edge}
 \label{subsection:lct-is-connected}
@@ -265,7 +265,7 @@ Por último, temos a função \texttt{maximum\_edge(u, v)}, que supõe que $u$ e
     \end{algorithmic}
 \end{algorithm}
 
-Assim, encerramos a explicação da implementação dos métodos das \emph{link-cut trees}.
+Assim, encerramos a explicação da implementação dos métodos das \emph{link-cut trees}. Além disso, podemos perceber que todos os métodos executam simplesmente chamadas para os modificadores de caminhos preferidos e para a rotina \texttt{access}. Portanto, temos que as funções apresentadas até agora consomem tempo proporcional a $\Oh(log n)$ amortizado.
 
 %% ------------------------------------------------------------------------- %%
 %% ------------------------------------------------------------------------- %%
@@ -278,7 +278,7 @@ No artigo original, Sleator e Tarjan propuseram a utilização de uma árvore bi
 
 Uma splay tree é uma árvore binária de busca auto-balanceável. Estas árvores utilizam rotações para se auto-balancear, através de uma operação chamada \texttt{splay}. A operação \texttt{splay} traz um nó para a raiz da árvore através de sucessivas rotações. Mas antes de nos aprofundarmos neste método, examinaremos como os caminhos preferidos são representados aqui.
 
-Primeiramente, em nosso uso, a ordenação dos nós na splay tree é dada pela profundidade destes nas \emph{link-cut trees}. Note que, para garantir a eficiência, não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores, apresentadas a seguir. Em contrapartida, com este método, perdemos a capacidade de realizarmos buscas por chave na splay tree, porém não necessitamos dessa operação.
+Primeiramente, em nosso uso, a ordenação dos nós na splay tree é dada pela profundidade destes nas \emph{link-cut trees}. Note que, para garantir a eficiência, não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores, apresentadas a seguir. Em contrapartida, com este método, eventualmente perdemos a capacidade de realizarmos buscas por chave na splay tree, porém não necessitamos dessa operação.
 
 Ademais, para implementar eficientemente a operação \texttt{get\_maximum\_path\_value}, mantemos o peso máximo dos nós em cada sub-árvore de uma splay tree.
 
@@ -445,10 +445,10 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz da splay tree que 
     \caption{Rotina Splay}\label{splay:splay}
     \begin{algorithmic}
         \Function{Splay}{\emph{u}}
-        \While{\emph{$\neg$u.is\_root()}} \Comment{$u$ não é raiz da LCT e nem da Splay}
+        \WhileNot  {\emph{u.is\_root()}} \Comment{$u$ não é raiz da LCT e nem da Splay}
         \State \emph{parent $\gets$ u.parent}
         \State \emph{grandparent $\gets$ parent.parent}
-        \If{\emph{$\neg$parent.is\_root()}}
+        \IfNot{\emph{parent.is\_root()}}
         \State \emph{grandparent.push\_reversed\_bit()}
         \State \emph{parent.push\_reversed\_bit()}
         \If{\emph{(grandparent.r\_child = parent) = (parent.r\_child = u)}}

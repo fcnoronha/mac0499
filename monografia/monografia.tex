@@ -111,6 +111,9 @@
 % macro para foreach
 \algnewcommand\algorithmicforeach{\textbf{for each}}
 \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+\algdef{SE}[IF]{IfNot}{EndIf}[1]{\algorithmicif\ \textbf{not}\ #1\ \algorithmicthen}{\algorithmicend\ \algorithmicif}
+\algdef{SE}[WHILE]{WhileNot}{EndIf}[1]{\algorithmicwhile\ \textbf{not}\ #1\ \algorithmicthen}{\algorithmicend\ \algorithmicwhile}
+
 
 % para habilitar quebra de linha dentro do \texttt{} 
 \usepackage{lipsum}

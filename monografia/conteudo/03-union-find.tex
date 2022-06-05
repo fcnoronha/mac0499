@@ -128,7 +128,7 @@ Para isso, devemos lembrar que: cada aresta da link-cut tree representa uma oper
     \caption{Consulta Same Set}\label{uf:same-set}
     \begin{algorithmic}
         \Function{same\_set}{\emph{a, b, t}}
-        \If {\emph{$\neg$linkCutTree.is\_connected(a, b)}}
+        \IfNot {\emph{linkCutTree.is\_connected(a, b)}}
         \State \Return \emph{false}
         \EndIf
         \State \Return \emph{linkCutTree.maximum\_edge(a, b) $\leq$ t}

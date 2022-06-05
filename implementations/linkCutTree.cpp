@@ -34,19 +34,19 @@ void LinkCutTree::make_root(Node *u)
 
 void LinkCutTree::access(Node *u)
 {
-    Node *last = NULL;
-    Node *current_root = u;
+    splayTree.splay(u);
+    splayTree.join(u, NULL);
+    Node *above_path = splayTree.get_parent_path_node(u);
 
     // transform all parent pointers from u to the root into part of the same preferred path
-    while (current_root != NULL)
+    while (above_path != NULL)
     {
-        splayTree.splay(current_root);      // makes current_root the id of its preferred path auxiliary tree
-        splayTree.join(current_root, last); // separates the preferred path of current_root, appending the
-                                            // last auxiliary tree processed as the deepest part of this path
-        last = current_root;                // current_root is now path id
-        current_root = splayTree.get_parent_path_node(current_root);
+        splayTree.splay(above_path);   // makes above_path the id of its preferred path
+        splayTree.join(above_path, u); // separates the preferred path of above_path, appending the
+                                       // path identified by u to it
+        splayTree.splay(u);
+        above_path = splayTree.get_parent_path_node(u);
     }
-    splayTree.splay(u);
 }
 
 void LinkCutTree::create_node(int u)
