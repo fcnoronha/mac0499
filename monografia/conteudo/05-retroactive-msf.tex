@@ -6,6 +6,9 @@
 
 Neste capitulo, estudaremos a solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima retroativa --- \emph{retroactive minimum spanning forest}, em inglês. Esta versão, utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do capítulo anterior para solucionar o problema, oferecendo uma alternativa mais simples, porém mais limitada, a outras implementações na literatura, como a de \citet{10.1145/502090.502095}.
 
+\todo{excluir citacao do holm daqui}
+\todo{introduzir ao problema. dizer que queremos implementar uma versao retroativa do problema do capitulo 4}
+
 %% ------------------------------------------------------------------------- %%
 \section{Square-root decomposition}
 \label{sec:sqrt-decomp}
@@ -62,6 +65,57 @@ Portanto, $\sqrt{n}$ é o tamanho ótimo para um bloco, o que implica que a noss
 \section{Ideia}
 \label{sec:rmsf-ideia}
 % mostrar implementação de 1 ou 2 métodos internos
+
+
+
+
+%% ------------------------------------------------------------------------- %%
+\section{Rotinas Extras}
+\label{sec:imsf-extras}
+
+\todo{adaptar essa parte para se encaixar neste capitulo}
+
+Por último, vamos falar de duas rotinas que serão úteis para a estrutura apresentada no próximo capítulo. Em particular, ambas possuem o mesmo objetivo: possibilitar consultas acerca da floresta maximal de peso mínimo após a adição de um conjunto de arestas sem que tais modificações persistam na estrutura original. Em outras palavras, elas simulam o que poderia ser consultado caso fizéssemos estas adições de arestas em uma cópia da estrutura, porém, sem o custo adicional que tal cópia implica.
+
+Essas rotinas são as \texttt{get\_msf\_after\_operations(edges[])} e \texttt{get\_msf\_weight\_after\_operations(edges[])}, que recebem uma lista de arestas e retornam, respectivamente, as arestas que fazem parte de uma floresta maximal de peso mínimo e seu peso caso as arestas da lista fornecida fossem adicionas ao grafo. Desta forma, a execução destes métodos consiste em três etapas: adição das arestas na estrutura; realização da consulta que estamos interessados; reversão da estrutura para o seu estado inicial.
+
+Para a realização da primeira etapa, criamos o método \texttt{apply\_add\_edge\_operations}, que recebe uma lista de arestas, e realiza a adição delas na estrutura, de maneira muito similar ao que acontece na rotina \texttt{add\_edge}. Entretanto, este método retorna uma lista de pares \texttt{\{operação, aresta\}}, indicando quais operações foram realizadas na \emph{link-cut tree} --- \texttt{link} ou \texttt{cut} --- assim como as arestas envolvidas em cada uma delas. Como este método é muito semelhante à rotina \texttt{add\_edge}, não mostraremos seu pseudo-código.
+
+Logo, após realizarmos as consultas que estamos interessados, precisamos reverter as operações realizadas na \emph{link-cut tree}. Para isso, criamos o método \texttt{apply\_rollback}, que recebe a lista criada pela rotina acima e desfaz as operações. Note que, para mantermos a consistência da \emph{link-cut tree} durante este processo, precisamos percorrer esta lista de trás para frente, revertendo uma operação de cada vez.
+
+\begin{algorithm}[h!]
+    \caption{Rotina Apply Rollback}\label{imsf-apply-rollback}
+    \begin{algorithmic}
+        \Function{apply\_rollback}{\emph{operations\_list[]}}
+        \State \emph{revert(operations\_list)}
+        \ForEach{\emph{(operation, edge) in operations\_list}}
+        \If{\emph{operation = link}}
+        \State \emph{linkCutTree.cut(edge.u, edge.v)}
+        \State \emph{current\_msf.erase(edge.id)}
+        \State \emph{current\_msf\_weight -= edge.w}
+        \Else
+        \State \emph{linkCutTree.link(edge.u, edge.v, edge.w, edge.id)}
+        \State \emph{current\_msf.append(edge.id)}
+        \State \emph{current\_msf\_weight += edge.w}
+        \EndIf
+        \EndFor
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras que estávamos interessados. Dado que a única diferença entre as duas implementações seria a chamada na segunda linha, vamos mostrar somente o pseudo-código da rotina \texttt{get\_msf\_after\_operations}. Além disso, podemos perceber que a complexidade destes métodos é proporcional à $\Oh(q \log m)$, onde $q$ é o número de arestas que queremos adicionar.
+
+\begin{algorithm}[h!]
+    \caption{Rotina Get MSF After Operations}\label{imsf-msf-after}
+    \begin{algorithmic}
+        \Function{get\_msf\_after\_operations}{\emph{edges[]}}
+        \State \emph{rollback\_operations $\gets$ apply\_add\_edge\_operations(edges)}
+        \State \emph{msf $\gets$ get\_msf()}
+        \State \emph{apply\_rollback(rollback\_operations)}
+        \State \Return \emph{msf}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
 
 
 

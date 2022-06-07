@@ -1,44 +1,48 @@
 %!TeX root=../monografia.tex
 
 %% ------------------------------------------------------------------------- %%
-\chapter{Floresta Geradora Mínima incremental}
+\chapter{Floresta Geradora Mínima Incremental}
 \label{cap:incremental-msf}
 
-Neste capítulo, falaremos do problema da floresta geradora mínima incremental --- \emph{incremental minimum spanning forest}, em inglês. A solução deste problema é utilizada por \citet{10.1093/comjnl/bxaa135} para implementar a versão retroativa da floresta geradora mínima, que estudaremos no próximo capítulo.
-
-\todo{citar frederickson1985data ao inves do andrade}
+Neste capítulo, falaremos do problema da floresta geradora mínima incremental --- \emph{incremental minimum spanning forest}, em inglês. A solução deste problema é utilizada por \citet{10.1093/comjnl/bxaa135} para implementar uma versão semi-retroativa da floresta geradora mínima, que estudaremos no próximo capítulo.
 
 %% ------------------------------------------------------------------------- %%
 \section{Ideia}
 \label{sec:imsf-ideia}
 
-Primeiramente, a árvore geradora minima de uma grafo é um conjunto de arestas que conecta todos os vértices do grafo e tem peso mínimo. Em geral, caso o grafo não seja conexo, a floresta geradora mínima é o conjunto de árvores geradoras mínimas de cada uma das componentes do grafo.
+O \emph{problema da árvore geradora mínima} consiste no seguinte: dado um grafo conexo $G$, com um peso associado a cada aresta, determinar uma árvore geradora de peso mínimo. Note que, este problema admite tanto pesos positivos quanto negativos nas arestas, mas ao admitir pesos negativos, é necessário exigir que o grafo em questão seja acíclico. Caso o grafo de entrada seja desconexo, buscamos uma floresta maximal de peso mínimo, que consiste em uma árvore geradora minima de cada componente conexa do grafo.
 
-Para resolver este problema, queremos uma estrutura que consiga manter um grafo não direcionado, com pesos nas arestas e que está sempre sofrendo a adição de novas arestas. Essa estrutura também deve ser capaz de calcular, de maneira eficiente, a floresta geradora mínima deste grafo. Desta forma, estamos interessados na seguinte interface:
+Algorítimos como o de \citet{6773228} ou o de \citet{kruskal1956shortest} são famosos por resolver este problema de maneira eficiente, ambos com complexidade de $\Oh(|E| \log |E|)$, onde $E$ é o conjunto de arestas do grafo.
+
+Já na versão incremental do problema, inicialmente sabemos apenas o número de vértices do grafo, que começa sem nenhuma aresta. Em seguida, uma a uma das arestas são inseridas, com um dado peso. Devemos, sempre que for requisitado, fornecer eficientemente uma floresta maximal de peso mínimo do grafo corrente.
+
+Uma solução ingênua para está versão seria acionar o algoritmo de Prim ou o de Kruskal a cada consulta. Porém, essa alternativa seria muita cara, pois ela não considera que entre uma consulta e outra o grafo pode ter mudado muito pouco. A ideia então é utilizar a versão apresentada por \citet{frederickson1985data} para mantermos informações sobre grafo, de modo a conseguirmos responder às consultas de maneira eficiente.
+
+Desta forma, a estrutura de dados que vamos apresentar da suporta à seguinte interface:
 
 \begin{itemize}
-    \item \texttt{add\_edge(u, v, w)}: adiciona no grafo a aresta com pontas em $u$ e $v$ com peso $w$, possivelmente alterando a floresta geradora mínima.
-    \item \texttt{get\_msf()}: retorna uma lista com todas as arestas que compõem a floresta geradora mínima no momento atual.
-    \item \texttt{get\_msf\_cost()}: retorna o custo da floresta geradora mínima no momento atual.
+    \item \texttt{add\_edge(u, v, w)}: adiciona no grafo a aresta com pontas em $u$ e $v$ com peso $w$.
+    \item \texttt{get\_msf()}: retorna a lista com todas as arestas que compõem uma floresta maximal de peso mínimo do grafo corrente.
+    \item \texttt{get\_msf\_weight()}: retorna o custo de uma floresta maximal de peso mínimo do grafo corrente.
 \end{itemize}
 
-A partir destes métodos, é possível construir um grafo de maneira incremental, isto é, adicionando aresta por aresta, com o advento de termos sempre em mãos a sua respectiva floresta geradora mínima. Tudo isso com um custo $\Oh (\log n)$ para a adição de novas arestas, um custo linearmente proporcional ao tamanho da floresta geradora para a consulta das arestas que a compõem e um custo constante para a consulta do custo total da floresta.
+A partir destes métodos, é possível construir um grafo de maneira incremental, isto é, adicionando aresta por aresta, com o advento de termos sempre em mãos a sua respectiva floresta geradora mínima. Em particular, a rotina \texttt{add\_edge} consumirá tempo proporcional à $\Oh (\log n)$ amortizado por operação --- onde $n$ é o número de vértices do grafo, a rotina \texttt{get\_msf} consumirá tempo proporcional a $\Oh (\log n)$ e \texttt{get\_msf\_weight} será executada em tempo constante.
 
 %% ------------------------------------------------------------------------- %%
 \section{Estrutura interna}
 \label{sec:imsf-est-int}
 
-Assim como no union-find retroativo, vamos utilizar a link-cut tree como a estrutura interna da solução deste problema. Para isso, queremos que a link-cut tree seja utilizada para manter a floresta geradora mínima do grafo corrente, de modo que, ao adicionarmos uma nova aresta, com peso $w$ e pontas em $u$ e $v$, ao grafo, podemos usar as rotinas \texttt{is\_connected(u,v)} e \texttt{maximum\_edge(u,v)} para decidir se incluímos ou não a aresta à floresta geradora mínima.
+Assim como no union-find retroativo, vamos utilizar as \emph{link-cut trees} como estrutura interna da solução deste problema. Para isso, queremos que as \emph{link-cut trees} sejam utilizadas para manter uma floresta maximal de peso mínimo do grafo corrente, de modo que, ao adicionarmos uma nova aresta, com peso $w$ e pontas em $u$ e $v$, ao grafo, podemos usar as rotinas \texttt{is\_connected(u,v)} e \texttt{maximum\_edge(u,v)} para decidir se incluímos ou não a aresta à floresta maximal de peso mínimo.
 
-Um detalhe importante é que, para essa implementação, necessitamos de uma maneira de consultar qual a aresta com maior custo no caminho entre dois vértices na árvore, não apenas o seu respectivo valor. Para isso, modificamos a implementação da link-cut tree para incluir um novo parâmetro opcional \texttt{id} na rotina \texttt{link}, além de um novo  método \texttt{maximum\_edge\_id}, que retorna o \texttt{id} da maior aresta no caminho entre dois vértices. Este \texttt{id} será definido por nossa estrutura, e a partir dele, utilizando um mapa \texttt{edges\_by\_id}, conseguimos recuperar em quais vértices tal aresta incide.
+Um detalhe importante é que, para essa implementação, necessitamos de uma maneira de consultar qual a aresta com maior peso no caminho entre dois vértices na árvore, não apenas o seu peso. Para isso, modificamos a implementação das \emph{link-cut trees} para incluir um novo parâmetro opcional \texttt{id} na rotina \texttt{link}, além de um novo  método \texttt{maximum\_edge\_id}, que retorna o \texttt{id} de uma aresta de peso máximo no caminho entre dois vértices. Este \texttt{id} será definido por nossa estrutura, e a partir dele, utilizando um mapa \texttt{edges\_by\_id}, conseguimos recuperar em quais vértices tal aresta incide.
 
-Finalmente, mantemos uma lista \texttt{current\_msf} de \texttt{id}'s das arestas que compõem a floresta geradora minima, assim como um inteiro \texttt{current\_msf\_cost}, que armazena o respectivo custo. Estes atributos nos permitem responder de maneira eficiente as consultas de nossa estrutura, como mostraremos a seguir.
+Finalmente, mantemos uma lista \texttt{current\_msf} de \texttt{id}'s das arestas que compõem uma floresta maximal de peso mínimo, assim como um inteiro \texttt{current\_msf\_weight}, que armazena o seu custo. Estes atributos nos permitem responder de maneira eficiente às consultas, como mostraremos a seguir.
 
 %% ------------------------------------------------------------------------- %%
-\section{Consultas Get MSF e Get MST Cost}
+\section{Consultas Get MSF e Get MST Weight}
 \label{sec:imsf-get-msf}
 
-Primeiramente, para realizarmos a consulta acerca da composição da floresta geradora mínima, simplesmente percorremos a lista dos \texttt{id}'s das arestas que compõem a floresta e criamos uma nova lista com as arestas em si, utilizando o mapeamento fornecido pelo \texttt{edges\_by\_id}.
+Primeiramente, para realizarmos a consulta acerca da composição de uma floresta maximal de peso mínimo, simplesmente percorremos a lista dos \texttt{id}'s das arestas que compõem a floresta armazenadas nas \emph{link-cut trees} e criamos uma nova lista com as arestas em si, utilizando o mapeamento fornecido pelo \texttt{edges\_by\_id}.
 
 \begin{algorithm}[h!]
     \caption{Consulta Get MSF}\label{imsf-get-msf}
@@ -53,28 +57,28 @@ Primeiramente, para realizarmos a consulta acerca da composição da floresta ge
     \end{algorithmic}
 \end{algorithm}
 
-Já a consulta sobre o custo da floresta geradora mínima pode ser facilmente respondida retornando o inteiro \texttt{current\_msf\_cost} mantido pela rotina \texttt{add\_edge}, explicada na seção a seguir.
+Já a consulta sobre o custo de uma floresta maximal de peso mínimo pode ser facilmente respondida retornando o inteiro \texttt{current\_msf\_weight}, mantido pela rotina \texttt{add\_edge}, explicada na seção a seguir.
 
 \begin{algorithm}[h!]
-    \caption{Consulta Get MSF Cost}\label{imsf-get-msf-cost}
+    \caption{Consulta Get MSF Weight}\label{imsf-get-msf-weight}
     \begin{algorithmic}
-        \Function{get\_msf\_cost}{}
-        \State \Return \emph{current\_msf\_cost}
+        \Function{get\_msf\_weight}{}
+        \State \Return \emph{current\_msf\_weight}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
 
-Com isso, a primeira consulta tem um custo proporcional a $\Oh(m)$, onde $m$ é o número de arestas inseridas no grafo, pois no pior caso o grafo pode ser a própria floresta geradora mínima, e a segunda consulta tem um custo $\Oh(1)$.
+Com isso, a consulta \texttt{get\_msf} tem um custo proporcional a $\Oh(m)$, onde $m$ é o número de arestas inseridas no grafo, pois no pior caso o grafo pode ser a própria floresta maximal de peso mínimo, e a consulta \texttt{get\_msf\_weight} tem um custo $\Oh(1)$.
 
 %% ------------------------------------------------------------------------- %%
 \section{Rotina Add Edge}
 \label{sec:imsf-add-edge}
 
-Como a parte mais importante da nossa estrutura, a rotina \texttt{add\_edge(u, v, w)} é responsável por adicionar uma nova aresta $e$ ao grafo, possivelmente modificando a sua respectiva floresta geradora mínima. Para isso, vamos checar se a aresta deve ser adicionada à link-cut tree ou não, pois caso contrario, simplesmente a descartamos. Desta forma, este processo pode ser divido em duas partes.
+Como a parte mais importante da estrutura, a rotina \texttt{add\_edge(u, v, w)} é responsável por adicionar uma nova aresta ao grafo, com extremos em $u$ e $v$ e peso $w$, possivelmente tendo que atualizar a floresta maximal de peso mínimo. Este processo pode ser divido em dois casos.
 
-A primeira delas consiste em verificar se $u$ e $v$ pertencem a componentes distintas do grafo. Neste caso, simplesmente adicionamos a aresta $e$ na floresta geradora mínima, o que representa uma ligação entre as árvores geradoras mínimas em que $u$ e $v$ pertencem.
+O primeiro deles ocorre quando $u$ e $v$ pertencem a componentes distintas do grafo. Neste caso, simplesmente adicionamos a aresta $uv$ à floresta maximal de peso mínimo, ou seja, à floresta representada pelas \emph{link-cut trees}.
 
-Caso $u$ e $v$ façam parte da mesma componente, devemos decidir se essa aresta $e$ deve ou não substituir alguma aresta na árvore geradora mínima que acomoda estes vértices. Note que, ao adicionar essa nova aresta na árvore, estamos criando um ciclo, que consiste em todas as arestas no caminho simples de $u$ até $v$ mais $e$. Ademais, a adição da aresta $e$ somente faz sentido caso ela diminua o custo total da árvore, em outras palavras, caso ela não seja a maior aresta deste ciclo. Dessa forma podemos simplesmente excluir a aresta com maior peso do ciclo, preservando a estrutura de árvore e contribuindo para uma diminuição de seu custo total.
+O segundo caso ocorre quando $u$ e $v$ fazem parte da mesma componente do grafo. Neste caso, devemos decidir se essa aresta $uv$ deve ou não substituir alguma aresta na árvore geradora mínima dessa componente. Note que, se adicionarmos essa nova aresta na árvore, criaremos um ciclo, que consiste em todas as arestas no caminho de $u$ até $v$ na árvore, mais $uv$. Ademais, a adição da aresta $uv$ somente faz sentido caso ela diminua o custo total da árvore, em outras palavras, caso ela não seja a maior aresta deste ciclo. Dessa forma podemos simplesmente excluir a aresta com maior peso do ciclo, preservando a estrutura de árvore e possivelmente contribuindo para uma diminuição de seu custo total.
 
 \begin{algorithm}[h!]
     \caption{Rotina Add Edge}\label{imsf-add-edge}
@@ -85,65 +89,25 @@ Caso $u$ e $v$ façam parte da mesma componente, devemos decidir se essa aresta 
         \IfNot{\emph{linkCutTree.is\_connected(u, v)}}
         \State \emph{linkCutTree.link(u, v, w, edge\_id)}
         \State \emph{current\_msf.append(edge\_id)}
-        \State \emph{current\_msf\_cost += w}
+        \State \emph{current\_msf\_weight += w}
         \ElsIf{\emph{linkCutTree.maximum\_edge(u, v) $>$ w}}
         \State \emph{maximum\_edge\_id $\gets$ linkCutTree.maximum\_edge\_id(u, v)}
         \State \emph{maximum\_edge $\gets$ edges\_by\_id[maximum\_edge\_id]}
         \State \emph{linkCutTree.cut(maximum\_edge.u, maximum\_edge.v)}
         \State \emph{current\_msf.erase(maximum\_edge.id)}
-        \State \emph{current\_msf\_cost -= maximum\_edge.w}
+        \State \emph{current\_msf\_weight -= maximum\_edge.w}
         \State \emph{linkCutTree.link(u, v, w, edge\_id)}
         \State \emph{current\_msf.append(edge\_id)}
-        \State \emph{current\_msf\_cost += w}
+        \State \emph{current\_msf\_weight += w}
         \EndIf
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
 
-Com isso, como esta rotina usa apenas os métodos fornecidos pela link-cut tree de uma maneira limitada, podemos concluir que ela tem uma complexidade proporcional $\Oh(\log m)$.
+Com isso, como esta rotina usa apenas os métodos fornecidos pelas \emph{link-cut trees}, podemos concluir que ela consome tempo amortizado proporcional a $\Oh(\log n)$, onde $n$ é o número de vértices do grafo representado.
 
 %% ------------------------------------------------------------------------- %%
-\section{Rotinas Extras}
-\label{sec:imsf-extras}
+\section{Versão Dinâmica}
+\label{sec:versao-dinamica}
 
-Por último, vamos falar de duas rotinas que serão uteis para a estrutura apresentada no próximo capítulo. Em particular, ambas possuem o mesmo objetivo, possibilitar consultas acerca da floresta geradora mínima após a adição de um conjunto de arestas sem que tais modificações persistam na estrutura original. Em outras palavras, elas simulam o que poderia ser consultado caso fizéssemos estas adições de arestas em uma cópia da estrutura, porém, sem o custo adicional que tal cópia implica.
-
-Essas rotinas são as \texttt{get\_msf\_after\_operations(edges[])} e \texttt{get\_msf\_cost\_after\_operations(edges[])}, que recebem uma lista de arestas e retornam, respectivamente, as arestas que fazem parte da floresta geradora mínima e seu custo caso as arestas da lista fornecida fossem adicionas à estrutura. Desta forma, a execução destes métodos consiste em três etapas: adição das arestas na estrutura; a realização da consulta que estamos interessados; reversão da estrutura para o seu estado inicial.
-
-Para a realização da primeira etapa, criamos o método \texttt{apply\_add\_edge\_operations}, que recebe uma lista de arestas, e realiza a adição delas na estrutura, de maneira muito similar ao que acontece na rotina \texttt{add\_edge}. Entretanto, este método retorna uma lista de pares \texttt{\{operação, aresta\}}, indicando quais operações foram realizadas na link-cut tree --- \texttt{link} ou \texttt{cut} --- assim como as arestas envolvidas em cada uma delas. Como este método é muito semelhante à rotina \texttt{add\_edge}, não mostraremos seu pseudo-código.
-
-Logo, após realizarmos as consultas que estamos interessados, precisamos reverter as operações realizadas na link-cut tree. Para isso, criamos o método \texttt{apply\_rollback}, que recebe a lista criada pela rotina acima e desfaz as operações. Note que, para mantermos a consistência da link-cut tree durante este processo, precisamos percorrer esta lista de trás para frente, revertendo uma operação de cada vez.
-
-\begin{algorithm}[h!]
-    \caption{Rotina Apply Rollback}\label{imsf-apply-rollback}
-    \begin{algorithmic}
-        \Function{apply\_rollback}{\emph{operations\_list[]}}
-        \State \emph{revert(operations\_list)}
-        \ForEach{\emph{(operation, edge) in operations\_list}}
-        \If{\emph{operation = link}}
-        \State \emph{linkCutTree.cut(edge.u, edge.v)}
-        \State \emph{current\_msf.erase(edge.id)}
-        \State \emph{current\_msf\_cost -= edge.w}
-        \Else
-        \State \emph{linkCutTree.link(edge.u, edge.v, edge.w, edge.id)}
-        \State \emph{current\_msf.append(edge.id)}
-        \State \emph{current\_msf\_cost += edge.w}
-        \EndIf
-        \EndFor
-        \EndFunction
-    \end{algorithmic}
-\end{algorithm}
-
-Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras que estávamos interessados. Dado que a única diferença entre as duas implementações seria a chamada na segunda linha, vamos mostrar somente o pseudo-código da rotina \texttt{get\_msf\_after\_operations}. Além disso, podemos perceber que a complexidade destes métodos é proporcional à $\Oh(q \log m)$, onde $q$ é o número de arestas que queremos adicionar.
-
-\begin{algorithm}[h!]
-    \caption{Rotina Get MSF After Operations}\label{imsf-msf-after}
-    \begin{algorithmic}
-        \Function{get\_msf\_after\_operations}{\emph{edges[]}}
-        \State \emph{rollback\_operations $\gets$ apply\_add\_edge\_operations(edges)}
-        \State \emph{msf $\gets$ get\_msf()}
-        \State \emph{apply\_rollback(rollback\_operations)}
-        \State \Return \emph{msf}
-        \EndFunction
-    \end{algorithmic}
-\end{algorithm}
+Além da versão incremental do problema, que apresentamos neste capitulo, existe uma versão dinâmica, onde é permitida também a remoção de arestas do grafo. O trabalho de \citet{hanauer2021recent} cita algumas soluções para essa versão do problema. Em particular, \citet{10.1145/502090.502095} propõem uma solução com custo $\Oh(\log^4 n)$, onde $n$ é o número de vértices do grafo. Porém, essa solução é bastante sofisticada e seu estudo fugiria do escopo deste trabalho.
