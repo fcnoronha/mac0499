@@ -9,18 +9,18 @@ TEST(IncrementalMSFTest, SimpleTest)
     IncrementalMSF imsf;
 
     imsf.add_edge(1, 2, 4);
-    EXPECT_EQ(imsf.get_msf_cost(), 4);
+    EXPECT_EQ(imsf.get_msf_weight(), 4);
 
     imsf.add_edge(2, 3, 5);
     imsf.add_edge(3, 4, 6);
     imsf.add_edge(4, 5, 7);
-    EXPECT_EQ(imsf.get_msf_cost(), 22);
+    EXPECT_EQ(imsf.get_msf_weight(), 22);
 
     imsf.add_edge(1, 4, 2);
-    EXPECT_EQ(imsf.get_msf_cost(), 18);
+    EXPECT_EQ(imsf.get_msf_weight(), 18);
 
     imsf.add_edge(2, 5, 6);
-    EXPECT_EQ(imsf.get_msf_cost(), 17);
+    EXPECT_EQ(imsf.get_msf_weight(), 17);
 }
 
 TEST(IncrementalMSFTest, ComplexTest)
@@ -35,10 +35,10 @@ TEST(IncrementalMSFTest, ComplexTest)
     imsf.add_edge(3, 4, 8);
     imsf.add_edge(3, 5, 3);
     imsf.add_edge(4, 6, 3);
-    EXPECT_EQ(imsf.get_msf_cost(), 17);
+    EXPECT_EQ(imsf.get_msf_weight(), 17);
 
     imsf.add_edge(3, 2, 1);
-    EXPECT_EQ(imsf.get_msf_cost(), 13);
+    EXPECT_EQ(imsf.get_msf_weight(), 13);
 }
 
 TEST(IncrementalMSFTest, OperationsTest)
@@ -53,8 +53,8 @@ TEST(IncrementalMSFTest, OperationsTest)
 
     Edge e1 = Edge(1, 4, 2, 0);
     Edge e2 = Edge(2, 5, 6, 0);
-    int operations_msf_cost = imsf.get_msf_cost_after_operations({e1, e2});
-    EXPECT_EQ(operations_msf_cost, 17);
+    int operations_msf_weight = imsf.get_msf_weight_after_operations({e1, e2});
+    EXPECT_EQ(operations_msf_weight, 17);
 
     auto final_msf = imsf.get_msf();
     EXPECT_EQ(initial_msf, final_msf);

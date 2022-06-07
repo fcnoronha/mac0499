@@ -17,7 +17,7 @@ std::vector<std::pair<bool, Edge>> IncrementalMSF::apply_add_edge_operations(std
         {
             linkCutTree.link(edge.u, edge.v, edge.w, edge.id);
             current_msf.insert(edge.id);
-            current_msf_cost += edge.w;
+            current_msf_weight += edge.w;
             rollback_operations.push_back({true, edge});
         }
 
@@ -28,12 +28,12 @@ std::vector<std::pair<bool, Edge>> IncrementalMSF::apply_add_edge_operations(std
 
             linkCutTree.cut(maximum_edge.u, maximum_edge.v);
             current_msf.erase(maximum_edge.id);
-            current_msf_cost -= maximum_edge.w;
+            current_msf_weight -= maximum_edge.w;
             rollback_operations.push_back({false, maximum_edge});
 
             linkCutTree.link(edge.u, edge.v, edge.w, edge.id);
             current_msf.insert(edge.id);
-            current_msf_cost += edge.w;
+            current_msf_weight += edge.w;
             rollback_operations.push_back({true, edge});
         }
     }
@@ -52,13 +52,13 @@ void IncrementalMSF::apply_rollback(std::vector<std::pair<bool, Edge>> rollback_
         {
             linkCutTree.cut(edge.u, edge.v);
             current_msf.erase(edge.id);
-            current_msf_cost -= edge.w;
+            current_msf_weight -= edge.w;
         }
         else
         {
             linkCutTree.link(edge.u, edge.v, edge.w, edge.id);
             current_msf.insert(edge.id);
-            current_msf_cost += edge.w;
+            current_msf_weight += edge.w;
         }
     }
 }
@@ -85,15 +85,15 @@ std::vector<Edge> IncrementalMSF::get_msf_after_operations(std::vector<Edge> edg
     return msf;
 }
 
-int IncrementalMSF::get_msf_cost()
+int IncrementalMSF::get_msf_weight()
 {
-    return current_msf_cost;
+    return current_msf_weight;
 }
 
-int IncrementalMSF::get_msf_cost_after_operations(std::vector<Edge> edges_to_add)
+int IncrementalMSF::get_msf_weight_after_operations(std::vector<Edge> edges_to_add)
 {
     auto rollback_operations = apply_add_edge_operations(edges_to_add);
-    int msf_cost = get_msf_cost();
+    int msf_weight = get_msf_weight();
     apply_rollback(rollback_operations);
-    return msf_cost;
+    return msf_weight;
 }

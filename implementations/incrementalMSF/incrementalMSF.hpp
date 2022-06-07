@@ -24,7 +24,7 @@ private:
    LinkCutTree linkCutTree;
    std::map<int, Edge> edges_by_id;
    std::set<int> current_msf;
-   int current_msf_cost = 0;
+   int current_msf_weight = 0;
    int current_unused_id = 1;
 
    /* Apply a list of add_edge operations into the structure and return a list
@@ -50,10 +50,10 @@ public:
       operations, doing this without copying the structure. */
    std::vector<Edge> get_msf_after_operations(std::vector<Edge>);
 
-   /* Return the cost of the MSF. */
-   int get_msf_cost();
+   /* Return the weight of the MSF. */
+   int get_msf_weight();
 
-   /* Return the cost of the MSF after a sequence of add_edge operations, doing
+   /* Return the weight of the MSF after a sequence of add_edge operations, doing
       this without copying the structure. */
-   int get_msf_cost_after_operations(std::vector<Edge>);
+   int get_msf_weight_after_operations(std::vector<Edge>);
 };

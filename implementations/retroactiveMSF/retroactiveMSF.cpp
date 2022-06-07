@@ -112,11 +112,11 @@ std::vector<Edge> RetroactiveMSF::get_msf(int t)
     return checkpoint_structure[last_checkpoint_index].get_msf_after_operations(delta_edge_operations);
 }
 
-int RetroactiveMSF::get_msf_cost(int t)
+int RetroactiveMSF::get_msf_weight(int t)
 {
     check_time_is_valid(t);
 
     int last_checkpoint_index = find_left_checkpoint_index(t);
     auto delta_edge_operations = get_delta_edge_operations(t);
-    return checkpoint_structure[last_checkpoint_index].get_msf_cost_after_operations(delta_edge_operations);
+    return checkpoint_structure[last_checkpoint_index].get_msf_weight_after_operations(delta_edge_operations);
 }

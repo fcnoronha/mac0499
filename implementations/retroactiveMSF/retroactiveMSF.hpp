@@ -14,6 +14,7 @@ private:
    int insertions_left = 1;
    int block_size = 1;
    int n_blocks = 1;
+   int aux = 0;
 
    /* Sanitization method used to check wether or not we already have an
       add_edge operation at time t. */
@@ -50,6 +51,6 @@ public:
    /* Return the list of edges that compose the MSF at time t. */
    std::vector<Edge> get_msf(int);
 
-   /* Return the cost of the MSF at time t. */
-   int get_msf_cost(int);
+   /* Return the weight of the MSF at time t. */
+   int get_msf_weight(int);
 };
