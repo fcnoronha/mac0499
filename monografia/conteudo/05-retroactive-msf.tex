@@ -1,13 +1,10 @@
 %!TeX root=../monografia.tex
 
 %% ------------------------------------------------------------------------- %%
-\chapter{Floresta Geradora Mínima retroativa}
+\chapter{Floresta Geradora Mínima Semi-Retroativa}
 \label{cap:retroactive-msf}
 
-Neste capitulo, estudaremos a solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima retroativa --- \emph{retroactive minimum spanning forest}, em inglês. Esta versão, utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do capítulo anterior para solucionar o problema, oferecendo uma alternativa mais simples, porém mais limitada, a outras implementações na literatura, como a de \citet{10.1145/502090.502095}.
-
-\todo{excluir citacao do holm daqui}
-\todo{introduzir ao problema. dizer que queremos implementar uma versao retroativa do problema do capitulo 4}
+Neste capitulo, estudaremos a solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima semi-retroativa --- \emph{semi-retroactive minimum spanning forest}, em inglês. Esta versão, utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do capítulo anterior para solucionar o problema.
 
 %% ------------------------------------------------------------------------- %%
 \section{Square-root decomposition}
@@ -16,19 +13,19 @@ Neste capitulo, estudaremos a solução apresentada por \citet{10.1093/comjnl/bx
 Inicialmente, vamos conhecer a técnica de \emph{square-root decomposition}, utilizada para transformar soluções que consomem tempo proporcional a $\Oh(\log n)$ --- onde $n$ é o número de elementos no problema em questão --- em soluções com custo $\Oh(\sqrt{n})$. Para nossa explicação, vamos utilizar o seguinte problema como exemplo: dado uma lista de inteiros $ [ a_1, a_2, a_3, \dots, a_n ] $, queremos conseguir efetuar as duas operações a seguir:
 
 \begin{itemize}
-    \item \texttt{find\_sum(l, r)}: Encontra a soma de todos os valores no intervalo $[l,r]$;
-    \item \texttt{update\_value(i, x)}: Muda para $x$ o valor do elemento na posição $i$.
+    \item \texttt{find\_sum(l, r)}: encontra a soma de todos os valores no intervalo $[l,r]$;
+    \item \texttt{update\_value(i, x)}: atualiza para $x$ o valor do elemento na posição $i$.
 \end{itemize}
 
 Este problema possui duas soluções \emph{ingênuas}, cada uma favorecendo uma das operações. A primeira, e mais simples, consiste em utilizar um \emph{loop} para responder consultas \texttt{find\_sum}, o que acaba custando $\Oh(n)$, e apenas atualizando a respectiva posição para a operação \texttt{update\_value}, o que consome tempo $\Oh(1)$.
 
 Já a segunda solução se resume a utilizarmos um vetor de soma de prefixos --- isto é, um vetor tal que \texttt{prefix\_sum[i]} equivale a $\Sigma_{j=1}^{i} a_j$ --- para respondermos as consultas \texttt{find\_sum} em tempo constante, porém, acarretando na reconstrução de \texttt{prefix\_sum} em toda chamada de \texttt{update\_value}, o que consome $\Oh(n)$.
 
-Porém, utilizando a \emph{square-root decomposition}, podemos responder consultas do primeiro tipo em tempo $\Oh(\sqrt{n})$ e rotinas do segundo tipo em tempo constante, um bom meio termo. O cerne desta técnica consiste em duas etapas. Primeiramente, dividimos a estrutura de interesse --- neste caso, uma lista --- em $d$ blocos de tamanho $b$. Sem perda de generalidade, assumimos que $n$, o tamanho da lista, é um múltiplo de $b$, com $d = \frac{n}{b}$. Em seguida, para cada um dos blocos, pré-calculamos o resultado do problema de interesse de seus elementos. No problema utilizado como exemplo, isso se traduz em pré-calcular a soma de todos os elementos dentro de um bloco.
+Todavia, utilizando a \emph{square-root decomposition}, podemos responder consultas do primeiro tipo em tempo $\Oh(\sqrt{n})$ e rotinas do segundo tipo em tempo constante, um bom meio termo. O cerne desta técnica consiste em duas etapas. Primeiramente, dividimos a estrutura de interesse --- neste caso, uma lista --- em $d$ blocos de tamanho $b$. Sem perda de generalidade, assumimos que $n$, o tamanho da lista, é um múltiplo de $b$, com $d = \frac{n}{b}$. Em seguida, para cada um dos blocos, pré-calculamos o resultado do problema de interesse de seus elementos. No problema utilizado como exemplo, isso se traduz em pré-calcular a soma de todos os elementos dentro de um bloco.
 
 Com isso, podemos explicar como adaptamos as operações para funcionarem utilizando esta divisão em blocos. Note que, apesar de estarmos focados em resolver o problema de soma em um intervalo, a \emph{receita} por trás dessa adaptação pode ser facilmente utilizada em outros contextos, como veremos na próxima seção.
 
-Para respondermos consultas do tipo \texttt{find\_sum(l, r)}, utilizaremos o pré-calculo realizado nos blocos para eliminar a necessidade de percorrer todos os elementos no intervalo entre $l$ e $r$. Primeiramente, iteramos sob todos os blocos completamente contidos no intervalo e acumulamos a respectiva soma em uma variável $y$. Com isso em mãos, podemos nos concentrar para calcular a soma $x$ e $z$ das \emph{pontas} do intervalo, isto é, os pedaços que fazem parte de um bloco não totalmente contido no intervalo, utilizando um simples \emph{loop}. Esta tarefa está representada na figura \ref{fig:sqrt-decomp-blocks} e podemos perceber que a reposta para a consulta é simplesmente a soma $x + y + z$.
+Para respondermos consultas do tipo \texttt{find\_sum(l, r)}, utilizaremos o pré-calculo realizado nos blocos para eliminar a necessidade de percorrer todos os elementos no intervalo entre $l$ e $r$. Primeiramente, iteramos sob todos os blocos completamente contidos no intervalo e acumulamos a respectiva soma em uma variável $y$. Com isso em mãos, podemos nos concentrar para calcular a soma $x$ e $z$ das \emph{pontas} do intervalo, isto é, os pedaços que fazem parte de um bloco não totalmente contido no intervalo, utilizando um simples \emph{loop}. Esta tarefa está representada na Figura \ref{fig:sqrt-decomp-blocks} e podemos perceber que a reposta para a consulta é simplesmente a soma $x + y + z$.
 
 \begin{figure}
     \centering
@@ -64,18 +61,21 @@ Portanto, $\sqrt{n}$ é o tamanho ótimo para um bloco, o que implica que a noss
 %% ------------------------------------------------------------------------- %%
 \section{Ideia}
 \label{sec:rmsf-ideia}
-% mostrar implementação de 1 ou 2 métodos internos
 
+\todo{mostrar ideia, falar que a implimentaçao que vamos mostrar tem uma limitacao, por isso chamamos ela de semi retroativa}
+\todo{falar floresta geradora maximal de peso minima}
 
+% %% ------------------------------------------------------------------------- %%
+% \subsection{reconstrução da decomposição}
+% \label{sec:rmsf-reconstru}
+\todo{mostrar implementação de 1 ou 2 métodos internos}
 
 
 %% ------------------------------------------------------------------------- %%
-\section{Rotinas Extras}
+\section{Rotinas extras para a versão incremental}
 \label{sec:imsf-extras}
 
-\todo{adaptar essa parte para se encaixar neste capitulo}
-
-Por último, vamos falar de duas rotinas que serão úteis para a estrutura apresentada no próximo capítulo. Em particular, ambas possuem o mesmo objetivo: possibilitar consultas acerca da floresta maximal de peso mínimo após a adição de um conjunto de arestas sem que tais modificações persistam na estrutura original. Em outras palavras, elas simulam o que poderia ser consultado caso fizéssemos estas adições de arestas em uma cópia da estrutura, porém, sem o custo adicional que tal cópia implica.
+Antes de mostrarmos as rotinas dessa versão do problema, temos que apresentar duas funções extras adicionadas na nossa solução para a versão incremental do problema.  Em particular, ambas possuem o mesmo objetivo: possibilitar consultas acerca da floresta maximal de peso mínimo após a adição de um conjunto de arestas sem que tais modificações persistam na estrutura original. Em outras palavras, elas simulam o que poderia ser consultado caso fizéssemos estas adições de arestas em uma cópia da estrutura, porém, sem o custo adicional que tal cópia implica.
 
 Essas rotinas são as \texttt{get\_msf\_after\_operations(edges[])} e \texttt{get\_msf\_weight\_after\_operations(edges[])}, que recebem uma lista de arestas e retornam, respectivamente, as arestas que fazem parte de uma floresta maximal de peso mínimo e seu peso caso as arestas da lista fornecida fossem adicionas ao grafo. Desta forma, a execução destes métodos consiste em três etapas: adição das arestas na estrutura; realização da consulta que estamos interessados; reversão da estrutura para o seu estado inicial.
 
@@ -103,7 +103,7 @@ Logo, após realizarmos as consultas que estamos interessados, precisamos revert
     \end{algorithmic}
 \end{algorithm}
 
-Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras que estávamos interessados. Dado que a única diferença entre as duas implementações seria a chamada na segunda linha, vamos mostrar somente o pseudo-código da rotina \texttt{get\_msf\_after\_operations}. Além disso, podemos perceber que a complexidade destes métodos é proporcional à $\Oh(q \log m)$, onde $q$ é o número de arestas que queremos adicionar.
+Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras que estávamos interessados. Dado que a única diferença entre as duas implementações seria a chamada na segunda linha, vamos mostrar somente o pseudo-código da rotina \texttt{get\_msf\_after\_operations}.
 
 \begin{algorithm}[h!]
     \caption{Rotina Get MSF After Operations}\label{imsf-msf-after}
@@ -117,14 +117,12 @@ Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras q
     \end{algorithmic}
 \end{algorithm}
 
+Além disso, podemos perceber que a complexidade destes métodos é proporcional à $\Oh(q \log m)$, onde $q$ é o número de arestas que queremos adicionar.
 
 
 %% ------------------------------------------------------------------------- %%
-\section{Consultas Get MSF e Get MST Cost}
+\section{Consultas Get MSF e Get MST Weight}
 \label{sec:rmsf-get-msf}
-
-
-
 
 
 
@@ -137,6 +135,7 @@ Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras q
 %% ------------------------------------------------------------------------- %%
 \section{Complexidade}
 \label{sec:rmsf-complexidade}
-%   falar da alternativa usada no paper do andre para contornar
-%   falar da maneira implemetada, seguindo as linhas sugeridas pelo demaine
-%   falar o que falta e citar paper que a cris mandou
+
+\todo{falar da alternativa usada no paper do andre para contornar o problema da complexidade}
+\todo{falar que poderiamos adaptar essa solucao usando link-cut trees persistentes, citar paper que a Cris mandou}
+\todo{falar da complexidade da nossa variante da solucao proposta por Demaine}
