@@ -11,10 +11,8 @@ private:
    std::vector<IncrementalMSF> checkpoint_structure;
    std::vector<int> checkpoint_time;
    std::map<int, Edge> edges_by_time;
-   int insertions_left = 1;
-   int block_size = 1;
-   int n_blocks = 1;
-   int aux = 0;
+   int block_size = 0;
+   int n_blocks = 0;
 
    /* Sanitization method used to check wether or not we already have an
       add_edge operation at time t. */
@@ -32,7 +30,11 @@ private:
       block_size and defining new checkpoints. This is used to maintain the
       O(√N lgN) complexity of the add_edge method. This will also add a
       O(√N lgN) amortized constraint to all add_edge calls. */
-   void rebuild_structure();
+   void rebuild_decomposition();
+
+   /* Moves the Incremental MSF from one checkpoint to another one to the right
+      of it in the timeline. */
+   void move_imsf_checkpoint(IncrementalMSF &, int, int);
 
    /* Return the index of the checkpoint to the left of time t in the timeline,
       that is, the last checkpoint smaller than or equal to t. */

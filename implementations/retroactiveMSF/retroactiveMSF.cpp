@@ -18,41 +18,48 @@ void RetroactiveMSF::check_time_is_valid(int t)
     }
 }
 
-void RetroactiveMSF::rebuild_structure()
+void RetroactiveMSF::rebuild_decomposition()
 {
-    block_size = ceil(sqrt(edges_by_time.size()));
-    insertions_left = (block_size + 1) / 2;
-    checkpoint_time.clear();
-    checkpoint_structure.clear();
+    block_size++;
+    n_blocks = block_size + 1;
 
-    // building the decomposition from right to left in the timeline
-    int position = edges_by_time.size();
-    for (auto op = edges_by_time.rbegin(); op != edges_by_time.rend(); op++)
+    int position = 0;
+    std::vector<int> new_checkpoint_time(1, 0);
+    for (auto op : edges_by_time)
     {
-        int time = (*op).first;
-        Edge edge = (*op).second;
-
+        position++;
+        int time = op.first;
         if (position % block_size == 0)
         {
-            checkpoint_time.push_back(time);
-            checkpoint_structure.push_back(IncrementalMSF());
+            new_checkpoint_time.push_back(time);
         }
-        for (auto &imsf : checkpoint_structure)
-        {
-            imsf.add_edge(edge.u, edge.v, edge.w);
-        }
-        position--;
     }
 
-    // adding initial empty checkpoint
-    checkpoint_time.push_back(0);
-    checkpoint_structure.push_back(IncrementalMSF());
+    checkpoint_structure.insert(checkpoint_structure.begin(), IncrementalMSF());
+    checkpoint_structure.insert(checkpoint_structure.begin(), IncrementalMSF());
+    while (checkpoint_structure.size() > new_checkpoint_time.size())
+    {
+        checkpoint_structure.pop_back();
+    }
 
-    // since we built backwards, now we reverse
-    std::reverse(checkpoint_time.begin(), checkpoint_time.end());
-    std::reverse(checkpoint_structure.begin(), checkpoint_structure.end());
+    move_imsf_checkpoint(checkpoint_structure[1], new_checkpoint_time[1], -1);
+    for (int i = 2; i < (int)checkpoint_structure.size(); i++)
+    {
+        move_imsf_checkpoint(checkpoint_structure[i], new_checkpoint_time[i], checkpoint_time[i - 2]);
+    }
 
-    n_blocks = checkpoint_time.size();
+    checkpoint_time = new_checkpoint_time;
+}
+
+void RetroactiveMSF::move_imsf_checkpoint(IncrementalMSF &imsf, int new_checkpoint_time, int old_checkpoint_time)
+{
+    for (auto it = edges_by_time.upper_bound(old_checkpoint_time);
+         it != edges_by_time.end() && (*it).first <= new_checkpoint_time;
+         it++)
+    {
+        auto edge = (*it).second;
+        imsf.add_edge(edge.u, edge.v, edge.w);
+    }
 }
 
 int RetroactiveMSF::find_left_checkpoint_index(int t)
@@ -89,15 +96,14 @@ void RetroactiveMSF::add_edge(int u, int v, int w, int t)
 
     Edge newEdge = Edge(u, v, w);
     edges_by_time[t] = newEdge;
-    insertions_left--;
 
-    if (insertions_left == 0)
+    if ((block_size + 1) * (block_size + 1) == (int)edges_by_time.size())
     {
-        rebuild_structure();
+        rebuild_decomposition();
         return;
     }
 
-    for (int i = find_left_checkpoint_index(t); i < n_blocks; i++)
+    for (int i = find_left_checkpoint_index(t) + 1; i < n_blocks; i++)
     {
         checkpoint_structure[i].add_edge(u, v, w);
     }
