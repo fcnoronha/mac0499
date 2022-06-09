@@ -97,15 +97,14 @@ void RetroactiveMSF::add_edge(int u, int v, int w, int t)
     Edge newEdge = Edge(u, v, w);
     edges_by_time[t] = newEdge;
 
-    if ((block_size + 1) * (block_size + 1) == (int)edges_by_time.size())
-    {
-        rebuild_decomposition();
-        return;
-    }
-
     for (int i = find_left_checkpoint_index(t) + 1; i < n_blocks; i++)
     {
         checkpoint_structure[i].add_edge(u, v, w);
+    }
+
+    if ((block_size + 1) * (block_size + 1) == (int)edges_by_time.size())
+    {
+        rebuild_decomposition();
     }
 }
 
