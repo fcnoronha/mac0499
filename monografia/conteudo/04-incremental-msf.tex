@@ -46,7 +46,7 @@ Primeiramente, para realizarmos a consulta acerca da composição de uma florest
 
 \begin{algorithm}[h!]
     \caption{Consulta Get MSF}\label{imsf-get-msf}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{get\_msf}{}
         \State \emph{msf $\gets$ []}
         \ForEach{\emph{id in current\_msf}}
@@ -61,7 +61,7 @@ Já a consulta sobre o custo de uma floresta maximal de peso mínimo pode ser fa
 
 \begin{algorithm}[h!]
     \caption{Consulta Get MSF Weight}\label{imsf-get-msf-weight}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{get\_msf\_weight}{}
         \State \Return \emph{current\_msf\_weight}
         \EndFunction
@@ -82,7 +82,7 @@ O segundo caso ocorre quando $u$ e $v$ fazem parte da mesma componente do grafo.
 
 \begin{algorithm}[h!]
     \caption{Rotina Add Edge}\label{imsf-add-edge}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{add\_edge}{\emph{u,v,w}}
         \State \emph{edge\_id $\gets$ create\_unique\_edge\_id()}
         \State \emph{edges\_by\_id[edge\_id] $\gets$ new edge(u, v, w, edge\_id)}

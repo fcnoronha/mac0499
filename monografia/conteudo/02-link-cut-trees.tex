@@ -110,7 +110,7 @@ Com isso, a rotina agora realiza uma série de iterações, mantendo a seguinte 
 
 \begin{algorithm}[h!]
     \caption{Rotina Access}\label{lct:access}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{access}{\emph{u}}
         \State \emph{make\_identifier(u)}
         \State \emph{join(u, NULL)}
@@ -179,7 +179,7 @@ Em seguida, temos a função \texttt{make\_root(u)}, que enraíza em $u$ a árvo
 
 \begin{algorithm}[h!]
     \caption{Rotina Make Root}\label{lct:make-root}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{make\_root}{\emph{u}}
         \State \emph{access(u)}
         \State \emph{reverse\_path(u)}
@@ -195,7 +195,7 @@ Inicialmente, colocamos $v$ como raiz de sua árvore representada, e criamos um 
 
 \begin{algorithm}[h!]
     \caption{Rotina Link}\label{lct:link}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Require{$u$ e $v$ em árvores distintas}
         \Function{link}{\emph{u, v, w}}
         \State \emph{uv\_edge $\gets$ new Node(w)} \Comment{cria nó com peso $w$, representando a aresta}
@@ -216,7 +216,7 @@ Já a operação \texttt{cut(u, v)}, que separa dois nós ligados por uma aresta
 
 \begin{algorithm}[h!]
     \caption{Rotina Cut}\label{lct:cut}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Require{$u$ e $v$ na mesma árvore e $uv$ uma aresta da floresta representada}
         \Function{cut}{\emph{u, v}}
         \State \Comment{cortando $(u) - (uv\_edge)$}
@@ -240,7 +240,7 @@ A função \texttt{is\_connected(u, v)}, que nos informa se $u$ e $v$ pertencem 
 
 \begin{algorithm}[h!]
     \caption{Consulta Is Connected}\label{lct:is-connected}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{is\_connected}{\emph{u, v}}
         \State \emph{access(u)}
         \State \emph{u\_tree\_root $\gets$ get\_path\_end\_node(u)}
@@ -255,7 +255,7 @@ Por último, temos a função \texttt{maximum\_edge(u, v)}, que supõe que $u$ e
 
 \begin{algorithm}[h!]
     \caption{Consulta Maximum Edge}\label{lct:max-edge}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Require{$u$ e $v$ na mesma árvore}
         \Function{maximum\_edge}{\emph{u, v}}
         \State \emph{make\_root(v)}
@@ -443,7 +443,7 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz da splay tree que 
 
 \begin{algorithm}[h!]
     \caption{Rotina Splay}\label{splay:splay}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{Splay}{\emph{u}}
         \WhileNot  {\emph{u.is\_root()}} \Comment{$u$ não é raiz da LCT e nem da Splay}
         \State \emph{parent $\gets$ u.parent}
@@ -475,7 +475,7 @@ Primeiramente, falaremos do método \texttt{split(u)}, que recebe um nó $u$, id
 
 \begin{algorithm}[h!]
     \caption{Rotina Split}\label{splay:split}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Require{$u$ é identificador de seu caminho preferido}
         \Function{split}{\emph{u}}
         \If{\emph{u.l\_child $\neq$ NULL}}
@@ -490,7 +490,7 @@ De maneira complementar, temos a rotina \texttt{join(u, v)}, que recebe dois nó
 
 \begin{algorithm}[h!]
     \caption{Rotina Join}\label{splay:join}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Require{$u$ e $v$ são identificadores de seus caminhos preferidos}
         \Function{join}{\emph{u, v}}
         \If{\emph{v $\neq$ NULL}}
@@ -514,7 +514,7 @@ Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador $u$ de um cami
 
 \begin{algorithm}[h!]
     \caption{Rotina Revese Path}\label{splay:reverse-path}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Require{$u$ identificador de seu caminho preferido}
         \Function{revese\_path}{\emph{u}}
         \State \emph{u.is\_reversed $\gets \neg$u.is\_reversed}
@@ -527,7 +527,7 @@ A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_pa
 
 \begin{algorithm}[h!]
     \caption{Consulta Get Path End Node}\label{splay:get-path-end}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{get\_path\_end\_node}{\emph{u}}
         \State \emph{splay(u)}
         \State \emph{smallest\_value $\gets$ u}
@@ -542,7 +542,7 @@ A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_pa
 
 \begin{algorithm}[h!]
     \caption{Consulta Get Parent Path Node}\label{splay:get-parent-path}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{get\_parent\_path\_node}{\emph{u}}
         \State \emph{splay(u)}
         \State \Return \emph{u.parent}
@@ -554,7 +554,7 @@ Por último, temos a função \texttt{get\_maximum\_path\_value(u)}, que recebe 
 
 \begin{algorithm}[h!]
     \caption{Consulta Get Maximum Path Value}\label{splay:get-maximum-value}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Require{$u$ identificador de seu caminho preferido}
         \Function{get\_maximum\_path\_value}{\emph{u}}
         \State \Return \emph{u.max\_subtree\_value}

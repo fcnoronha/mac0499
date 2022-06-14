@@ -4,16 +4,18 @@
 \chapter{Floresta Geradora Mínima Semi-Retroativa}
 \label{cap:retroactive-msf}
 
-Neste capitulo, estudaremos a solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima semi-retroativa --- \emph{semi-retroactive minimum spanning forest}, em inglês. Esta versão, utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do capítulo anterior para solucionar o problema.
+Neste capitulo, descreveremos uma versão aprimorada solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima retroativa --- \emph{retroactive minimum spanning forest}, em inglês. Esta versão utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do capítulo anterior para solucionar o problema.
+
+Vale notar que tanto a solução de Andrade Júnior e Duarte Seabra quanto a versão aqui apresentada não implementam completamente retroatividade, pois ambas não dão suporte a remoção de operações. Por isso decidimos nos referir a estas duas soluções como \emph{semi-retroativas}.
 
 %% ------------------------------------------------------------------------- %%
 \section{Square-root decomposition}
 \label{sec:sqrt-decomp}
 
-Inicialmente, vamos conhecer a técnica de \emph{square-root decomposition}, utilizada para transformar soluções que consomem tempo proporcional a $\Oh(\log n)$ --- onde $n$ é o número de elementos no problema em questão --- em soluções com custo $\Oh(\sqrt{n})$. Para nossa explicação, vamos utilizar o seguinte problema como exemplo: dado uma lista de inteiros $ [ a_1, a_2, a_3, \dots, a_n ] $, queremos conseguir efetuar as duas operações a seguir:
+Inicialmente, vamos conhecer a técnica de \emph{square-root decomposition}, utilizada para transformar soluções que consomem tempo $\Oh(\log n)$ --- onde $n$ é o número de elementos no problema em questão --- em soluções com custo $\Oh(\sqrt{n})$. Para nossa explicação, vamos utilizar o seguinte problema como exemplo: dado uma lista de inteiros $ [ a_1, a_2, a_3, \dots, a_n ] $, queremos conseguir efetuar as duas operações a seguir:
 
 \begin{itemize}
-    \item \texttt{find\_sum(l, r)}: encontra a soma de todos os valores no intervalo $[l,r]$;
+    \item \texttt{find\_sum(l, r)}: determina a soma de todos os valores no intervalo $[l,r]$;
     \item \texttt{update\_value(i, x)}: atualiza para $x$ o valor do elemento na posição $i$.
 \end{itemize}
 
@@ -21,11 +23,11 @@ Este problema possui duas soluções \emph{ingênuas}, cada uma favorecendo uma 
 
 Já a segunda solução se resume a utilizarmos um vetor de soma de prefixos --- isto é, um vetor tal que \texttt{prefix\_sum[i]} equivale a $\Sigma_{j=1}^{i} a_j$ --- para respondermos as consultas \texttt{find\_sum} em tempo constante, porém, acarretando na reconstrução de \texttt{prefix\_sum} em toda chamada de \texttt{update\_value}, o que consome $\Oh(n)$.
 
-Todavia, utilizando a \emph{square-root decomposition}, podemos responder consultas do primeiro tipo em tempo $\Oh(\sqrt{n})$ e rotinas do segundo tipo em tempo constante, um bom meio termo. O cerne desta técnica consiste em duas etapas. Primeiramente, dividimos a estrutura de interesse --- neste caso, uma lista --- em $d$ blocos de tamanho $b$. Sem perda de generalidade, assumimos que $n$, o tamanho da lista, é um múltiplo de $b$, com $d = \frac{n}{b}$. Em seguida, para cada um dos blocos, pré-calculamos o resultado do problema de interesse de seus elementos. No problema utilizado como exemplo, isso se traduz em pré-calcular a soma de todos os elementos dentro de um bloco.
+Todavia, utilizando a \emph{square-root decomposition}, podemos responder consultas do primeiro tipo em tempo $\Oh(\sqrt{n})$ e executa rotinas do segundo tipo em tempo constante, um bom meio termo. O cerne desta técnica consiste em duas etapas. Primeiramente, dividimos a estrutura de interesse --- neste caso, a lista de inteiros --- em $d$ blocos de tamanho $b$. Sem perda de generalidade, assumimos que $n$, o tamanho da lista, é um múltiplo de $b$, com $d = \frac{n}{b}$. Em seguida, para cada um dos blocos, pré-calculamos alguma informação auxiliar. No problema utilizado como exemplo, isso se traduz em pré-calcular a soma de todos os elementos dentro de um bloco.
 
-Com isso, podemos explicar como adaptamos as operações para funcionarem utilizando esta divisão em blocos. Note que, apesar de estarmos focados em resolver o problema de soma em um intervalo, a \emph{receita} por trás dessa adaptação pode ser facilmente utilizada em outros contextos, como veremos na próxima seção.
+Com isso, podemos explicar como adaptamos as operações para funcionarem utilizando esta divisão em blocos. Apesar de estarmos focados em resolver o problema de soma em um intervalo, a \emph{receita} por trás dessa adaptação pode ser facilmente utilizada em outros contextos, como veremos na próxima seção.
 
-Para respondermos consultas do tipo \texttt{find\_sum(l, r)}, utilizaremos o pré-calculo realizado nos blocos para eliminar a necessidade de percorrer todos os elementos no intervalo entre $l$ e $r$. Primeiramente, iteramos sob todos os blocos completamente contidos no intervalo e acumulamos a respectiva soma em uma variável $y$. Com isso em mãos, podemos nos concentrar para calcular a soma $x$ e $z$ das \emph{pontas} do intervalo, isto é, os pedaços que fazem parte de um bloco não totalmente contido no intervalo, utilizando um simples \emph{loop}. Esta tarefa está representada na Figura \ref{fig:sqrt-decomp-blocks} e podemos perceber que a reposta para a consulta é simplesmente a soma $x + y + z$.
+Para respondermos consultas do tipo \texttt{find\_sum(l, r)}, utilizaremos o pré-cálculo realizado nos blocos para eliminar a necessidade de percorrer todos os elementos no intervalo entre $l$ e $r$. Primeiramente, iteramos sob todos os blocos completamente contidos no intervalo e acumulamos a respectiva soma em uma variável $y$. Com isso em mãos, podemos nos concentrar para calcular a soma $x$ e $z$ das \emph{pontas} do intervalo, isto é, os pedaços que fazem parte de um bloco não totalmente contido no intervalo, utilizando um simples \emph{loop}. Esta tarefa está representada na Figura \ref{fig:sqrt-decomp-blocks} e podemos perceber que a reposta para a consulta é simplesmente a soma $x + y + z$.
 
 \begin{figure}
     \centering
@@ -38,15 +40,15 @@ Para respondermos consultas do tipo \texttt{find\_sum(l, r)}, utilizaremos o pr�
         }^y \quad
         \underbracket{\overbrace{a_{n-3}, a_{n-2}, a_{n-1}}^z, a_n}_{block_d}
     \end{equation*}
-    \caption{Divisão de uma lista de tamanho $n$ em $d$ blocos de tamanho $b$, mostrando que a soma de $x$, $y$ e $z$ reponde a consulta feita por \texttt{find\_sum(3, n-1)}.}
+    \caption{Divisão de uma lista de tamanho $n$ em $d$ blocos de tamanho $b$, mostrando que a soma de $x$, $y$ e $z$ responde a consulta feita por \texttt{find\_sum(3, n-1)}.}
     \label{fig:sqrt-decomp-blocks}
 \end{figure}
 
-Já a rotina \texttt{update\_value(i, x)} é um pouco mais simples. Ao atualizamos um valor na posição $i$, temos simplesmente que atualizar o valor pré-calculado do bloco que o contém, e isso é o suficiente.
+Já a rotina \texttt{update\_value(i, x)} é um pouco mais simples. Ao atualizamos o valor da posição $i$, temos simplesmente que atualizar o valor pré-calculado do bloco que o contém, e isso é o suficiente.
 
-Note que, a segunda operação tem um custo constante, dado que apenas atualizamos um único valor, porém a primeira operação requer uma analise mais cuidadosa. Para encontrar os valores das \emph{pontas}, $x$ e $z$, somos obrigados a realizar um \emph{loop} sob estes elementos, e como no pior caso podemos acabar percorrendo $b-1$ elementos, podemos dizer que esta etapa tem custo $\Oh(b)$. Já para encontrar $y$, iteramos sob os blocos em si, portanto, no pior caso, gastamos $\Oh(d)$ para o seu cálculo. Com isso, temos que a consulta \texttt{find\_sum} tem um custo final $\Oh(\max(b, d))$.
+Note que a segunda operação tem um custo constante, dado que apenas atualizamos um único valor, porém a primeira operação requer uma análise mais cuidadosa. Para encontrar os valores das \emph{pontas}, $x$ e $z$, somos obrigados a realizar um \emph{loop} sob estes elementos, e como no pior caso podemos acabar percorrendo $b-1$ elementos, esta etapa tem custo $\Oh(b)$. Já para encontrar $y$, iteramos sob os blocos em si, portanto, no pior caso, gastamos $\Oh(d)$ para o seu cálculo. Com isso, temos que a consulta \texttt{find\_sum} tem um custo final $\Oh(\max(b, d))$.
 
-Com o intuito de maximizarmos a eficiência desta função, queremos encontrar um tamanho de bloco $b$ ótimo que minimize o valor de $\max(b, d)$, isto é, que tornem $b$ e $d$ o mais próximos possível. Para isso, podemos fazer:
+Com o intuito de maximizarmos a eficiência desta função, queremos encontrar um tamanho de bloco $b$ ótimo que minimize o valor de $\max(b, d)$, isto é, que tornem $b$ e $d$ os mais próximos possível. Para isso, podemos fazer:
 
 \begin{equation}
     b = d \Rightarrow
@@ -55,7 +57,7 @@ Com o intuito de maximizarmos a eficiência desta função, queremos encontrar u
     b = \pm \sqrt{n}
 \end{equation}
 
-Portanto, $\sqrt{n}$ é o tamanho ótimo para um bloco, o que implica que a nossa lista será dividida em $\sqrt{n}$ blocos, dai surge o nome da técnica. Finalmente, temos agora que a consulta \texttt{find\_sum} consome tempo $\Oh(\sqrt{n})$.
+Portanto, $\sqrt{n}$ é o tamanho ótimo para um bloco, o que implica que a nossa lista será dividida em $\sqrt{n}$ blocos, daí o nome da técnica. Finalmente, temos agora que a consulta \texttt{find\_sum} consome tempo $\Oh(\sqrt{n})$.
 
 
 %% ------------------------------------------------------------------------- %%
@@ -85,7 +87,7 @@ Logo, após realizarmos as consultas que estamos interessados, precisamos revert
 
 \begin{algorithm}[h!]
     \caption{Rotina Apply Rollback}\label{imsf-apply-rollback}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{apply\_rollback}{\emph{operations\_list[]}}
         \State \emph{revert(operations\_list)}
         \ForEach{\emph{(operation, edge) in operations\_list}}
@@ -103,11 +105,11 @@ Logo, após realizarmos as consultas que estamos interessados, precisamos revert
     \end{algorithmic}
 \end{algorithm}
 
-Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras que estávamos interessados. Dado que a única diferença entre as duas implementações seria a chamada na segunda linha, vamos mostrar somente o pseudo-código da rotina \texttt{get\_msf\_after\_operations}.
+Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras que estávamos interessados. Vamos mostrar somente o pseudo-código da rotina \texttt{get\_msf\_after\_operations}, dado que a única diferença entre as duas implementações seria a chamada na terceira linha.
 
 \begin{algorithm}[h!]
     \caption{Rotina Get MSF After Operations}\label{imsf-msf-after}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \Function{get\_msf\_after\_operations}{\emph{edges[]}}
         \State \emph{rollback\_operations $\gets$ apply\_add\_edge\_operations(edges)}
         \State \emph{msf $\gets$ get\_msf()}
@@ -117,7 +119,7 @@ Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras q
     \end{algorithmic}
 \end{algorithm}
 
-Além disso, podemos perceber que a complexidade destes métodos é proporcional à $\Oh(q \log m)$, onde $q$ é o número de arestas que queremos adicionar.
+Além disso, podemos perceber que a complexidade destes métodos é proporcional à $\Oh(q \log m)$, onde $q$ é o número de arestas na lista \texttt{edges[]}.
 
 
 %% ------------------------------------------------------------------------- %%
