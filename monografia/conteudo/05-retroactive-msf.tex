@@ -4,9 +4,15 @@
 \chapter{Floresta Geradora Mínima Semi-Retroativa}
 \label{cap:retroactive-msf}
 
-Neste capitulo, descreveremos uma versão aprimorada solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima retroativa --- \emph{retroactive minimum spanning forest}, em inglês. Esta versão utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do capítulo anterior para solucionar o problema.
+Neste capitulo, descreveremos uma versão aprimorada solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima retroativa --- \emph{retroactive minimum spanning forest}, em inglês. Esta versão utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do Capítulo \ref{cap:incremental-msf} para solucionar o problema.
 
-Vale notar que tanto a solução de Andrade Júnior e Duarte Seabra quanto a versão aqui apresentada não implementam completamente retroatividade, pois ambas não dão suporte a remoção de operações. Por isso decidimos nos referir a estas duas soluções como \emph{semi-retroativas}.
+%% ------------------------------------------------------------------------- %%
+\section{Nomenclatura}
+\label{sec:nomeclatura}
+
+Tendo em vista as definições acerca de estruturas de dados parcialmente e totalmente retroativas, mostradas no Capítulo \ref{cap:introducao}, decidimos nos referir tanto a solução de Andrade Júnior e Duarte Seabra quanto a versão aqui apresentada como \emph{semi-retroativas}. Isto se da pelo fato de ambas suportarem inserções e consultas em qualquer instante de tempo, porém nenhuma delas suporta a remoção de uma operação, o que as exclui de qualquer uma das duas definições.
+
+Vale notar que \citet{DBLP:journals/corr/abs-1910-03332} apresentam ainda outra definição, a de \emph{estrutura de dados incremental totalmente retroativa}. Neste contexto, uma operação retroativa pode criar ou cancelar uma inserção, fazendo com que, no segundo caso, a operação cancelada seja totalmente removida da estrutura de dados. Entretanto, não se pode criar uma remoção, isto é, não existe suporte para que uma operação seja cancelada somente após um certo instante de tempo. Portanto, apesar de um nome sugestivo, essa definição também não contempla a solução que vamos estudar neste capítulo.
 
 %% ------------------------------------------------------------------------- %%
 \section{Square-root decomposition}
@@ -59,25 +65,11 @@ Com o intuito de maximizarmos a eficiência desta função, queremos encontrar u
 
 Portanto, $\sqrt{n}$ é o tamanho ótimo para um bloco, o que implica que a nossa lista será dividida em $\sqrt{n}$ blocos, daí o nome da técnica. Finalmente, temos agora que a consulta \texttt{find\_sum} consome tempo $\Oh(\sqrt{n})$.
 
-
-%% ------------------------------------------------------------------------- %%
-\section{Ideia}
-\label{sec:rmsf-ideia}
-
-\todo{mostrar ideia, falar que a implimentaçao que vamos mostrar tem uma limitacao, por isso chamamos ela de semi retroativa}
-\todo{falar floresta geradora maximal de peso minima}
-
-% %% ------------------------------------------------------------------------- %%
-% \subsection{reconstrução da decomposição}
-% \label{sec:rmsf-reconstru}
-\todo{mostrar implementação de 1 ou 2 métodos internos}
-
-
 %% ------------------------------------------------------------------------- %%
 \section{Rotinas extras para a versão incremental}
 \label{sec:imsf-extras}
 
-Antes de mostrarmos as rotinas dessa versão do problema, temos que apresentar duas funções extras adicionadas na nossa solução para a versão incremental do problema.  Em particular, ambas possuem o mesmo objetivo: possibilitar consultas acerca da floresta maximal de peso mínimo após a adição de um conjunto de arestas sem que tais modificações persistam na estrutura original. Em outras palavras, elas simulam o que poderia ser consultado caso fizéssemos estas adições de arestas em uma cópia da estrutura, porém, sem o custo adicional que tal cópia implica.
+Antes de seguirmos adiante com a explicação versão do problema, temos que apresentar duas funções extras adicionadas na nossa solução para a versão incremental do problema. Em particular, ambas possuem o mesmo objetivo: possibilitar consultas acerca da floresta maximal de peso mínimo após a adição de um conjunto de arestas sem que tais modificações persistam na estrutura original. Em outras palavras, elas simulam o que poderia ser consultado caso fizéssemos estas adições de arestas em uma cópia da estrutura, porém, sem o custo adicional que tal cópia implica.
 
 Essas rotinas são as \texttt{get\_msf\_after\_operations(edges[])} e \texttt{get\_msf\_weight\_after\_operations(edges[])}, que recebem uma lista de arestas e retornam, respectivamente, as arestas que fazem parte de uma floresta maximal de peso mínimo e seu peso caso as arestas da lista fornecida fossem adicionas ao grafo. Desta forma, a execução destes métodos consiste em três etapas: adição das arestas na estrutura; realização da consulta que estamos interessados; reversão da estrutura para o seu estado inicial.
 
@@ -120,6 +112,34 @@ Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras q
 \end{algorithm}
 
 Além disso, podemos perceber que a complexidade destes métodos é proporcional à $\Oh(q \log m)$, onde $q$ é o número de arestas na lista \texttt{edges[]}.
+
+%% ------------------------------------------------------------------------- %%
+\section{Ideia}
+\label{sec:rmsf-ideia}
+
+% \todo{mostrar ideia, falar que a implimentaçao que vamos mostrar tem uma limitacao, por isso chamamos ela de semi retroativa}
+% \todo{falar floresta geradora maximal de peso minima}
+% \todo{mostrar implementação de 1 ou 2 métodos internos}
+
+Agora, com todas as peças necessárias em mãos, podemos partir para a explicação da solução. Assim como no Capítulo \ref{cap:incremental-msf}, estamos interessados em resolver o \emph{problema da floresta geradora maximal de peso mínimo}, porem agora em sua versão semi-retroativa.
+
+Em particular, queremos ser capazes de adicionar uma aresta ao grafo em certo estante de tempo, assim como realizar consultas acerca da floresta geradora maximal de peso mínimo em algum momento do presente ou do passado. Para isso, a estrutura deve conseguir dar suporte a seguinte interface:
+
+\begin{itemize}
+    \item \texttt{add\_edge(u, v, w, t)}: adiciona no grafo a aresta com pontas em $u$ e $v$ com peso $w$ no instante $t$;
+    \item \texttt{get\_msf(t)}: retorna a lista com todas as arestas que compõem uma floresta maximal de peso mínimo do grafo no instante $t$;
+    \item \texttt{get\_msf\_weight(t)}: retorna o custo de uma floresta maximal de peso mínimo do grafo no instante $t$.
+\end{itemize}
+
+Por último, a versão final apresentada faz com que estes três métodos tenham custo amortizado $\Oh(\sqrt m \log n)$, onde $m$ é o número de operações realizadas e $n$ é o número de vértices do grafo.
+
+%% ------------------------------------------------------------------------- %%
+\section{Versão original}
+\label{sec:rmsf-versao-ori}
+
+%% ------------------------------------------------------------------------- %%
+\section{Versão melhorada}
+\label{sec:rmsf-versao-mel}
 
 
 %% ------------------------------------------------------------------------- %%
