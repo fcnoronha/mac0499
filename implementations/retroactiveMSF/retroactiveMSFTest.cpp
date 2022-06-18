@@ -170,7 +170,7 @@ TEST(RetroactiveMSFTest, biTest)
     uniform_int_distribution<std::mt19937::result_type> dist_weight(1, 1000);
     uniform_int_distribution<std::mt19937::result_type> dist_time(1, 100000);
 
-    // we'll perform 10 validation steps running kruskal algo
+    // we'll perform 20 validation steps running kruskal algo
     for (int step = 1; step <= 20; step++)
     {
         for (int amt_edges = 1; amt_edges <= 100; amt_edges++)

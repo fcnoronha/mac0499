@@ -28,16 +28,16 @@ void RetroactiveMSF::rebuild_decomposition()
     for (auto op : edges_by_time)
     {
         position++;
-        int time = op.first;
         if (position % block_size == 0)
         {
+            int time = op.first;
             new_checkpoint_time.push_back(time);
         }
     }
 
     checkpoint_structure.insert(checkpoint_structure.begin(), IncrementalMSF());
     checkpoint_structure.insert(checkpoint_structure.begin(), IncrementalMSF());
-    while (checkpoint_structure.size() > new_checkpoint_time.size())
+    if (checkpoint_structure.size() == new_checkpoint_time.size() + 1)
     {
         checkpoint_structure.pop_back();
     }

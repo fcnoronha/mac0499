@@ -141,11 +141,36 @@ Inicialmente, vamos pensar em como resolver este problema de uma maneira ingênu
 
 Como podemos perceber, a solução acima gasta muito tempo construindo a resposta do zero para cada uma das consultas. Para melhorar isso, Andrade Júnior e Duarte Seabra sugerem uma maneira de acelerar esta etapa de construção de resposta, mas comprometendo um pouco o custo da rotina de inserção de novas arestas, através do uso da técnica de \emph{square root decomposition}.
 
-Para procedermos com a explicação, precisamos assumir duas coisas: que $m$ é um inteiro conhecido de antemão, representando o número total de arestas a serem inseridas no grafo; e que o instante de tempo fornecido a toda operação esteja no intervalo $[1,m]$. Esses dois detalhes representam uma grande restrição para a versão original, e buscamos eliminá-los na versão melhorada da solução.
+Para procedermos com a explicação, precisamos assumir duas coisas: que $m$ é um inteiro conhecido de antemão, representando o número total de arestas a serem inseridas no grafo; e que o instante de tempo fornecido a toda operação esteja no intervalo $[1,m]$. Esses dois detalhes representam uma grande restrição para a versão original, e buscamos eliminá-los na versão melhorada da solução. Além disso, sem perda de generalidade, vamos assumir que $m$ é um quadrado perfeito.
 
-Primeiramente, utilizando a ideia de \emph{square root decomposition}, vamos dividir a lista \texttt{edges\_by\_time} em $\sqrt m$ blocos. A fim de facilitar
+Primeiramente, utilizando a ideia de \emph{square root decomposition}, vamos dividir a lista \texttt{edges\_by\_time} em $\sqrt m$ blocos. De modo a facilitar a explicação, definimos os \emph{checkpoints} $c_1, c_2, \dots, c_{\sqrt m}$, que correspondem aos instantes de tempo no fim de cada bloco, assim temos que $c_i$ corresponde ao instante de tempo $i \sqrt m$. Em seguida, atribuímos uma floresta geradora mínima incremental $t_i$ a cada \emph{checkpoint}, onde $t_i$ é incrementada com todas as arestas inseridas em um instante de tempo menor ou igual a $c_i$.
 
-% descobrir se os checkpoints terminam em um bloco ou se comecam em outro
+Em outras palavras, podemos descrever esta construção da seguinte maneira: dividimos a lista de inserções em $\sqrt m$ blocos de tamanho $\sqrt m$, onde cada bloco possui uma estrutura para resolver o problema da floresta geradora mínima incremental. Dessa forma, fazemos com que a estrutura em cada bloco possua todas as arestas inseridas desde o instante de tempo $1$ até o instante de tempo máximo contido naquele bloco
+
+\todo{adicionar uma figura mostrando como ficaria para uma linha do tempo onde m = 16}
+
+A partir dessa construção, podemos responder uma consulta acerca do estado da floresta geradora maximal de peso mínimo no instante de tempo $t$ utilizando a seguinte abordagem:
+
+\begin{itemize}
+    \item para começar, precisamos encontrar o último bloco da decomposição que não possui a aresta adicionada no instante de tempo $t$, ou o bloco que a possui em seu extremo. Mais formalmente, isso corresponde a encontrarmos o maior $i$ tal que $c_i \leq t$ vale;
+    \item em seguida, vamos \emph{aumentar} este bloco até que ele possua todas as operações de inserção até o instante $t$, isto é, com a estrutura $t_i$ em mãos, incrementamos ela com todas as arestas adicionadas entre os instantes $c_i + 1$ e $t$;
+    \item finalmente, basta retornar a consulta de interesse, isto é, as arestas que compõem a floresta geradora ou o seu respectivo peso.
+\end{itemize}
+
+Vale notar que, caso a consulta aconteça no primeiro bloco, não existe uma estrutura inicial a qual podemos utilizar para incrementar a resposta final. Por isso, vamos definir o \emph{checkpoint} $c_0 = 0$ e sua respectiva estrutura $t_0$, uma floresta geradora mínima incremental completamente vazia.
+
+Agora, para executamos uma rotina \texttt{add\_edge(u,v,w,t)} fazemos o seguinte:
+
+\begin{itemize}
+    \item inicialmente, encontramos o primeiro bloco em que a aresta adicionada no instante $t$ deve ser passada para a estrutura incremental, ou seja, o menor $i$ tal que $t \leq c_i$ é verdade;
+    \item por último, basta adicionarmos esta aresta nas estruturas de cada bloco daqui para frente, o que se traduz em realizarmos uma operação de \texttt{add\_edge(u,v,w)} em todas as $t_j$, com $j \in [i, \sqrt m]$.
+\end{itemize}
+
+Finalmente, podemos analisar a complexidade desta solução, onde $m$ é o número de operações realizadas e $n$ é o número de vértices do grafo.
+
+Para as consultas, podemos perceber que o primeiro passo tem custo $\Oh(\sqrt m)$, dado que temos que percorrer todos os blocos até encontrarmos o $i$ de interesse. Já a segundo passo implica um custo amortizado de $\Oh(\sqrt m \log n)$, dado que, no pior caso, teremos que adicionar quase todas as arestas de um bloco na estrutura incremental. Assim, a consulta \texttt{get\_msf} fica com um custo amortizado de $\Oh(m + \sqrt m \log n) = \Oh(m)$ e a consulta \texttt{get\_msf\_weight} fica com custo amortizado de $\Oh(1 + \sqrt m \log n) = \Oh(\sqrt m \log n)$.
+
+Além disso, na rotina \texttt{add\_edge}, podemos ter que adicionar a aresta na estrutura incremental de quase todos os blocos da decomposição, com isso, seu custo amortizado também será de $\Oh(\sqrt m \log n)$.
 
 %% ------------------------------------------------------------------------- %%
 \subsection{Versão melhorada}
