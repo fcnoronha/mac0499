@@ -121,7 +121,7 @@ Além disso, podemos perceber que a complexidade destes métodos é proporcional
 % \todo{falar floresta geradora maximal de peso minima}
 % \todo{mostrar implementação de 1 ou 2 métodos internos}
 
-Agora, com todas as peças necessárias em mãos, podemos partir para a explicação da solução. Assim como no Capítulo \ref{cap:incremental-msf}, estamos interessados em resolver o \emph{problema da floresta geradora maximal de peso mínimo}, porem agora em sua versão semi-retroativa.
+Agora, com todas as peças necessárias em mãos, podemos partir para a explicação da solução. Assim como no Capítulo \ref{cap:incremental-msf}, estamos interessados em resolver o \emph{problema da floresta geradora maximal de peso mínimo}, porém agora em sua versão semi-retroativa.
 
 Em particular, queremos ser capazes de adicionar uma aresta ao grafo em certo estante de tempo, assim como realizar consultas acerca da floresta geradora maximal de peso mínimo em algum momento do presente ou do passado. Para isso, a estrutura deve conseguir dar suporte a seguinte interface:
 
@@ -131,14 +131,24 @@ Em particular, queremos ser capazes de adicionar uma aresta ao grafo em certo es
     \item \texttt{get\_msf\_weight(t)}: retorna o custo de uma floresta maximal de peso mínimo do grafo no instante $t$.
 \end{itemize}
 
-Por último, a versão final apresentada faz com que estes três métodos tenham custo amortizado $\Oh(\sqrt m \log n)$, onde $m$ é o número de operações realizadas e $n$ é o número de vértices do grafo.
+A seguir, vamos apresentar duas soluções para este problema: a primeira delas é a versão original de Andrade Júnior e Duarte Seabra, que fornece os métodos acima com um custo de $\Oh(\sqrt m \log n)$ por operação --- onde $m$ é o número de operações realizadas até o instante atual e $n$ é o número de vértices do grafo, porém essa abordagem apresenta uma restrição em relação a quantidade de operações que podem ser realizadas na estrutura; já a segunda solução corresponde a uma melhoria da versão original, onde eliminamos a restrição acerca da quantidade de operações, oferecendo um custo amortizado de $\Oh(\sqrt m \log n)$ por operação.
 
 %% ------------------------------------------------------------------------- %%
-\section{Versão original}
+\subsection{Versão original}
 \label{sec:rmsf-versao-ori}
 
+Inicialmente, vamos pensar em como resolver este problema de uma maneira ingênua, isto é, sem usar as técnicas mais sofisticadas que vimos até agora. Para isso, podemos manter uma lista ordenada \texttt{edges\_by\_time}, onde cada posição corresponde a uma operação \texttt{add\_edge(u,v,w,t)}, com a tripla \texttt{(u,v,w)} sendo armazenada como valor e \texttt{t} sendo usado como chave de ordenação para a lista. Assim, podemos responder às consultas da seguinte maneira: separamos todas as arestas inseridas até o instante de tempo $t$ fornecido para a consulta e executamos, por exemplo, o algoritmo de Kruskal para determinar a floresta geradora maximal de custo mínimo. Dessa maneira, o consumo de tempo da rotina \texttt{add\_edge} é $\Oh (log m)$ --- sendo $m$ o número de inserções realizadas, e o consumo de tempo das consultas \texttt{get\_msf} e \texttt{get\_msf\_weight} é de $\Oh(m \log m)$, pois no pior caso executamos o algoritmo de Kruskal para todas as arestas na lista.
+
+Como podemos perceber, a solução acima gasta muito tempo construindo a resposta do zero para cada uma das consultas. Para melhorar isso, Andrade Júnior e Duarte Seabra sugerem uma maneira de acelerar esta etapa de construção de resposta, mas comprometendo um pouco o custo da rotina de inserção de novas arestas, através do uso da técnica de \emph{square root decomposition}.
+
+Para procedermos com a explicação, precisamos assumir duas coisas: que $m$ é um inteiro conhecido de antemão, representando o número total de arestas a serem inseridas no grafo; e que o instante de tempo fornecido a toda operação esteja no intervalo $[1,m]$. Esses dois detalhes representam uma grande restrição para a versão original, e buscamos eliminá-los na versão melhorada da solução.
+
+Primeiramente, utilizando a ideia de \emph{square root decomposition}, vamos dividir a lista \texttt{edges\_by\_time} em $\sqrt m$ blocos. A fim de facilitar
+
+% descobrir se os checkpoints terminam em um bloco ou se comecam em outro
+
 %% ------------------------------------------------------------------------- %%
-\section{Versão melhorada}
+\subsection{Versão melhorada}
 \label{sec:rmsf-versao-mel}
 
 
