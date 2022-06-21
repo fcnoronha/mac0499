@@ -114,7 +114,6 @@
 \algdef{SE}[IF]{IfNot}{EndIf}[1]{\algorithmicif\ \textbf{not}\ #1\ \algorithmicthen}{\algorithmicend\ \algorithmicif}
 \algdef{SE}[WHILE]{WhileNot}{EndIf}[1]{\algorithmicwhile\ \textbf{not}\ #1\ \algorithmicthen}{\algorithmicend\ \algorithmicwhile}
 
-
 % para habilitar quebra de linha dentro do \texttt{} 
 \usepackage{lipsum}
 \usepackage[htt]{hyphenat}
@@ -124,6 +123,15 @@
 
 % para usar o \abs
 \usepackage{physics}
+
+% para tirar o espaço estranho antes da raiz
+\usepackage{letltxmacro}
+\LetLtxMacro{\oldsqrt}{\sqrt}
+\renewcommand{\sqrt}[2][\mkern4mu]{\mkern-4mu\mathop{}\oldsqrt[#1]{#2}}
+
+% para as bolinhas do capitulo 5
+% \newcommand{\bolinha}[1]{\; \raisebox{-10pt}{\Large\textcircled{\normalsize #1}}}
+\newcommand*\bolinha[1]{\; \tikz[inner sep=.25ex]\node[circle,draw]{#1}; \;}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% METADADOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

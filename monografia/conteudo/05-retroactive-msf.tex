@@ -137,17 +137,50 @@ A seguir, vamos apresentar duas soluções para este problema: a primeira delas 
 \subsection{Versão original}
 \label{sec:rmsf-versao-ori}
 
-Inicialmente, vamos pensar em como resolver este problema de uma maneira ingênua, isto é, sem usar as técnicas mais sofisticadas que vimos até agora. Para isso, podemos manter uma lista ordenada \texttt{edges\_by\_time}, onde cada posição corresponde a uma operação \texttt{add\_edge(u,v,w,t)}, com a tripla \texttt{(u,v,w)} sendo armazenada como valor e \texttt{t} sendo usado como chave de ordenação para a lista. Assim, podemos responder às consultas da seguinte maneira: separamos todas as arestas inseridas até o instante de tempo $t$ fornecido para a consulta e executamos, por exemplo, o algoritmo de Kruskal para determinar a floresta geradora maximal de custo mínimo. Dessa maneira, o consumo de tempo da rotina \texttt{add\_edge} é $\Oh (log m)$ --- sendo $m$ o número de inserções realizadas, e o consumo de tempo das consultas \texttt{get\_msf} e \texttt{get\_msf\_weight} é de $\Oh(m \log m)$, pois no pior caso executamos o algoritmo de Kruskal para todas as arestas na lista.
+Inicialmente, vamos pensar em como resolver este problema de uma maneira ingênua, isto é, sem usar as técnicas mais sofisticadas que vimos até agora. Para isso, podemos manter uma lista ordenada \texttt{edges\_by\_time}, onde cada posição corresponde a uma operação \texttt{add\_edge(u,v,w,t)}, com a aresta \texttt{(u,v,w)} sendo armazenada como valor e \texttt{t} sendo usado como chave de ordenação para a lista. Assim, podemos responder às consultas da seguinte maneira: separamos todas as arestas inseridas até o instante de tempo $t$ fornecido para a consulta e executamos, por exemplo, o algoritmo de Kruskal para determinar a floresta geradora maximal de custo mínimo. Dessa maneira, o consumo de tempo da rotina \texttt{add\_edge} é $\Oh (log m)$ --- sendo $m$ o número de inserções realizadas, e o consumo de tempo das consultas \texttt{get\_msf} e \texttt{get\_msf\_weight} é de $\Oh(m \log m)$, pois no pior caso executamos o algoritmo de Kruskal para todas as arestas na lista.
 
 Como podemos perceber, a solução acima gasta muito tempo construindo a resposta do zero para cada uma das consultas. Para melhorar isso, Andrade Júnior e Duarte Seabra sugerem uma maneira de acelerar esta etapa de construção de resposta, mas comprometendo um pouco o custo da rotina de inserção de novas arestas, através do uso da técnica de \emph{square root decomposition}.
 
 Para procedermos com a explicação, precisamos assumir duas coisas: que $m$ é um inteiro conhecido de antemão, representando o número total de arestas a serem inseridas no grafo; e que o instante de tempo fornecido a toda operação esteja no intervalo $[1,m]$. Esses dois detalhes representam uma grande restrição para a versão original, e buscamos eliminá-los na versão melhorada da solução. Além disso, sem perda de generalidade, vamos assumir que $m$ é um quadrado perfeito.
 
-Primeiramente, utilizando a ideia de \emph{square root decomposition}, vamos dividir a lista \texttt{edges\_by\_time} em $\sqrt m$ blocos. De modo a facilitar a explicação, definimos os \emph{checkpoints} $c_1, c_2, \dots, c_{\sqrt m}$, que correspondem aos instantes de tempo no fim de cada bloco, assim temos que $c_i$ corresponde ao instante de tempo $i \sqrt m$. Em seguida, atribuímos uma floresta geradora mínima incremental $t_i$ a cada \emph{checkpoint}, onde $t_i$ é incrementada com todas as arestas inseridas em um instante de tempo menor ou igual a $c_i$.
+Primeiramente, utilizando a ideia de \emph{square root decomposition}, vamos dividir a lista \texttt{edges\_by\_time} em $\sqrt m$ blocos. Além disso, definimos os \emph{checkpoints} $c_1, c_2, \dots, c_{\sqrt m}$, que correspondem aos instantes de tempo no fim de cada bloco, assim temos que $c_i$ corresponde ao instante de tempo $i \sqrt m$. Em seguida, atribuímos uma floresta geradora mínima incremental $t_i$ a cada \emph{checkpoint}, onde $t_i$ é incrementada com todas as arestas inseridas em um instante de tempo menor ou igual a $c_i$.
 
 Em outras palavras, podemos descrever esta construção da seguinte maneira: dividimos a lista de inserções em $\sqrt m$ blocos de tamanho $\sqrt m$, onde cada bloco possui uma estrutura para resolver o problema da floresta geradora mínima incremental. Dessa forma, fazemos com que a estrutura em cada bloco possua todas as arestas inseridas desde o instante de tempo $1$ até o instante de tempo máximo contido naquele bloco
 
-\todo{adicionar uma figura mostrando como ficaria para uma linha do tempo onde m = 16}
+\begin{figure}
+    \centering
+    \begin{equation*}
+        \overbracket{
+            \overbracket{
+                \overbracket{
+                    \overbracket{
+                        \overbracket{
+                            \bolinha{\,0\,}
+                        }^{t_0}
+                        \bolinha{\,1\,}
+                        \bolinha{\,2\,}
+                        \bolinha{\,3\,}
+                        \bolinha{\,4\,}
+                    }^{t_1}
+                    \bolinha{\,5\,}
+                    \bolinha{\,6\,}
+                    \bolinha{\,7\,}
+                    \bolinha{\,8\,}
+                }^{t_2}
+                \bolinha{\,9\,}
+                \bolinha{10}
+                \bolinha{11}
+                \bolinha{12}
+            }^{t_3}
+            \bolinha{13}
+            \bolinha{14}
+            \bolinha{15}
+            \bolinha{16}
+        }^{t_4}
+    \end{equation*}
+    \caption{Representação da lista \texttt{edges\_by\_time} com $m$ igual a $16$. Neste caso, cada bloco tem tamanho $4$ e os instantes $0,4,8,12$ e $16$ são $c_0, c_1, c_2, c_3$ e $c_4$, respectivamente. Assim, por exemplo, a estrutura $t_3$ contém todas as arestas adicionadas desde o instante $1$ até o instante $12$.}
+    \label{fig:sqrt-decomp-blocks-m16}
+\end{figure}
 
 A partir dessa construção, podemos responder uma consulta acerca do estado da floresta geradora maximal de peso mínimo no instante de tempo $t$ utilizando a seguinte abordagem:
 
@@ -157,7 +190,7 @@ A partir dessa construção, podemos responder uma consulta acerca do estado da 
     \item finalmente, basta retornar a consulta de interesse, isto é, as arestas que compõem a floresta geradora ou o seu respectivo peso.
 \end{itemize}
 
-Vale notar que, caso a consulta aconteça no primeiro bloco, não existe uma estrutura inicial a qual podemos utilizar para incrementar a resposta final. Por isso, vamos definir o \emph{checkpoint} $c_0 = 0$ e sua respectiva estrutura $t_0$, uma floresta geradora mínima incremental completamente vazia.
+Vale notar que, caso a consulta aconteça no primeiro bloco, não existe uma estrutura inicial a qual podemos utilizar para incrementar a resposta final. Por isso, vamos definir o \emph{checkpoint} $c_0 = 0$ e sua respectiva estrutura $t_0$, uma floresta geradora mínima incremental de um grafo vazio.
 
 Agora, para executamos uma rotina \texttt{add\_edge(u,v,w,t)} fazemos o seguinte:
 
@@ -176,6 +209,46 @@ Além disso, na rotina \texttt{add\_edge}, podemos ter que adicionar a aresta na
 \subsection{Versão melhorada}
 \label{sec:rmsf-versao-mel}
 
+Como podemos ver acima, a versão original de Andrade Júnior e Duarte Seabra oferece uma solução para o problema que estamos interessados em resolver, porém, as restrições que a acompanham acabam se tornando um grande inconveniente. Logo, ao refletirmos sobre maneiras de melhorar a ideia apresentada, rapidamente notamos que a construção inicial da decomposição acaba se tornando um limitante para a estrutura.
+
+Em particular, a construção realizada na versão original se baseia no artigo proponente da ideia de estruturas de dados retroativas, de Demaine, Iacono et al., que mostra uma receita para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas --- traduzindo para o nosso caso, uma maneira para transformar a floresta geradora mínima incremental em uma retroativa. Entretanto, na abordagem sugerida pelo artigo, são diversas reconstruções da decomposição, conforme novas aresta vão sendo adicionadas. Mais especificamente, os autores sugerem uma reconstrução a cada $\frac{\sqrt m}{2}$ operações, de modo a garantir que nenhum bloco tenha tamanho maior que $\frac{3\sqrt m}{2}$.
+
+Além disso, assumindo que a reconstrução possui um custo de $\Oh(m \log n)$, podemos distribuir este gasto de maneira amortizada em cada operação, fazendo com que o custo amortizado de cada uma continue sendo $\Oh(\sqrt m \log n)$. Todavia, para que a reconstrução tenha este custo, é necessário que estrutura parcialmente retroativa tenha uma versão persistente, de modo a  podermos utilizar uma única cópia para representar $t_0, t_1, \dots, t_{\sqrt m}$. Por sua vez, uma versão persistente da floresta geradora mínima incremental requer a implementação de uma \emph{link-cut tree} persistente, como a apresentada por \citet{10.1007/978-3-540-69903-3_16}. Porém, essa implementação é bastante sofisticada, e seu estudo fugiria do escopo deste trabalho.
+
+Logo, estaremos interessados em resolver este problema utilizando uma versão não persistente da floresta geradora mínima incremental, criando uma cópia da estrutura para cada $t_i$. Desse modo, durante uma reconstrução, as operações do último bloco serão inseridas em $t_{\sqrt m}$, as operações do penúltimo bloco serão inseridas em $t_{\sqrt m - 1}$ e $t_{\sqrt m}$, e assim por diante. Portanto, podemos calcular o custo dessa reconstrução da seguinte maneira:
+
+\begin{equation}
+    \sum_{i=1}^{\sqrt m} (i \sqrt m \log n) =
+    \frac{m \log n \: (\sqrt m + 1)}{2} \Rightarrow
+    \Oh(m \log n \sqrt m).
+\end{equation}
+
+Ou seja, com o custo da reconstrução apresentado acima, cada operação teria agora um custo amortizado de $\Oh(m \log n)$, o que esta longe do ideal. Neste ponto, nossa abordagem para solucionar o problema fica bastante criativa, com a apresentação de uma maneira totalmente nova de realizar tal tarefa.
+
+% apresentar nossa ideia, de reaproveitar a estrutura e reconstruir a cada quadrado perfeito
+
+%% ------------------------------------------------------------------------- %%
+\subsection{Complexidade}
+\label{sec:rmsf-complexidade}
+
+
+
+\todo{falar da alternativa usada no paper do andre para contornar o problema da complexidade}
+\todo{falar que poderiamos adaptar essa solucao usando link-cut trees persistentes, citar paper que a Cris mandou}
+\todo{falar da complexidade da nossa variante da solucao proposta por Demaine}
+
+% corolário: são realizadas 2sqrt m operações entre 2 quadrados perfeitos
+
+% teorema: cada t_i eh deslocada no máximo 4sqrt posições a cada reconstrução (provinha no email)
+
+% deduzir complexidade através das provas
+
+
+%% ------------------------------------------------------------------------- %%
+\section{Rotina Build Decomposition}
+\label{sec:rmsf-build-decomposition}
+
+
 
 %% ------------------------------------------------------------------------- %%
 \section{Consultas Get MSF e Get MST Weight}
@@ -187,12 +260,3 @@ Além disso, na rotina \texttt{add\_edge}, podemos ter que adicionar a aresta na
 \section{Rotina Add Edge}
 \label{sec:rmsf-add-edge}
 
-
-
-%% ------------------------------------------------------------------------- %%
-\section{Complexidade}
-\label{sec:rmsf-complexidade}
-
-\todo{falar da alternativa usada no paper do andre para contornar o problema da complexidade}
-\todo{falar que poderiamos adaptar essa solucao usando link-cut trees persistentes, citar paper que a Cris mandou}
-\todo{falar da complexidade da nossa variante da solucao proposta por Demaine}
