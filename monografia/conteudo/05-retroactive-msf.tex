@@ -131,7 +131,7 @@ Em particular, queremos ser capazes de adicionar uma aresta ao grafo em certo es
     \item \texttt{get\_msf\_weight(t)}: retorna o custo de uma floresta maximal de peso mínimo do grafo no instante $t$.
 \end{itemize}
 
-A seguir, vamos apresentar duas soluções para este problema: a primeira delas é a versão original de Andrade Júnior e Duarte Seabra, que fornece os métodos acima com um custo de $\Oh(\sqrt m \log n)$ por operação --- onde $m$ é o número de operações realizadas até o instante atual e $n$ é o número de vértices do grafo, porém essa abordagem apresenta uma restrição em relação a quantidade de operações que podem ser realizadas na estrutura; já a segunda solução corresponde a uma melhoria da versão original, onde eliminamos a restrição acerca da quantidade de operações, oferecendo um custo amortizado de $\Oh(\sqrt m \log n)$ por operação.
+A seguir, vamos apresentar duas soluções para este problema: a primeira delas é a versão original de Andrade Júnior e Duarte Seabra, que fornece os métodos acima com um custo de $\Oh(\sqrt{m} \log n)$ por operação --- onde $m$ é o número de operações realizadas até o instante atual e $n$ é o número de vértices do grafo, porém essa abordagem apresenta uma restrição em relação a quantidade de operações que podem ser realizadas na estrutura; já a segunda solução corresponde a uma melhoria da versão original, onde eliminamos a restrição acerca da quantidade de operações, oferecendo um custo amortizado de $\Oh(\sqrt{m} \log n)$ por operação.
 
 %% ------------------------------------------------------------------------- %%
 \subsection{Versão original}
@@ -143,9 +143,9 @@ Como podemos perceber, a solução acima gasta muito tempo construindo a respost
 
 Para procedermos com a explicação, precisamos assumir duas coisas: que $m$ é um inteiro conhecido de antemão, representando o número total de arestas a serem inseridas no grafo; e que o instante de tempo fornecido a toda operação esteja no intervalo $[1,m]$. Esses dois detalhes representam uma grande restrição para a versão original, e buscamos eliminá-los na versão melhorada da solução. Além disso, sem perda de generalidade, vamos assumir que $m$ é um quadrado perfeito.
 
-Primeiramente, utilizando a ideia de \emph{square root decomposition}, vamos dividir a lista \texttt{edges\_by\_time} em $\sqrt m$ blocos. Além disso, definimos os \emph{checkpoints} $c_1, c_2, \dots, c_{\sqrt m}$, que correspondem aos instantes de tempo no fim de cada bloco, assim temos que $c_i$ corresponde ao instante de tempo $i \sqrt m$. Em seguida, atribuímos uma floresta geradora mínima incremental $t_i$ a cada \emph{checkpoint}, onde $t_i$ é incrementada com todas as arestas inseridas em um instante de tempo menor ou igual a $c_i$.
+Primeiramente, utilizando a ideia de \emph{square root decomposition}, vamos dividir a lista \texttt{edges\_by\_time} em $\sqrt{m}$ blocos. Além disso, definimos os \emph{checkpoints} $c_1, c_2, \dots, c_{\sqrt{m}}$, que correspondem aos instantes de tempo no fim de cada bloco, assim temos que $c_i$ corresponde ao instante de tempo $i \sqrt{m}$. Em seguida, atribuímos uma floresta geradora mínima incremental $t_i$ a cada \emph{checkpoint}, onde $t_i$ é incrementada com todas as arestas inseridas em um instante de tempo menor ou igual a $c_i$.
 
-Em outras palavras, podemos descrever esta construção da seguinte maneira: dividimos a lista de inserções em $\sqrt m$ blocos de tamanho $\sqrt m$, onde cada bloco possui uma estrutura para resolver o problema da floresta geradora mínima incremental. Dessa forma, fazemos com que a estrutura em cada bloco possua todas as arestas inseridas desde o instante de tempo $1$ até o instante de tempo máximo contido naquele bloco
+Em outras palavras, podemos descrever esta construção da seguinte maneira: dividimos a lista de inserções em $\sqrt{m}$ blocos de tamanho $\sqrt{m}$, onde cada bloco possui uma estrutura para resolver o problema da floresta geradora mínima incremental. Dessa forma, fazemos com que a estrutura em cada bloco possua todas as arestas inseridas desde o instante de tempo $1$ até o instante de tempo máximo contido naquele bloco
 
 \begin{figure}
     \centering
@@ -196,14 +196,14 @@ Agora, para executamos uma rotina \texttt{add\_edge(u,v,w,t)} fazemos o seguinte
 
 \begin{itemize}
     \item inicialmente, encontramos o primeiro bloco em que a aresta adicionada no instante $t$ deve ser passada para a estrutura incremental, ou seja, o menor $i$ tal que $t \leq c_i$ é verdade;
-    \item por último, basta adicionarmos esta aresta nas estruturas de cada bloco daqui para frente, o que se traduz em realizarmos uma operação de \texttt{add\_edge(u,v,w)} em todas as $t_j$, com $j \in [i, \sqrt m]$.
+    \item por último, basta adicionarmos esta aresta nas estruturas de cada bloco daqui para frente, o que se traduz em realizarmos uma operação de \texttt{add\_edge(u,v,w)} em todas as $t_j$, com $j \in [i, \sqrt{m}]$.
 \end{itemize}
 
 Finalmente, podemos analisar a complexidade desta solução, onde $m$ é o número de operações realizadas e $n$ é o número de vértices do grafo.
 
-Para as consultas, podemos perceber que o primeiro passo tem custo $\Oh(\sqrt m)$, dado que temos que percorrer todos os blocos até encontrarmos o $i$ de interesse. Já a segundo passo implica um custo amortizado de $\Oh(\sqrt m \log n)$, dado que, no pior caso, teremos que adicionar quase todas as arestas de um bloco na estrutura incremental. Assim, a consulta \texttt{get\_msf} fica com um custo amortizado de $\Oh(m + \sqrt m \log n) = \Oh(m)$ e a consulta \texttt{get\_msf\_weight} fica com custo amortizado de $\Oh(1 + \sqrt m \log n) = \Oh(\sqrt m \log n)$.
+Para as consultas, podemos perceber que o primeiro passo tem custo $\Oh(\sqrt{m})$, dado que temos que percorrer todos os blocos até encontrarmos o $i$ de interesse. Já a segundo passo implica um custo amortizado de $\Oh(\sqrt{m} \log n)$, dado que, no pior caso, teremos que adicionar quase todas as arestas de um bloco na estrutura incremental. Assim, a consulta \texttt{get\_msf} fica com um custo amortizado de $\Oh(m + \sqrt{m} \log n) = \Oh(m)$ e a consulta \texttt{get\_msf\_weight} fica com custo amortizado de $\Oh(1 + \sqrt{m} \log n) = \Oh(\sqrt{m} \log n)$.
 
-Além disso, na rotina \texttt{add\_edge}, podemos ter que adicionar a aresta na estrutura incremental de quase todos os blocos da decomposição, com isso, seu custo amortizado também será de $\Oh(\sqrt m \log n)$.
+Além disso, na rotina \texttt{add\_edge}, podemos ter que adicionar a aresta na estrutura incremental de quase todos os blocos da decomposição, com isso, seu custo amortizado também será de $\Oh(\sqrt{m} \log n)$.
 
 %% ------------------------------------------------------------------------- %%
 \subsection{Versão melhorada}
@@ -211,35 +211,57 @@ Além disso, na rotina \texttt{add\_edge}, podemos ter que adicionar a aresta na
 
 Como podemos ver acima, a versão original de Andrade Júnior e Duarte Seabra oferece uma solução para o problema que estamos interessados em resolver, porém, as restrições que a acompanham acabam se tornando um grande inconveniente. Logo, ao refletirmos sobre maneiras de melhorar a ideia apresentada, rapidamente notamos que a construção inicial da decomposição acaba se tornando um limitante para a estrutura.
 
-Em particular, a construção realizada na versão original se baseia no artigo proponente da ideia de estruturas de dados retroativas, de Demaine, Iacono et al., que mostra uma receita para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas --- traduzindo para o nosso caso, uma maneira para transformar a floresta geradora mínima incremental em uma retroativa. Entretanto, na abordagem sugerida pelo artigo, são diversas reconstruções da decomposição, conforme novas aresta vão sendo adicionadas. Mais especificamente, os autores sugerem uma reconstrução a cada $\frac{\sqrt m}{2}$ operações, de modo a garantir que nenhum bloco tenha tamanho maior que $\frac{3\sqrt m}{2}$.
+Em particular, a construção realizada na versão original se baseia no artigo proponente da ideia de estruturas de dados retroativas, de Demaine, Iacono et al., que mostra uma receita para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas --- traduzindo para o nosso caso, uma maneira para transformar a floresta geradora mínima incremental em uma retroativa. Entretanto, na abordagem sugerida pelo artigo, são diversas reconstruções da decomposição, conforme novas aresta vão sendo adicionadas. Mais especificamente, os autores sugerem uma reconstrução a cada $\frac{\sqrt{m}}{2}$ operações, de modo a garantir que nenhum bloco tenha tamanho maior que $\frac{3\sqrt{m}}{2}$.
 
-Além disso, assumindo que a reconstrução possui um custo de $\Oh(m \log n)$, podemos distribuir este gasto de maneira amortizada em cada operação, fazendo com que o custo amortizado de cada uma continue sendo $\Oh(\sqrt m \log n)$. Todavia, para que a reconstrução tenha este custo, é necessário que estrutura parcialmente retroativa tenha uma versão persistente, de modo a  podermos utilizar uma única cópia para representar $t_0, t_1, \dots, t_{\sqrt m}$. Por sua vez, uma versão persistente da floresta geradora mínima incremental requer a implementação de uma \emph{link-cut tree} persistente, como a apresentada por \citet{10.1007/978-3-540-69903-3_16}. Porém, essa implementação é bastante sofisticada, e seu estudo fugiria do escopo deste trabalho.
+Além disso, assumindo que a reconstrução possui um custo de $\Oh(m \log n)$, podemos distribuir este gasto de maneira amortizada em cada operação, fazendo com que o custo amortizado de cada uma continue sendo $\Oh(\sqrt{m} \log n)$. Todavia, para que a reconstrução tenha este custo, é necessário que estrutura parcialmente retroativa tenha uma versão persistente, de modo a  podermos utilizar uma única cópia para representar $t_0, t_1, \dots, t_{\sqrt{m}}$. Por sua vez, uma versão persistente da floresta geradora mínima incremental requer a implementação de uma \emph{link-cut tree} persistente, como a apresentada por \citet{10.1007/978-3-540-69903-3_16}. Porém, essa implementação é bastante sofisticada, e seu estudo fugiria do escopo deste trabalho.
 
-Logo, estaremos interessados em resolver este problema utilizando uma versão não persistente da floresta geradora mínima incremental, criando uma cópia da estrutura para cada $t_i$. Desse modo, durante uma reconstrução, as operações do último bloco serão inseridas em $t_{\sqrt m}$, as operações do penúltimo bloco serão inseridas em $t_{\sqrt m - 1}$ e $t_{\sqrt m}$, e assim por diante. Portanto, podemos calcular o custo dessa reconstrução da seguinte maneira:
+Logo, estaremos interessados em resolver este problema utilizando uma versão não persistente da floresta geradora mínima incremental, criando uma cópia da estrutura para cada $t_i$. Desse modo, durante uma reconstrução, as operações do último bloco serão inseridas em $t_{\sqrt{m}}$, as operações do penúltimo bloco serão inseridas em $t_{\sqrt{m} - 1}$ e $t_{\sqrt{m}}$, e assim por diante. Portanto, podemos calcular o custo dessa reconstrução da seguinte maneira:
 
 \begin{equation}
-    \sum_{i=1}^{\sqrt m} (i \sqrt m \log n) =
-    \frac{m \log n \: (\sqrt m + 1)}{2} \Rightarrow
-    \Oh(m \log n \sqrt m).
+    \sum_{i=1}^{\sqrt{m}} (i \sqrt{m} \log n) =
+    \frac{m \log n \: (\sqrt{m} + 1)}{2} \Rightarrow
+    \Oh(m \log n \sqrt{m}).
 \end{equation}
 
 Ou seja, com o custo da reconstrução apresentado acima, cada operação teria agora um custo amortizado de $\Oh(m \log n)$, o que esta longe do ideal. Neste ponto, nossa abordagem para solucionar o problema fica bastante criativa, com a apresentação de uma maneira totalmente nova de realizar tal tarefa.
 
-% apresentar nossa ideia, de reaproveitar a estrutura e reconstruir a cada quadrado perfeito
+O principal ponto a ser notado é que, entre uma reconstrução e outra, gastamos muito tempo para reconstruir as $t_i$ a partir do zero, e que talvez exista uma maneira para de reaproveitar as estruturas da decomposição anterior durante a reconstrução da nova. Para facilitar as coisas, vamos diferenciar a notação relativa à nova decomposição em relação a antiga. Deste modo, definimos $\sqrt{m^*}$ como o tamanho do bloco na nova versão, além de $c_0^*, c_1^*, \dots, c_{\sqrt{m^*}}^*$ e $t_0^*, t_1^*, \dots, t_{\sqrt{m^*}}^*$ como as novas listas de \emph{checkpoints} e florestas geradoras mínimas incrementais.
+
+Assim, nossa versão melhorada funciona da seguinte maneira:
+
+\begin{itemize}
+    \item primeiramente, uma reconstrução vai ser realizada toda vez que $m$ for um quadrado perfeito, fazendo com que $\sqrt{m^*} $ seja igual a $\sqrt{m} + 1$;
+    \item em cada reconstrução, faremos com que $t_0^*$ e $t_1^*$ sejam uma floresta geradora incremental de um grafo vazio, além disso, definimos $t_i^* = t_{i-2}$, para $i \in [2, \sqrt{m^*}]$;
+    \item por último, deslocamos cada $t_i^*$ para o seu respectivo $c_i^*$, isto é, incluímos todas as arestas adicionadas desde o instante $c_{i-2}$ ate o instante $c_i^*$ --- caso $i-2$ seja menor que $0$ incluímos todas as arestas desde o início da lista de operações.
+\end{itemize}
+
+A partir dessa versão, a reconstrução consome o mesmo tempo da reconstrução sugerida por Demaine, Iacono et al., porem agora sem a necessidade de uma estrutura persistente. Além disso, o funcionamento das outras rotinas continuam iguais ao da versão original.
 
 %% ------------------------------------------------------------------------- %%
 \subsection{Complexidade}
 \label{sec:rmsf-complexidade}
 
+Antes de adentrarmos nos detalhes de como são as implementações dos métodos da nossa estrutura, vamos analisar a complexidade da versão aqui proposta. Primeiramente, precisamos obter um resultado relativamente simples, porém muito útil para nossa análise: o número de operações realizadas entre duas reconstruções.
 
+\begin{corollary}
+    \label{coro:amt-op}
+    Seja $m$, a quantidade atual de operações realizadas, um quadrado perfeito. Entao o número de operações a serem realizadas até a próxima reconstrução é de $2 \sqrt{m} + 1$.
+\end{corollary}
+\begin{proof}
+    Como sabemos, uma nova reconstrução acontece quando $m$ for o próximo quadrado perfeito. Desse modo, na próxima reconstrução teremos um novo $m^*$ igual a $(\sqrt m + 1)^2$. Logo, podemos calcular a diferença entre estes dois valores como:
+    \begin{align*}
+        m^* - m & = (\sqrt m + 1)^2 - m    \\
+                & = (m + 2\sqrt m + 1) - m \\
+                & = 2\sqrt m + 1
+    \end{align*}
+    Portanto, temos que $2\sqrt m + 1$ operações serão realizadas entre duas reconstruções.
+\end{proof}
 
-\todo{falar da alternativa usada no paper do andre para contornar o problema da complexidade}
-\todo{falar que poderiamos adaptar essa solucao usando link-cut trees persistentes, citar paper que a Cris mandou}
-\todo{falar da complexidade da nossa variante da solucao proposta por Demaine}
-
-% corolário: são realizadas 2sqrt m operações entre 2 quadrados perfeitos
+Agora, precisamos descobrir
 
 % teorema: cada t_i eh deslocada no máximo 4sqrt posições a cada reconstrução (provinha no email)
+
+% mostrar que as t_i de fato so voltam para frente
 
 % deduzir complexidade através das provas
 
@@ -254,6 +276,7 @@ Ou seja, com o custo da reconstrução apresentado acima, cada operação teria 
 \section{Consultas Get MSF e Get MST Weight}
 \label{sec:rmsf-get-msf}
 
+% falar sobre uso das funcoes extras que apresentamos neste capitulo
 
 
 %% ------------------------------------------------------------------------- %%
