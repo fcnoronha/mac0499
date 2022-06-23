@@ -44,7 +44,7 @@ private:
       checkpoint smaller than t and t. In other words, let ct be the time of
       the last checkpoint smaller than t, then it will return all the edges
       added in Edge range (tc, t]. */
-   std::vector<Edge> get_delta_edge_operations(int);
+   std::vector<Edge> get_delta_edge_operations(int, int);
 
 public:
    /* Add an edge from node u to v with weigth w into the graph at the time t. */

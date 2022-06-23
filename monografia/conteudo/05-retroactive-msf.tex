@@ -67,7 +67,7 @@ Portanto, $\sqrt{n}$ é o tamanho ótimo para um bloco, o que implica que a noss
 
 %% ------------------------------------------------------------------------- %%
 \section{Rotinas extras para a versão incremental}
-\label{sec:imsf-extras}
+\label{sec:rmsf-extras}
 
 Antes de seguirmos adiante com a explicação versão do problema, temos que apresentar duas funções extras adicionadas na nossa solução para a versão incremental do problema. Em particular, ambas possuem o mesmo objetivo: possibilitar consultas acerca da floresta maximal de peso mínimo após a adição de um conjunto de arestas sem que tais modificações persistam na estrutura original. Em outras palavras, elas simulam o que poderia ser consultado caso fizéssemos estas adições de arestas em uma cópia da estrutura, porém, sem o custo adicional que tal cópia implica.
 
@@ -191,7 +191,7 @@ Vale notar que, caso a consulta aconteça no primeiro bloco, não existe uma est
 Agora, para executamos uma rotina \texttt{add\_edge(u,v,w,t)} fazemos o seguinte:
 
 \begin{itemize}
-    \item inicialmente, encontramos o primeiro bloco em que a aresta adicionada no instante $t$ deve ser passada para a estrutura incremental, ou seja, o menor $i$ tal que $t \leq c_i$ é verdade;
+    \item inicialmente, encontramos o primeiro bloco em que a aresta adicionada no instante $t$ deve ser passada para a estrutura incremental, ou seja, o menor $i$ tal que $t < c_i$ é verdade;
     \item por último, basta adicionarmos esta aresta nas estruturas de cada bloco daqui para frente, o que se traduz em realizarmos uma operação de \texttt{add\_edge(u,v,w)} em todas as $t_j$, com $j \in [i, \sqrt{m}]$.
 \end{itemize}
 
@@ -294,16 +294,86 @@ Finalmente, devido ao deslocamento que sera realizado em cada $t_i^*$ e utilizan
 \section{Rotina Build Decomposition}
 \label{sec:rmsf-build-decomposition}
 
+A primeira rotina que vamos fornecer uma explicação mais detalhada é a responsável por reconstruir a decomposição, a \texttt{build\_decomposition}. Este método vai ser acionado pela rotina \texttt{add\_edge} toda vez que $m$ for um quadrado perfeito.
 
+
+\begin{algorithm}[h!]
+    \caption{Rotina Build Decomposition}\label{rmsf-build-decomp}
+    \begin{algorithmic}[1]
+        \Function{build\_decomposition}{\emph{}}
+        \State \emph{block\_size += 1}
+        \State \emph{n\_blocks $\gets$ block\_size + 1}
+
+        \State \emph{position $\gets$ 0}
+        \State \emph{$c^*$ $\gets$ [0]}
+        \ForEach{\emph{[edge, time] in edges\_by\_time}}
+        \State \emph{position += 1}
+        \If{position \% block\_size = 0}
+        \State \emph{$c^*$.append(time)}
+        \EndIf
+        \EndFor
+
+        \State \emph{$t^*$ $\gets$ [new IncrementalMSF(), new IncrementalMSF()]}
+        \State \emph{move\_imsf\_checkpoint($t^*$[1], 0, $c^*$[1])}
+
+        \For{\emph{i $\in [2, n\_blocks)$}}
+        \State \emph{$t^*$.append($t$[i-2])}
+        \State \emph{move\_imsf\_checkpoint($t^*$[i], $c$[i-2], $c^*$[i])}
+        \EndFor
+        \State \emph{$c$ $\gets$ $c^*$}
+        \State \emph{$t$ $\gets$ $t^*$}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Para facilitarmos o código, criamos uma rotina auxiliar \texttt{move\_imsf\_checkpoint(t, a, b)}, que recebe uma floresta geradora mínima incremental $t$ e a desloca, adicionando todas arestas no intervalo de tempo $(a, b]$.
+
+Com isso, a implementação segue diretamente da explicação nas Seção \ref{sec:rmsf-complexidade}, com a criação de novas listas $c^*$ e $t^*$, para armazenar os \emph{checkpoints} e as florestas geradoras mínimas incrementais, respectivamente. Além disso, utilizamos um \emph{loop} para preencher $t^*$ e fazer com que cada uma das $t^*_i$ seja deslocada para o seu respectivo $c_i^*$.
+
+Por último, o custo do laço na linha 6 é de $\Oh(m \log m)$ e o custo de cada chamada \texttt{move\_imsf\_checkpoint} é de $\Oh(\sqrt{m} \log n)$, pois, como demonstrado no Teorema \ref{teo:deslocamento}, são adicionadas no máximo $3\sqrt{m}$ arestas, com cada adição tendo um custo amortizado de $\Oh(\log n)$. Portanto, podemos conferir que a rotina gasta tempo amortizado $\Oh(m \log n)$.
 
 %% ------------------------------------------------------------------------- %%
 \section{Consultas Get MSF e Get MST Weight}
 \label{sec:rmsf-get-msf}
 
-% falar sobre uso das funcoes extras que apresentamos neste capitulo
+Primeiramente, para falarmos sobre as consultas, precisamos lembrar a ideia por trás delas. Dado um instante de tempo $t$, precisamos encontrar o maior \emph{checkpoint} tal que $c_i \leq t$. Depois disso, aumentamos a estrutura $t_i$ do respectivo bloco, adicionando todas as arestas no intervalo de tempo $(c_i, t]$. Por último, podemos retornar a consulta propriamente dita, isto é, a árvore geradora mínima ou o seu respetivo peso.
 
+Entretanto, não podemos simplesmente realizar uma cópia de $t_i$ para então aumentá-la, pois isso teria um custo $\Oh(m)$ no pior caso. Para contornar este problema, usamos os métodos apresentados na Seção \ref{sec:rmsf-extras}, que nos permitem adicionar as arestas no intervalo e depois desfazer essas alterações.
+
+Ademais, criamos mais duas rotinas auxiliares para ajudar na implementação das consultas. A primeira delas é a \texttt{find\_left\_checkpoint\_index(t)}, que percorre a lista de \emph{checkpoints} e retorna o maior inteiro $i$ tal que $c_i \leq t$. Em seguida, temos a rotina \texttt{get\_delta\_edge\_operations(i, t)}, que retorna uma lista com todas as arestas no intervalo $(c_i, t]$. Os custos destas rotinas são $\Oh(\sqrt{m})$ e $\Oh(\sqrt{m}\log{m})$, respectivamente.
+
+\begin{algorithm}[h!]
+    \caption{Consulta Get MSF Weight}\label{rmsf-get-msf-weight}
+    \begin{algorithmic}[1]
+        \Function{get\_msf\_weight}{\emph{t}}
+        \State \emph{checkpoint\_index $\gets$ find\_left\_checkpoint\_index(t)}
+        \State \emph{delta\_operations $\gets$ get\_delta\_edge\_operations(last\_checkpoint\_index, t)}
+        \State \Return \emph{t[checkpoint\_index].get\_msf\_weight\_after\_operations(delta\_operations)}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Deste modo, como a lista \texttt{delta\_operations} tem no máximo $\sqrt{m}$ arestas, e como o custo para adicionar e remover cada uma destas arestas é de $\Oh(\log{n})$ amortizado, temos que esta rotina possui um custo amortizado de $\Oh(\sqrt{m} \log{n})$.
 
 %% ------------------------------------------------------------------------- %%
 \section{Rotina Add Edge}
 \label{sec:rmsf-add-edge}
 
+Finalmente, chegamos a rotina responsável por adicionar novas arestas a estrutura. Seu funcionamento consiste em: adicionar a aresta $(u,v,w)$ na lista \texttt{edges\_by\_time}; inserir a aresta na $t_i$ de todos os blocos tal que $t < c_i$; acionar a reconstrução da estrutura caso necessário.
+
+\begin{algorithm}[h!]
+    \caption{Rotina Add Edge}\label{rmsf-add-edge}
+    \begin{algorithmic}[1]
+        \Function{get\_msf}{\emph{u,v,w,t}}
+        \State \emph{edges\_by\_time[t] $\gets$ Edge(u,v,w)}
+        \For{\emph{i $\in$ (find\_left\_checkpoint\_index(t), n\_blocks)}}
+        \State \emph{t[i].add\_edge(u, v, w)}
+        \EndFor
+        \If{\emph{$($block\_size + 1$)^2$ = edges\_by\_time.size()}}
+        \State \emph{rebuild\_decomposition()}
+        \EndIf
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Com isso, temos que o custo amortizado dessa rotina é de $\Oh(\sqrt{m} \log{n})$, o custo de inserção em cada uma das $t_i$, além do custo amortizado da reconstrução.

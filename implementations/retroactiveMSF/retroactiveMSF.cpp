@@ -72,9 +72,8 @@ int RetroactiveMSF::find_left_checkpoint_index(int t)
     return i - 1;
 }
 
-std::vector<Edge> RetroactiveMSF::get_delta_edge_operations(int t)
+std::vector<Edge> RetroactiveMSF::get_delta_edge_operations(int last_checkpoint_index, int t)
 {
-    int last_checkpoint_index = find_left_checkpoint_index(t);
     int last_checkpoint = checkpoint_time[last_checkpoint_index];
     auto edge_added_after_checkpoint = edges_by_time.upper_bound(last_checkpoint);
 
@@ -113,7 +112,7 @@ std::vector<Edge> RetroactiveMSF::get_msf(int t)
     check_time_is_valid(t);
 
     int last_checkpoint_index = find_left_checkpoint_index(t);
-    auto delta_edge_operations = get_delta_edge_operations(t);
+    auto delta_edge_operations = get_delta_edge_operations(last_checkpoint_index, t);
     return checkpoint_structure[last_checkpoint_index].get_msf_after_operations(delta_edge_operations);
 }
 
@@ -122,6 +121,6 @@ int RetroactiveMSF::get_msf_weight(int t)
     check_time_is_valid(t);
 
     int last_checkpoint_index = find_left_checkpoint_index(t);
-    auto delta_edge_operations = get_delta_edge_operations(t);
+    auto delta_edge_operations = get_delta_edge_operations(last_checkpoint_index, t);
     return checkpoint_structure[last_checkpoint_index].get_msf_weight_after_operations(delta_edge_operations);
 }
