@@ -12,13 +12,13 @@ Neste capítulo, falaremos do problema da floresta geradora mínima incremental 
 
 O \emph{problema da árvore geradora mínima} consiste no seguinte: dado um grafo conexo $G$, com um peso associado a cada aresta, determinar uma árvore geradora de peso mínimo. Note que, este problema admite tanto pesos positivos quanto negativos nas arestas, mas ao admitir pesos negativos, é necessário exigir que o grafo em questão seja acíclico. Caso o grafo de entrada seja desconexo, buscamos uma floresta maximal de peso mínimo, que consiste em uma árvore geradora minima de cada componente conexa do grafo.
 
-Algorítimos como o de \citet{6773228} ou o de \citet{kruskal1956shortest} são famosos por resolver este problema de maneira eficiente, ambos com complexidade de $\Oh(|E| \log |E|)$, onde $E$ é o conjunto de arestas do grafo.
+Algoritmos como o de \citet{6773228} ou o de \citet{kruskal1956shortest} são famosos por resolver este problema de maneira eficiente, ambos com complexidade de $\Oh(|E| \log |E|)$, onde $E$ é o conjunto de arestas do grafo.
 
 Já na versão incremental do problema, inicialmente sabemos apenas o número de vértices do grafo, que começa sem nenhuma aresta. Em seguida, uma a uma das arestas são inseridas, com um dado peso. Devemos, sempre que for requisitado, fornecer eficientemente uma floresta maximal de peso mínimo do grafo corrente.
 
-Uma solução ingênua para está versão seria acionar o algoritmo de Prim ou o de Kruskal a cada consulta. Porém, essa alternativa seria muita cara, pois ela não considera que entre uma consulta e outra o grafo pode ter mudado muito pouco. A ideia então é utilizar a versão apresentada por \citet{frederickson1985data} para mantermos informações sobre grafo, de modo a conseguirmos responder às consultas de maneira eficiente.
+Uma solução ingênua para esta versão seria acionar o algoritmo de Prim ou o de Kruskal a cada consulta. Porém, essa alternativa seria muita cara, pois ela não considera que entre uma consulta e outra o grafo pode ter mudado muito pouco. A ideia então é utilizar a versão apresentada por \citet{frederickson1985data} para mantermos informações sobre o grafo, de modo a conseguirmos responder às consultas de maneira eficiente.
 
-Desta forma, a estrutura de dados que vamos apresentar da suporta à seguinte interface:
+Desta forma, a estrutura de dados que vamos apresentar dá suporta à seguinte interface:
 
 \begin{itemize}
     \item \texttt{add\_edge(u, v, w)}: adiciona no grafo a aresta com pontas em $u$ e $v$ com peso $w$.
@@ -26,15 +26,15 @@ Desta forma, a estrutura de dados que vamos apresentar da suporta à seguinte in
     \item \texttt{get\_msf\_weight()}: retorna o custo de uma floresta maximal de peso mínimo do grafo corrente.
 \end{itemize}
 
-A partir destes métodos, é possível construir um grafo de maneira incremental, isto é, adicionando aresta por aresta, com o advento de termos sempre em mãos a sua respectiva floresta geradora mínima. Em particular, a rotina \texttt{add\_edge} consumirá tempo proporcional à $\Oh (\log n)$ amortizado por operação --- onde $n$ é o número de vértices do grafo, a rotina \texttt{get\_msf} consumirá tempo proporcional a $\Oh (\log n)$ e \texttt{get\_msf\_weight} será executada em tempo constante.
+A partir destes métodos, é possível construir um grafo de maneira incremental, isto é, adicionando aresta por aresta, com o advento de termos sempre em mãos a sua respectiva floresta maximal de peso mínimo. Em particular, a rotina \texttt{add\_edge} consumirá tempo $\Oh (\log n)$ amortizado por operação --- onde $n$ é o número de vértices do grafo, a rotina \texttt{get\_msf} consumirá tempo proporcional a $\Oh (\log n)$ e \texttt{get\_msf\_weight} será executada em tempo constante.
 
 %% ------------------------------------------------------------------------- %%
 \section{Estrutura interna}
 \label{sec:imsf-est-int}
 
-Assim como no union-find retroativo, vamos utilizar as \emph{link-cut trees} como estrutura interna da solução deste problema. Para isso, queremos que as \emph{link-cut trees} sejam utilizadas para manter uma floresta maximal de peso mínimo do grafo corrente, de modo que, ao adicionarmos uma nova aresta, com peso $w$ e pontas em $u$ e $v$, ao grafo, podemos usar as rotinas \texttt{is\_connected(u,v)} e \texttt{maximum\_edge(u,v)} para decidir se incluímos ou não a aresta à floresta maximal de peso mínimo.
+Assim como no union-find retroativo, vamos utilizar as \emph{link-cut trees} como estrutura interna da solução deste problema. Para isso, queremos que as \emph{link-cut trees} sejam utilizadas para manter uma floresta maximal de peso mínimo do grafo corrente, de modo que, ao adicionarmos uma nova aresta, com peso $w$ e pontas em $u$ e $v$, ao grafo, possamos usar as rotinas \texttt{is\_connected(u,v)} e \texttt{maximum\_edge(u,v)} para decidir se incluímos ou não a aresta à floresta maximal de peso mínimo.
 
-Um detalhe importante é que, para essa implementação, necessitamos de uma maneira de consultar qual a aresta com maior peso no caminho entre dois vértices na árvore, não apenas o seu peso. Para isso, modificamos a implementação das \emph{link-cut trees} para incluir um novo parâmetro opcional \texttt{id} na rotina \texttt{link}, além de um novo  método \texttt{maximum\_edge\_id}, que retorna o \texttt{id} de uma aresta de peso máximo no caminho entre dois vértices. Este \texttt{id} será definido por nossa estrutura, e a partir dele, utilizando um mapa \texttt{edges\_by\_id}, conseguimos recuperar em quais vértices tal aresta incide.
+Um detalhe importante é que, para essa implementação, necessitamos de uma maneira de consultar qual a aresta com maior peso no caminho entre dois vértices numa árvore, não apenas o seu peso. Para isso, modificamos a implementação das \emph{link-cut trees} para incluir um novo parâmetro opcional \texttt{id} na rotina \texttt{link}, além de um novo  método \texttt{maximum\_edge\_id}, que retorna o \texttt{id} de uma aresta de peso máximo no caminho entre dois vértices. Este \texttt{id} será definido por nossa estrutura, e a partir dele, utilizando um mapa \texttt{edges\_by\_id}, conseguimos recuperar em quais vértices tal aresta incide.
 
 Finalmente, mantemos uma lista \texttt{current\_msf} de \texttt{id}'s das arestas que compõem uma floresta maximal de peso mínimo, assim como um inteiro \texttt{current\_msf\_weight}, que armazena o seu custo. Estes atributos nos permitem responder de maneira eficiente às consultas, como mostraremos a seguir.
 
