@@ -84,7 +84,7 @@ Logo, após realizarmos as consultas em que estamos interessados, precisamos rev
     \begin{algorithmic}[1]
         \Function{apply\_rollback}{\emph{operations\_list[]}}
         \State \emph{revert(operations\_list)}
-        \ForEach{\emph{(operation, edge) in operations\_list}}
+        \ForEach{\emph{[operation, edge] in operations\_list}}
         \If{\emph{operation = link}}
         \State \emph{linkCutTree.cut(edge.u, edge.v)}
         \State \emph{current\_msf.erase(edge.id)}
@@ -121,7 +121,7 @@ Além disso, podemos perceber que a complexidade destes métodos é $\Oh(q \log 
 
 Agora, com todas as peças necessárias em mãos, podemos partir para a explicação da solução. Assim como no Capítulo \ref{cap:incremental-msf}, estamos interessados em resolver o \emph{problema da floresta geradora maximal de peso mínimo}, porém agora em sua versão semi-retroativa.
 
-Em particular, queremos ser capazes de adicionar uma aresta ao grafo em certo instante de tempo, assim como realizar consultas acerca da floresta geradora maximal de peso mínimo em algum momento do presente ou do passado. Para isso, a estrutura deve conseguir dar suporte a seguinte interface:
+Em particular, queremos ser capazes de adicionar uma aresta ao grafo em um certo instante de tempo, assim como realizar consultas acerca da floresta geradora maximal de peso mínimo em algum momento do presente ou do passado. Para isso, a estrutura deve conseguir dar suporte a seguinte interface:
 
 \begin{itemize}
     \item \texttt{add\_edge(u, v, w, t)}: adiciona no grafo, no instante $t$, a aresta com pontas $u$ e $v$ e peso $w$;
@@ -150,7 +150,7 @@ A partir dessa construção, podemos responder uma consulta acerca do estado da 
 \begin{itemize}
     \item para começar, precisamos encontrar o último bloco da decomposição que não possui a aresta adicionada no instante de tempo $t$, ou o bloco que a possui em seu extremo. Mais formalmente, isso corresponde a encontrarmos o maior $i$ tal que $c_i \leq t$;
     \item em seguida, vamos \emph{aumentar} este bloco até que ele possua todas as operações de inserção até o instante $t$, isto é, com a estrutura $t_i$ em mãos, a incrementamos com todas as arestas adicionadas entre os instantes $c_i + 1$ e $t$;
-    \item finalmente, basta retornar a consulta de interesse, isto é, as arestas que compõem a floresta ou o seu respectivo peso.
+    \item finalmente, basta retornarmos a consulta de interesse, isto é, as arestas que compõem a floresta ou o seu respectivo peso.
 \end{itemize}
 
 Vale notar que, caso a consulta aconteça no primeiro bloco, não existe uma estrutura inicial a qual podemos utilizar para incrementar a resposta final. Por isso, vamos definir o \emph{checkpoint} $c_0 = 0$ e sua respectiva estrutura $t_0$, uma floresta geradora mínima incremental de um grafo vazio.
@@ -233,7 +233,7 @@ Assim, nossa versão melhorada funciona da seguinte maneira:
     \item por último, considerando $c_{-2} = c_{-1} = 0$, deslocamos cada $t_i^*$ para o seu respectivo $c_i^*$, isto é, incluímos todas as arestas adicionadas desde o instante $c_{i-2}$ até o instante $c_i^*$.
 \end{itemize}
 
-Na próxima seção, provaremos que $c_{i-2} \leq c^*_i$, de modo que o último passo resulta numa versão correta de $t_i^*$.
+Na próxima seção, provaremos que $c_{i-2} \leq c^*_i$, de modo que o último passo resulta numa versão correta de $t_i^*$, além de demonstrar que esse passo é eficiente.
 
 A partir dessa versão, a reconstrução consome o mesmo tempo da reconstrução sugerida por Demaine, Iacono et al., porém agora sem a necessidade de uma estrutura persistente. Além disso, o funcionamento das outras rotinas continuam iguais ao da versão original.
 
@@ -257,42 +257,56 @@ Antes de adentrarmos nos detalhes de como são as implementações dos métodos 
     Portanto, temos que $2\sqrt{m} + 1$ operações serão realizadas até a próxima reconstrução.
 \end{proof}
 
-Agora, precisamos descobrir qual o número máximo de posições que cada uma das $t_i^*$ pode ser deslocada, ou seja, o número máximo de arestas que podem existir entre um instante $c_{i-2}$ e $c_i^*$, para $i \in [2,\sqrt{m^*}]$.
+Em seguida, vamos constatar que o deslocamento de $t_i^*$ até $c_i^*$ sempre consiste na adição de zero ou mais arestas, isto é, que $c_i \leq c_i^*$.
 
 \begin{theorem}
-    \label{teo:deslocamento}
-    Durante uma reconstrução, a transformação de $t_{i-2}$ em $t_i^*$ sempre consiste na adição de novas arestas, e no máximo $3 \sqrt{m^*}$ arestas são adicionadas a cada $t_i^*$.
+    \label{teo:adicao-arestas}
+    Durante uma reconstrução, a transformação de $t_{i-2}$ em $t_i^*$ sempre consiste na adição de novas arestas, em outras palavras, todas as arestas em $t_{i-2}$ devem estar $t_i^*$.
 \end{theorem}
 \begin{proof}
-    Primeiramente, temos que cuidar de $t_0^*$ e $t_1^*$, criadas durante a fase inicial da reconstrução. Como $c_0^* = 0$, nenhuma aresta é adicionada em $t_0^*$. Já para $t_1^*$, é necessário que todas as $\sqrt{m^*}$ arestas até $c_1^*$ sejam adicionadas, porem isso ainda se encontra dentro do custo apresentado. Agora vamos cuidar do restante das $t_i^*$.
+    Primeiramente, temos que cuidar de $t_0^*$ e $t_1^*$, criadas durante a fase inicial da reconstrução. Neste caso, ambas as estruturas começam representando um grafo vazio, e apenas $t_1^*$ recebe novas arestas.
 
-    Vamos chamar $p_i$ a posição de $c_i$ na lista \texttt{edges\_by\_time} durante a última reconstrução, em particular, sabemos que $p_i = i \sqrt{m}$ para $i \in [0, \sqrt{m}]$. Analogamente, definimos $p_i^* = i\sqrt{m^*}$, para $i \in [0, \sqrt{m^*}]$.
+    Vamos chamar $p_i$ a posição da operação que define $c_i$ na lista \texttt{edges\_by\_time} durante a última reconstrução, ou seja, $p_i = i \sqrt{m}$ para $i \in [0, \sqrt{m}]$. Analogamente, definimos $p_i^* = i\sqrt{m^*}$, para $i \in [0, \sqrt{m^*}]$.
 
-    Estamos interessados em descobrir o intervalo que teremos que deslocar $t_i^*$, buscando entender qual o número mínimo de arestas a serem adicionadas --- o que é atingindo quando todas as operações são inseridas antes de $c_i$ --- e também o respectivo número máximo --- o que acontece quando todas as operações são inseridas apos $c_i$.
+    Estamos interessados em descobrir o intervalo que teremos que deslocar $t_i^*$, buscando determinar qual o número mínimo de arestas a serem adicionadas --- o que é atingindo quando todas as novas arestas são inseridas antes de $c_i$.
 
-    No primeiro caso, para $i \in [0, \sqrt{m}]$, temos:
+    Logo, para $i \in [0, \sqrt{m}]$, temos:
     \begin{align*}
         p_i & = i \sqrt{m}                 \\
             & < i \sqrt{m} + 2\sqrt{m} + 1 \\
             & = (i+2) \sqrt{m}             \\
             & < (i+2) \sqrt{m^*}           \\
-            & = p_{i+2}^*
+            & = p_{i+2}^*.
     \end{align*}
 
     Portanto, a transformação de $t_{i-2}$ em $t_i^*$ funciona, pois, o deslocamento de $c_i$ para $c_{i+2}^*$ sempre adiciona mais arestas a estrutura.
+\end{proof}
 
-    Por último, podemos medir o deslocamento no pior caso, onde nenhuma aresta sera adicionada em no $i$-ésimo bloco ou em algum de seus antecessores, assim, para $i \in [0, \sqrt{m}]$, temos:
+Agora, precisamos descobrir qual o número máximo de posições que cada uma das $t_i^*$ pode ser deslocada, ou seja, o número máximo de arestas que podem existir entre um instante $c_{i-2}$ e $c_i^*$, para $i \in [2,\sqrt{m^*}]$.
+
+\begin{theorem}
+    \label{teo:deslocamento}
+    Durante uma reconstrução, no máximo $3 \sqrt{m^*}$ arestas são adicionadas a cada $t_i^*$.
+\end{theorem}
+\begin{proof}
+    Sejam $p_i$ e $p_i^*$ as posições definidas no Teorema \ref{teo:adicao-arestas}. Da mesma maneira, começamos analisando a criação de $t_0^*$ e $t_1^*$. Como $c_0^* = 0$, nenhuma aresta é adicionada em $t_0^*$. Já para $t_1^*$, é necessário que todas as $\sqrt{m^*}$ arestas até $c_1^*$ sejam adicionadas, o que se encontra dentro do custo apresentado. Agora vamos cuidar do restante das $t_i^*$.
+
+    Aqui, estamos interessados em determinar qual o número máximo de arestas a serem adicionadas a cada $t_i^*$ --- o que acontece quando todas as novas arestas são inseridas após $c_i$, em outras palavras, quando nenhuma nova aresta é adicionada ao $i$-ésimo bloco ou a algum de seus antecessores.
+
+    Em particular, podemos medir o deslocamento de $t_i^*$ neste caso fazendo, para $i \in [0, \sqrt{m}]$:
     \begin{align*}
         p_i^* - p_{i-2} & = i\sqrt{m^*} - (i-2)\sqrt{m}           \\
                         & = i(\sqrt{m}+1) - (i-2)\sqrt{m}         \\
                         & = i\sqrt{m} + i - i\sqrt{m} + 2\sqrt{m} \\
                         & = i + 2\sqrt{m}                         \\
                         & \leq \sqrt{m} + 2\sqrt{m}               \\
-                        & < 3\sqrt{m^*}
+                        & < 3\sqrt{m^*}.
     \end{align*}
+
+    Desta forma, podemos conferir que no máximo $3 \sqrt{m^*}$ arestas são adicionadas a cada $t_i^*$.
 \end{proof}
 
-Finalmente, devido ao deslocamento que sera realizado em cada $t_i^*$ e utilizando os resultados acima, podemos ver que o custo total amortizado de uma reconstrução é de $\Oh(m^* \log{n})$ --- onde $n$ é o número de vértices do grafo. Além disso, podemos amortizar este custo em cada uma das $2\sqrt{m} + 1$ operações que levaram a essa reconstrução, assim o custo amortizado em cada uma delas é de $\Oh(\sqrt{m^*} \log{n})$.
+Finalmente, devido ao deslocamento que será realizado em cada $t_i^*$ e utilizando os resultados acima, podemos ver que o custo total de uma reconstrução é de $\Oh(m^* \log{n})$ --- onde $n$ é o número de vértices do grafo. Além disso, podemos amortizar este custo em cada uma das $2\sqrt{m} + 1$ operações que levaram a essa reconstrução, assim o custo amortizado por cada inserção de aresta é de $\Oh(\sqrt{m^*} \log{n})$.
 
 %% ------------------------------------------------------------------------- %%
 \section{Rotina Build Decomposition}
@@ -334,7 +348,7 @@ Para facilitarmos o código, criamos uma rotina auxiliar \texttt{move\_imsf\_che
 
 Com isso, a implementação segue diretamente da explicação nas Seção \ref{sec:rmsf-complexidade}, com a criação de novas listas $c^*$ e $t^*$, para armazenar os \emph{checkpoints} e as florestas geradoras mínimas incrementais, respectivamente. Além disso, utilizamos um \emph{loop} para preencher $t^*$ e fazer com que cada uma das $t^*_i$ seja deslocada para o seu respectivo $c_i^*$.
 
-Por último, o custo do laço na linha 6 é de $\Oh(m \log m)$ e o custo de cada chamada \texttt{move\_imsf\_checkpoint} é de $\Oh(\sqrt{m} \log n)$, pois, como demonstrado no Teorema \ref{teo:deslocamento}, são adicionadas no máximo $3\sqrt{m}$ arestas, com cada adição tendo um custo amortizado de $\Oh(\log n)$. Portanto, podemos conferir que a rotina gasta tempo amortizado $\Oh(m \log n)$.
+Por último, o custo do laço na linha 6 é de $\Oh(m \log m)$ --- porque estamos percorrendo uma lista ordenada, que possui um custo logarítmico para consultas e modificações --- e o custo de cada chamada \texttt{move\_imsf\_checkpoint} é de $\Oh(\sqrt{m} \log n)$ --- pois como demonstrado no Teorema \ref{teo:deslocamento}, são adicionadas no máximo $3\sqrt{m}$ arestas, com cada adição tendo um custo amortizado de $\Oh(\log n)$. Portanto, podemos conferir que a rotina gasta tempo amortizado $\Oh(m \log n)$, onde $m$ é o número de arestas na estrutura e $n$ a quantidade de vértices no grafo.
 
 %% ------------------------------------------------------------------------- %%
 \section{Consultas Get MSF e Get MST Weight}
@@ -357,13 +371,13 @@ Ademais, criamos mais duas rotinas auxiliares para ajudar na implementação das
     \end{algorithmic}
 \end{algorithm}
 
-Deste modo, como a lista \texttt{delta\_operations} tem no máximo $\sqrt{m}$ arestas, e como o custo para adicionar e remover cada uma destas arestas é de $\Oh(\log{n})$ amortizado, temos que esta rotina possui um custo amortizado de $\Oh(\sqrt{m} \log{n})$.
+Deste modo, como a lista \texttt{delta\_operations} tem no máximo $\sqrt{m}$ arestas, e como o custo para adicionar e remover cada uma destas arestas é de $\Oh(\log{n})$ amortizado, temos que a rotina \texttt{get\_msf\_weight} possui um custo amortizado de $\Oh(\sqrt{m} \log{n})$. Além disso, a rotina \texttt{get\_msf}, que teve seu pseudo-código omitido devido à similaridade com o Programa \ref{rmsf-get-msf-weight}, possui um custo amortizado de $\Oh(m)$.
 
 %% ------------------------------------------------------------------------- %%
 \section{Rotina Add Edge}
 \label{sec:rmsf-add-edge}
 
-Finalmente, chegamos a rotina responsável por adicionar novas arestas a estrutura. Seu funcionamento consiste em: adicionar a aresta $(u,v,w)$ na lista \texttt{edges\_by\_time}; inserir a aresta na $t_i$ de todos os blocos tal que $t < c_i$; acionar a reconstrução da estrutura caso necessário.
+Finalmente, chegamos a rotina responsável por adicionar novas arestas a estrutura. Sua responsabilidade consiste em adicionar a aresta $(u,v,w)$ na lista \texttt{edges\_by\_time}, além de inserir a aresta na $t_i$ de todos os blocos tal que $t < c_i$. Ademais, também atribuímos a está rotina a função de acionar a reconstrução da estrutura, caso necessário.
 
 \begin{algorithm}[h!]
     \caption{Rotina Add Edge}\label{rmsf-add-edge}
