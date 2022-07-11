@@ -6,19 +6,13 @@
 
 Neste capítulo, descreveremos uma versão aprimorada da solução apresentada por \citet{10.1093/comjnl/bxaa135} para o problema da floresta geradora mínima retroativa --- \emph{retroactive minimum spanning forest}, em inglês. Esta versão utiliza a técnica de \emph{square-root decomposition} junto com a estrutura do Capítulo \ref{cap:incremental-msf} para solucionar o problema.
 
-%% ------------------------------------------------------------------------- %%
-\section{Nomenclatura}
-\label{sec:nomeclatura}
-
-\todo{Mover essa discussão para o capítulo 1 e deixar segundo paragrafo mais claro, de acordo com a referência.}
-
-Tendo em vista as definições acerca de estruturas de dados parcialmente e totalmente retroativas, mostradas no Capítulo \ref{cap:introducao}, decidimos nos referir tanto à solução de Andrade Júnior e Duarte Seabra quanto à versão aqui apresentada como \emph{semi-retroativas}. Isto se dá pelo fato de ambas suportarem inserções e consultas em qualquer instante de tempo, porém nenhuma delas suporta a remoção de uma operação, o que as exclui de qualquer uma das duas definições.
-
-Vale notar que \citet{DBLP:journals/corr/abs-1910-03332} apresentam ainda outra definição: a de \emph{estrutura de dados incremental totalmente retroativa}. Neste contexto, uma operação retroativa pode criar ou cancelar uma inserção, fazendo com que, no segundo caso, a operação cancelada seja totalmente removida da estrutura de dados. Entretanto, não se pode criar uma remoção, isto é, não existe suporte para que uma operação seja cancelada somente após um certo instante de tempo. Portanto, apesar de um nome sugestivo, essa definição também não contempla a solução que vamos estudar neste capítulo.
+Ademais, tendo em vista as definições acerca de estruturas de dados parcialmente e totalmente retroativas, mostradas no Capítulo \ref{cap:introducao}, decidimos nos referir tanto à solução de \citet{10.1093/comjnl/bxaa135} quanto à versão aqui apresentada como \emph{semi-retroativas}. Isto se dá pelo fato de ambas suportarem inserções e consultas em qualquer instante de tempo, porém nenhuma delas suporta a remoção de uma operação, o que as exclui de qualquer uma das duas definições.
 
 %% ------------------------------------------------------------------------- %%
 \section{Square-root decomposition}
 \label{sec:sqrt-decomp}
+
+\nocite{sqrt-decomp}
 
 Inicialmente, vamos conhecer a técnica de \emph{square-root decomposition}, utilizada para transformar soluções que consomem tempo $\Oh(n)$ por operação --- onde $n$ é o número de elementos no problema em questão --- em soluções com custo $\Oh(\sqrt{n})$ por operação. Para nossa explicação, vamos utilizar o seguinte problema como exemplo: dada uma lista de inteiros $ [ a_1, a_2, a_3, \dots, a_n ] $, queremos efetuar as duas operações a seguir:
 
@@ -129,7 +123,7 @@ Em particular, queremos ser capazes de adicionar uma aresta ao grafo em um certo
     \item \texttt{get\_msf\_weight(t)}: retorna o custo de uma floresta maximal de peso mínimo do grafo no instante $t$.
 \end{itemize}
 
-A seguir, vamos apresentar duas soluções para este problema. A primeira delas é a versão original de Andrade Júnior e Duarte Seabra, que fornece os métodos acima com um custo de $\Oh(\sqrt{m} \log n)$ por operação --- onde $m$ é o número de operações realizadas até o instante atual e $n$ é o número de vértices do grafo. Porém essa abordagem apresenta uma restrição em relação à quantidade de operações que podem ser realizadas na estrutura, assim como o intervalo de tempo em que estas operações podem acontecer. Já a segunda solução corresponde a uma melhoria da versão original, onde eliminamos as restrições e oferecemos um custo amortizado de $\Oh(\sqrt{m} \log n)$ por operação.
+A seguir, vamos apresentar duas soluções para este problema. A primeira delas é a versão original de \citet{10.1093/comjnl/bxaa135}, que fornece os métodos acima com um custo de $\Oh(\sqrt{m} \log n)$ por operação --- onde $m$ é o número de operações realizadas até o instante atual e $n$ é o número de vértices do grafo. Porém essa abordagem apresenta uma restrição em relação à quantidade de operações que podem ser realizadas na estrutura, assim como o intervalo de tempo em que estas operações podem acontecer. Já a segunda solução corresponde a uma melhoria da versão original, onde eliminamos as restrições e oferecemos um custo amortizado de $\Oh(\sqrt{m} \log n)$ por operação.
 
 %% ------------------------------------------------------------------------- %%
 \subsection{Versão original}
@@ -137,7 +131,7 @@ A seguir, vamos apresentar duas soluções para este problema. A primeira delas 
 
 Inicialmente, vamos pensar em como resolver este problema de uma maneira ingênua, isto é, sem usar as técnicas mais sofisticadas que vimos até agora. Para isso, podemos manter uma lista ordenada \texttt{edges\_by\_time}, onde cada posição corresponde a uma operação \texttt{add\_edge(u,v,w,t)}, com a aresta \texttt{(u,v,w)} sendo armazenada como valor e \texttt{t} sendo usado como chave de ordenação para a lista. Assim, podemos responder às consultas da seguinte maneira: separamos todas as arestas inseridas até o instante de tempo $t$ fornecido para a consulta e executamos, por exemplo, o algoritmo de Kruskal para determinar a floresta geradora maximal de custo mínimo. Dessa maneira, o consumo de tempo da rotina \texttt{add\_edge} é $\Oh (\log m)$ --- sendo $m$ o número de inserções realizadas, e o consumo de tempo das consultas \texttt{get\_msf} e \texttt{get\_msf\_weight} é de $\Oh(m \log m)$, pois no pior caso executamos o algoritmo de Kruskal para todas as arestas na lista.
 
-Como podemos perceber, a solução acima gasta muito tempo construindo a resposta do zero para cada uma das consultas. Para melhorar isso, Andrade Júnior e Duarte Seabra sugerem uma maneira de acelerar esta etapa de construção de resposta, mas comprometendo um pouco o custo da rotina de inserção de novas arestas, através do uso da técnica de \emph{square root decomposition}.
+Como podemos perceber, a solução acima gasta muito tempo construindo a resposta do zero para cada uma das consultas. Para melhorar isso, \citet{10.1093/comjnl/bxaa135} sugerem uma maneira de acelerar esta etapa de construção de resposta, mas comprometendo um pouco o custo da rotina de inserção de novas arestas, através do uso da técnica de \emph{square root decomposition}.
 
 Para procedermos com a explicação, precisamos assumir duas coisas: que $m$ é um inteiro conhecido de antemão, representando o número total de arestas a serem inseridas no grafo; e que os instantes de tempo das operações sejam inteiros distintos no intervalo $[1,m]$. Esses dois detalhes representam uma grande restrição para a versão original, e buscamos eliminá-los na versão melhorada da solução. Além disso, para simplificar a explicação, vamos assumir que $m$ é um quadrado perfeito.
 
@@ -207,9 +201,9 @@ Além disso, na rotina \texttt{add\_edge}, podemos ter que adicionar a aresta na
 \subsection{Versão melhorada}
 \label{sec:rmsf-versao-mel}
 
-Como podemos ver acima, a versão original de Andrade Júnior e Duarte Seabra oferece uma solução para o problema que estamos interessados em resolver, porém, as restrições que a acompanham acabam se tornando um grande inconveniente. Logo, ao refletirmos sobre maneiras de melhorar a ideia apresentada, rapidamente notamos que a construção inicial da decomposição acaba se tornando um limitante para a estrutura.
+Como podemos ver acima, a versão original de \citet{10.1093/comjnl/bxaa135} oferece uma solução para o problema que estamos interessados em resolver, porém, as restrições que a acompanham acabam se tornando um grande inconveniente. Logo, ao refletirmos sobre maneiras de melhorar a ideia apresentada, rapidamente notamos que a construção inicial da decomposição acaba se tornando um limitante para a estrutura.
 
-Em particular, a construção realizada na versão original se baseia no artigo proponente da ideia de estruturas de dados retroativas, de Demaine, Iacono et al., que mostra uma receita para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas --- traduzindo para o nosso caso, uma maneira para transformar a floresta geradora mínima incremental em uma retroativa. Entretanto, na abordagem sugerida pelo artigo, são realizadas diversas reconstruções da decomposição, conforme novas aresta vão sendo adicionadas. Mais especificamente, os autores sugerem uma reconstrução a cada $\frac{\sqrt{m}}{2}$ operações, de modo a garantir que nenhum bloco tenha tamanho maior que $\frac{3\sqrt{m}}{2}$.
+Em particular, a construção realizada na versão original se baseia no artigo proponente da ideia de estruturas de dados retroativas, de \citet{10.1145/1240233.1240236}, que mostra uma receita para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas --- traduzindo para o nosso caso, uma maneira para transformar a floresta geradora mínima incremental em uma retroativa. Entretanto, na abordagem sugerida pelo artigo, são realizadas diversas reconstruções da decomposição, conforme novas aresta vão sendo adicionadas. Mais especificamente, os autores sugerem uma reconstrução a cada $\frac{\sqrt{m}}{2}$ operações, de modo a garantir que nenhum bloco tenha tamanho maior que $\frac{3\sqrt{m}}{2}$.
 
 Além disso, assumindo que a reconstrução possui um custo de $\Oh(m \log n)$, podemos distribuir este gasto de maneira amortizada por cada operação, fazendo com que o custo amortizado de cada uma continue sendo $\Oh(\sqrt{m} \log n)$. Todavia, para que a reconstrução tenha este custo, é necessário que a estrutura parcialmente retroativa tenha uma versão persistente, de modo a  podermos utilizar uma única cópia para representar $t_0, t_1, \dots, t_{\sqrt{m}}$. Por sua vez, uma versão persistente da floresta geradora mínima incremental requer a implementação de uma \emph{link-cut tree} persistente, como a apresentada por \citet{10.1007/978-3-540-69903-3_16}. Porém, essa implementação é bastante sofisticada, e seu estudo fugiria do escopo deste trabalho.
 
