@@ -84,44 +84,21 @@ direitos={CC-BY}, % Creative Commons Attribution 4.0 International License
 
 % As palavras-chave são obrigatórias, em português e
 % em inglês. Acrescente quantas forem necessárias.
-\palavrachave{Palavra-chave1}
-\palavrachave{Palavra-chave2}
-\palavrachave{Palavra-chave3}
+\palavrachave{link-cut tree}
+\palavrachave{estrutura de dados retroativa}
+\palavrachave{union-find}
+\palavrachave{floresta geradora mínima}
 
-\keyword{Keyword1}
-\keyword{Keyword2}
-\keyword{Keyword3}
+\keyword{link-cut tree}
+\keyword{retroactive data structure}
+\keyword{union-find}
+\keyword{minimum spanning forest}
 
 % O resumo é obrigatório, em português e inglês.
 \resumo{
-    Elemento obrigatório, constituído de uma sequência de frases concisas e
-    objetivas, em forma de texto.  Deve apresentar os objetivos, métodos empregados,
-    resultados e conclusões.  O resumo deve ser redigido em parágrafo único, conter
-    no máximo 500 palavras e ser seguido dos termos representativos do conteúdo do
-    trabalho (palavras-chave). Deve ser precedido da referência do documento.
-    Texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto texto texto texto texto texto texto.
-    Texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto texto texto texto texto texto texto texto texto texto texto texto
-    texto texto.
+    Estruturas de dados retroativas permitem a realização de operações que afetam não somente o estado atual da estrutura, mas também em qualquer um de seus estados passados. Além disso, uma link-cut tree é uma estrutura de dados que permite a manutenção de uma floresta de árvores enraizadas com peso nas arestas, e onde os nós de cada árvore possuem um número arbitrário de filhos. Tal estrutura é muito utilizada como base para o desenvolvimento de estruturas de dados retroativas, e neste trabalho estudaremos as versões retroativas dos problemas de union-find e floresta geradora mínima.  Para isso, implementamos essas estruturas em \texttt{C++} e descrevemos as ideias por trás de seus funcionamentos. Ademais, apresentamos uma melhoria da solução originalmente apresentada para a floresta geradora mínima retroativa, que retira limitações sem piorar sua performance.
 }
 
 \abstract{
-    Elemento obrigatório, elaborado com as mesmas características do resumo em
-    língua portuguesa. De acordo com o Regimento da Pós-Graduação da USP (Artigo
-    99), deve ser redigido em inglês para fins de divulgação. É uma boa ideia usar
-    o sítio \url{www.grammarly.com} na preparação de textos em inglês.
-    Text text text text text text text text text text text text text text text text
-    text text text text text text text text text text text text text text text text
-    text text text text text text text text text text text text text text text text
-    text text text text text text text text text text text text.
-    Text text text text text text text text text text text text text text text text
-    text text text text text text text text text text text text text text text text
-    text text text.
+    Retroactive data structures allow operations to be performed not only in the current state of the structure, but also in any of its past states. Furthermore, a link-cut tree is a data structure that allows the maintenance of a forest of rooted trees with weighted edges, and where the nodes of each tree have an arbitrary number of children. Such structure is widely used as a basis for the development of retroactive data structures, and in this work we will study the retroactive versions of the union-find and minimum spanning forest problems. To do so, we implement these structures in \texttt{C++} and describe the ideas behind how they work. Furthermore, we present an improvement of the solution originally presented for the retroactive minimum spanning forest, which removes limitations without worsening its performance.
 }
