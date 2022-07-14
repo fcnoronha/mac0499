@@ -274,7 +274,7 @@ Assim, encerramos a explicação da implementação dos métodos das \emph{link-
 \section{Splay Tree}
 \label{sec:lct-splay-trees}
 
-No artigo original, Sleator e Tarjan propuseram a utilização de uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, eles apresentaram a splay tree ~\citep{10.1145/3828.3835}, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $\Oh(\log n)$ amortizado, onde $n$ é o numero de nós da floresta representada, com uma implementação muito mais elegante do que a da versão original. Portanto, usaremos as splay trees para armazenar os caminhos preferidos.
+No artigo original, \citet{10.1145/800076.802464} propuseram a utilização de uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, eles apresentaram a splay tree --- \citet{10.1145/3828.3835}, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $\Oh(\log n)$ amortizado, onde $n$ é o numero de nós da floresta representada, com uma implementação muito mais elegante do que a da versão original. Portanto, usaremos as splay trees para armazenar os caminhos preferidos.
 
 Uma splay tree é uma árvore binária de busca auto-balanceável. Estas árvores utilizam rotações para se auto-balancear, através de uma operação chamada \texttt{splay}. A operação \texttt{splay} traz um nó para a raiz da árvore através de sucessivas rotações. Mas antes de nos aprofundarmos neste método, examinaremos como os caminhos preferidos são representados aqui.
 
