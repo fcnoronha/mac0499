@@ -1,3 +1,8 @@
+/******************************************************************************
+ * This work is part of the Bachelor’s dissertation of Felipe C. Noronha, at  *
+ * the Department of Computer Science of the University of São Paulo, Brazil. *
+ ******************************************************************************/
+
 #include <bits/stdc++.h>
 #include "splayTree.hpp"
 #include "linkCutTree.hpp"

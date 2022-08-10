@@ -50,7 +50,7 @@ cc_test(
 )
 
 ###############################################################################
-####################################### retroactive MSF
+####################################### semi retroactive MSF
 ###############################################################################
 
 cc_library(
@@ -72,18 +72,18 @@ cc_test(
 )
 
 cc_library(
-    name = "retroactive-msf",
-    srcs = ["retroactiveMSF/retroactiveMSF.cpp"],
-    hdrs = ["retroactiveMSF/retroactiveMSF.hpp"],
+    name = "semi-retroactive-msf",
+    srcs = ["semiRetroactiveMSF/semiRetroactiveMSF.cpp"],
+    hdrs = ["semiRetroactiveMSF/semiRetroactiveMSF.hpp"],
     deps = [":incremental-msf"],
     visibility = ["//visibility:public"],
     copts = ["-O2", "-std=c++17", "-Wall", "-Wextra", "-pedantic"],
 )
 cc_test(
-    name = "retroactive-msf-test",
-    srcs = ["retroactiveMSF/retroactiveMSFTest.cpp"],
+    name = "semi-retroactive-msf-test",
+    srcs = ["semiRetroactiveMSF/semiRetroactiveMSFTest.cpp"],
     deps = [
         "@com_google_googletest//:gtest_main",
-        ":retroactive-msf",
-    ],
+        ":semi-retroactive-msf",
+    ]
 )

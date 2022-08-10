@@ -1,12 +1,17 @@
+/******************************************************************************
+ * This work is part of the Bachelor’s dissertation of Felipe C. Noronha, at  *
+ * the Department of Computer Science of the University of São Paulo, Brazil. *
+ ******************************************************************************/
+
 #include <bits/stdc++.h>
 #include "gtest/gtest.h"
-#include "retroactiveMSF.hpp"
+#include "semiRetroactiveMSF.hpp"
 
 using namespace std;
 
-TEST(RetroactiveMSFTest, SimpleTest)
+TEST(SemiRetroactiveMSFTest, SimpleTest)
 {
-    RetroactiveMSF rmsf;
+    SemiRetroactiveMSF rmsf;
 
     rmsf.add_edge(1, 2, 6, 1);
     rmsf.add_edge(1, 3, 4, 2);
@@ -22,9 +27,9 @@ TEST(RetroactiveMSFTest, SimpleTest)
     EXPECT_EQ(rmsf.get_msf_weight(10), 13);
 }
 
-TEST(RetroactiveMSFTest, GrowingTimeTest)
+TEST(SemiRetroactiveMSFTest, GrowingTimeTest)
 {
-    RetroactiveMSF rmsf;
+    SemiRetroactiveMSF rmsf;
 
     // creating just a tree
     rmsf.add_edge(1, 2, 3, 1);
@@ -72,9 +77,9 @@ TEST(RetroactiveMSFTest, GrowingTimeTest)
     EXPECT_EQ(rmsf.get_msf_weight(13), 25);
 }
 
-TEST(RetroactiveMSFTest, ShuffledTimeTest)
+TEST(SemiRetroactiveMSFTest, ShuffledTimeTest)
 {
-    RetroactiveMSF rmsf;
+    SemiRetroactiveMSF rmsf;
 
     // creating the same graph as above, but with edges shuffled
     rmsf.add_edge(1, 4, 5, 3);
@@ -159,9 +164,9 @@ int kruskal(vector<pair<int, pair<int, int>>> edges, int max_vertex)
     return current_cost;
 }
 
-TEST(RetroactiveMSFTest, biTest)
+TEST(SemiRetroactiveMSFTest, biTest)
 {
-    RetroactiveMSF rmsf;
+    SemiRetroactiveMSF rmsf;
     set<int> used_times;
     set<pair<pair<int, int>, pair<int, int>>> added_edges;
 

@@ -1,3 +1,8 @@
+/******************************************************************************
+ * This work is part of the Bachelor’s dissertation of Felipe C. Noronha, at  *
+ * the Department of Computer Science of the University of São Paulo, Brazil. *
+ ******************************************************************************/
+
 #pragma once
 
 #include <bits/stdc++.h>
@@ -5,7 +10,7 @@
 
 #define dbg(x) std::cerr << "-- BDG -- " << #x << " = " << x << std::endl
 
-class RetroactiveMSF
+class SemiRetroactiveMSF
 {
 private:
    std::vector<IncrementalMSF> checkpoint_structure;

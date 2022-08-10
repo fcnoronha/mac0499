@@ -21,4 +21,4 @@ A tabela abaixo mostra os comandos para copilar e testar cada uma das estruturas
 | Link-Cut Tree | `bazel build //implementations:link-cut-tree` | `bazel test --test_output=all //implementations:link-cut-tree-test` |
 | Union-Find Retroativo | `bazel build //implementations:retroactive-union-find` | `bazel test --test_output=all //implementations:retroactive-union-find-test` |
 | MSF Incremental | `bazel build //implementations:incremental-msf` | `bazel test --test_output=all //implementations:incremental-msf-test` |
-| MSF Retroativo | `bazel build //implementations:retroactive-msf` | `bazel test --test_output=all //implementations:retroactive-msf-test` |
+| MSF Semi-Retroativo | `bazel build //implementations:semi-retroactive-msf` | `bazel test --test_output=all //implementations:semi-retroactive-msf-test` |

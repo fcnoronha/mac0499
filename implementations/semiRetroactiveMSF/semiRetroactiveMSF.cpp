@@ -1,8 +1,13 @@
+/******************************************************************************
+ * This work is part of the Bachelor’s dissertation of Felipe C. Noronha, at  *
+ * the Department of Computer Science of the University of São Paulo, Brazil. *
+ ******************************************************************************/
+
 #include <bits/stdc++.h>
 #include "../incrementalMSF/incrementalMSF.hpp"
-#include "retroactiveMSF.hpp"
+#include "semiRetroactiveMSF.hpp"
 
-void RetroactiveMSF::check_time_is_available(int t)
+void SemiRetroactiveMSF::check_time_is_available(int t)
 {
     if (edges_by_time.find(t) != edges_by_time.end())
     {
@@ -10,7 +15,7 @@ void RetroactiveMSF::check_time_is_available(int t)
     }
 }
 
-void RetroactiveMSF::check_time_is_valid(int t)
+void SemiRetroactiveMSF::check_time_is_valid(int t)
 {
     if (t <= 0)
     {
@@ -18,7 +23,7 @@ void RetroactiveMSF::check_time_is_valid(int t)
     }
 }
 
-void RetroactiveMSF::rebuild_decomposition()
+void SemiRetroactiveMSF::rebuild_decomposition()
 {
     block_size++;
     n_blocks = block_size + 1;
@@ -51,7 +56,7 @@ void RetroactiveMSF::rebuild_decomposition()
     checkpoint_time = new_checkpoint_time;
 }
 
-void RetroactiveMSF::move_imsf_checkpoint(IncrementalMSF &imsf, int new_checkpoint_time, int old_checkpoint_time)
+void SemiRetroactiveMSF::move_imsf_checkpoint(IncrementalMSF &imsf, int new_checkpoint_time, int old_checkpoint_time)
 {
     for (auto it = edges_by_time.upper_bound(old_checkpoint_time);
          it != edges_by_time.end() && (*it).first <= new_checkpoint_time;
@@ -62,7 +67,7 @@ void RetroactiveMSF::move_imsf_checkpoint(IncrementalMSF &imsf, int new_checkpoi
     }
 }
 
-int RetroactiveMSF::find_left_checkpoint_index(int t)
+int SemiRetroactiveMSF::find_left_checkpoint_index(int t)
 {
     int i = 0;
     while (i < n_blocks && checkpoint_time[i] <= t)
@@ -72,7 +77,7 @@ int RetroactiveMSF::find_left_checkpoint_index(int t)
     return i - 1;
 }
 
-std::vector<Edge> RetroactiveMSF::get_delta_edge_operations(int last_checkpoint_index, int t)
+std::vector<Edge> SemiRetroactiveMSF::get_delta_edge_operations(int last_checkpoint_index, int t)
 {
     int last_checkpoint = checkpoint_time[last_checkpoint_index];
     auto edge_added_after_checkpoint = edges_by_time.upper_bound(last_checkpoint);
@@ -88,7 +93,7 @@ std::vector<Edge> RetroactiveMSF::get_delta_edge_operations(int last_checkpoint_
     return delta_edge_operations;
 }
 
-void RetroactiveMSF::add_edge(int u, int v, int w, int t)
+void SemiRetroactiveMSF::add_edge(int u, int v, int w, int t)
 {
     check_time_is_available(t);
     check_time_is_valid(t);
@@ -107,7 +112,7 @@ void RetroactiveMSF::add_edge(int u, int v, int w, int t)
     }
 }
 
-std::vector<Edge> RetroactiveMSF::get_msf(int t)
+std::vector<Edge> SemiRetroactiveMSF::get_msf(int t)
 {
     check_time_is_valid(t);
 
@@ -116,7 +121,7 @@ std::vector<Edge> RetroactiveMSF::get_msf(int t)
     return checkpoint_structure[last_checkpoint_index].get_msf_after_operations(delta_edge_operations);
 }
 
-int RetroactiveMSF::get_msf_weight(int t)
+int SemiRetroactiveMSF::get_msf_weight(int t)
 {
     check_time_is_valid(t);
 
