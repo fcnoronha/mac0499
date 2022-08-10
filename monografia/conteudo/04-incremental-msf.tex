@@ -48,11 +48,11 @@ Primeiramente, para realizarmos a consulta acerca da composição de uma florest
     \caption{Consulta Get MSF}\label{imsf-get-msf}
     \begin{algorithmic}[1]
         \Function{get\_msf}{}
-        \State \emph{msf $\gets$ []}
-        \ForEach{\emph{id in current\_msf}}
-        \State \emph{msf.append(edges\_by\_id[id])}
+        \State {msf $\gets$ []}
+        \ForEach{{id in current\_msf}}
+        \State {msf.append(edges\_by\_id[id])}
         \EndFor
-        \State \Return \emph{msf}
+        \State \Return {msf}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -63,7 +63,7 @@ Já a consulta sobre o custo de uma floresta maximal de peso mínimo pode ser fa
     \caption{Consulta Get MSF Weight}\label{imsf-get-msf-weight}
     \begin{algorithmic}[1]
         \Function{get\_msf\_weight}{}
-        \State \Return \emph{current\_msf\_weight}
+        \State \Return {current\_msf\_weight}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -83,22 +83,22 @@ O segundo caso ocorre quando $u$ e $v$ fazem parte da mesma componente do grafo.
 \begin{algorithm}[h!]
     \caption{Rotina Add Edge}\label{imsf-add-edge}
     \begin{algorithmic}[1]
-        \Function{add\_edge}{\emph{u,v,w}}
-        \State \emph{edge\_id $\gets$ create\_unique\_edge\_id()}
-        \State \emph{edges\_by\_id[edge\_id] $\gets$ new edge(u, v, w, edge\_id)}
-        \IfNot{\emph{linkCutTree.is\_connected(u, v)}}
-        \State \emph{linkCutTree.link(u, v, w, edge\_id)}
-        \State \emph{current\_msf.append(edge\_id)}
-        \State \emph{current\_msf\_weight += w}
-        \ElsIf{\emph{linkCutTree.maximum\_edge(u, v) $>$ w}}
-        \State \emph{maximum\_edge\_id $\gets$ linkCutTree.maximum\_edge\_id(u, v)}
-        \State \emph{maximum\_edge $\gets$ edges\_by\_id[maximum\_edge\_id]}
-        \State \emph{linkCutTree.cut(maximum\_edge.u, maximum\_edge.v)}
-        \State \emph{current\_msf.erase(maximum\_edge.id)}
-        \State \emph{current\_msf\_weight -= maximum\_edge.w}
-        \State \emph{linkCutTree.link(u, v, w, edge\_id)}
-        \State \emph{current\_msf.append(edge\_id)}
-        \State \emph{current\_msf\_weight += w}
+        \Function{add\_edge}{{u,v,w}}
+        \State {edge\_id $\gets$ create\_unique\_edge\_id()}
+        \State {edges\_by\_id[edge\_id] $\gets$ new edge(u, v, w, edge\_id)}
+        \IfNot{{linkCutTree.is\_connected(u, v)}}
+        \State {linkCutTree.link(u, v, w, edge\_id)}
+        \State {current\_msf.append(edge\_id)}
+        \State {current\_msf\_weight $\gets$ current\_msf\_weight + w}
+        \ElsIf{{linkCutTree.maximum\_edge(u, v) $>$ w}}
+        \State {maximum\_edge\_id $\gets$ linkCutTree.maximum\_edge\_id(u, v)}
+        \State {maximum\_edge $\gets$ edges\_by\_id[maximum\_edge\_id]}
+        \State {linkCutTree.cut(maximum\_edge.u, maximum\_edge.v)}
+        \State {current\_msf.erase(maximum\_edge.id)}
+        \State {current\_msf\_weight -= maximum\_edge.w}
+        \State {linkCutTree.link(u, v, w, edge\_id)}
+        \State {current\_msf.append(edge\_id)}
+        \State {current\_msf\_weight $\gets$ current\_msf\_weight + w}
         \EndIf
         \EndFunction
     \end{algorithmic}

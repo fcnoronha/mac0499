@@ -76,17 +76,17 @@ Logo, após realizarmos as consultas em que estamos interessados, precisamos rev
 \begin{algorithm}[h!]
     \caption{Rotina Apply Rollback}\label{imsf-apply-rollback}
     \begin{algorithmic}[1]
-        \Function{apply\_rollback}{\emph{operations\_list[]}}
-        \State \emph{revert(operations\_list)}
-        \ForEach{\emph{[operation, edge] in operations\_list}}
-        \If{\emph{operation = link}}
-        \State \emph{linkCutTree.cut(edge.u, edge.v)}
-        \State \emph{current\_msf.erase(edge.id)}
-        \State \emph{current\_msf\_weight -= edge.w}
+        \Function{apply\_rollback}{{operations\_list[]}}
+        \State {revert(operations\_list)}
+        \ForEach{{[operation, edge] in operations\_list}}
+        \If{{operation = link}}
+        \State {linkCutTree.cut(edge.u, edge.v)}
+        \State {current\_msf.erase(edge.id)}
+        \State {current\_msf\_weight -= edge.w}
         \Else
-        \State \emph{linkCutTree.link(edge.u, edge.v, edge.w, edge.id)}
-        \State \emph{current\_msf.append(edge.id)}
-        \State \emph{current\_msf\_weight += edge.w}
+        \State {linkCutTree.link(edge.u, edge.v, edge.w, edge.id)}
+        \State {current\_msf.append(edge.id)}
+        \State {current\_msf\_weight $\gets$ current\_msf\_weight + edge.w}
         \EndIf
         \EndFor
         \EndFunction
@@ -98,11 +98,11 @@ Finalmente, com estes métodos em mãos, podemos implementar as rotinas extras e
 \begin{algorithm}[h!]
     \caption{Rotina Get MSF After Operations}\label{imsf-msf-after}
     \begin{algorithmic}[1]
-        \Function{get\_msf\_after\_operations}{\emph{edges[]}}
-        \State \emph{rollback\_operations $\gets$ apply\_add\_edge\_operations(edges)}
-        \State \emph{msf $\gets$ get\_msf()}
-        \State \emph{apply\_rollback(rollback\_operations)}
-        \State \Return \emph{msf}
+        \Function{get\_msf\_after\_operations}{{edges[]}}
+        \State {rollback\_operations $\gets$ apply\_add\_edge\_operations(edges)}
+        \State {msf $\gets$ get\_msf()}
+        \State {apply\_rollback(rollback\_operations)}
+        \State \Return {msf}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -312,33 +312,33 @@ A primeira rotina que vamos fornecer uma explicação mais detalhada é a respon
 \begin{algorithm}[h!]
     \caption{Rotina Build Decomposition}\label{rmsf-build-decomp}
     \begin{algorithmic}[1]
-        \Function{build\_decomposition}{\emph{}}
-        \State \emph{block\_size += 1}
-        \State \emph{n\_blocks $\gets$ block\_size + 1}
+        \Function{build\_decomposition}{{}}
+        \State {block\_size $\gets$ block\_size + 1}
+        \State {n\_blocks $\gets$ block\_size + 1}
 
-        \State \emph{position $\gets$ 0}
-        \State \emph{$c^*$ $\gets$ [0]}
-        \ForEach{\emph{[edge, time] in edges\_by\_time}}
-        \State \emph{position += 1}
+        \State {position $\gets$ 0}
+        \State {$c^*$ $\gets$ [0]}
+        \ForEach{{[edge, time] in edges\_by\_time}}
+        \State {position $gets$ position + 1}
         \If{position \% block\_size = 0}
-        \State \emph{$c^*$.append(time)}
+        \State {$c^*$.append(time)}
         \EndIf
         \EndFor
 
-        \State \emph{$t^*$ $\gets$ [new IncrementalMSF(), new IncrementalMSF()]}
-        \State \emph{move\_imsf\_checkpoint($t^*$[1], 0, $c^*$[1])}
+        \State {$t^*$ $\gets$ [new IncrementalMSF(), new IncrementalMSF()]}
+        \State {move\_imsf\_checkpoint($t^*$[1], 0, $c^*$[1])}
 
-        \For{\emph{i $\in [2, n\_blocks)$}}
-        \State \emph{$t^*$.append($t$[i-2])}
-        \State \emph{move\_imsf\_checkpoint($t^*$[i], $c$[i-2], $c^*$[i])}
+        \For{{i $\in [2, n\_blocks)$}}
+        \State {$t^*$.append($t$[i-2])}
+        \State {move\_imsf\_checkpoint($t^*$[i], $c$[i-2], $c^*$[i])}
         \EndFor
-        \State \emph{$c$ $\gets$ $c^*$}
-        \State \emph{$t$ $\gets$ $t^*$}
+        \State {$c$ $\gets$ $c^*$}
+        \State {$t$ $\gets$ $t^*$}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
 
-Para facilitarmos o código, criamos uma rotina auxiliar \texttt{move\_imsf\_checkpoint(t, a, b)}, que recebe uma floresta geradora mínima incremental $t$ e a desloca, adicionando todas arestas no intervalo de tempo $(a, b]$.
+Para facilitarmos o código, criamos uma rotina auxiliar \texttt{move\_imsf\_checkpoint(t, a, b)}, que recebe uma floresta geradora mínima incremental $t$ e a desloca, adicionando todas arestas no intervalo de tempo $(a, b]$, com custo amortizado $\Oh((b-a) \log n)$, onde $n$ é o numero de vértices no grafo.
 
 Com isso, a implementação segue diretamente da explicação nas Seção \ref{sec:rmsf-complexidade}, com a criação de novas listas $c^*$ e $t^*$, para armazenar os \emph{checkpoints} e as florestas geradoras mínimas incrementais, respectivamente. Além disso, utilizamos um \emph{loop} para preencher $t^*$ e fazer com que cada uma das $t^*_i$ seja deslocada para o seu respectivo $c_i^*$.
 
@@ -357,10 +357,10 @@ Ademais, criamos mais duas rotinas auxiliares para ajudar na implementação das
 \begin{algorithm}[h!]
     \caption{Consulta Get MSF Weight}\label{rmsf-get-msf-weight}
     \begin{algorithmic}[1]
-        \Function{get\_msf\_weight}{\emph{t}}
-        \State \emph{checkpoint\_index $\gets$ find\_left\_checkpoint\_index(t)}
-        \State \emph{delta\_operations $\gets$ get\_delta\_edge\_operations(last\_checkpoint\_index, t)}
-        \State \Return \emph{t[checkpoint\_index].get\_msf\_weight\_after\_operations(delta\_operations)}
+        \Function{get\_msf\_weight}{{t}}
+        \State {checkpoint\_index $\gets$ find\_left\_checkpoint\_index(t)}
+        \State {delta\_operations $\gets$ get\_delta\_edge\_operations(last\_checkpoint\_index, t)}
+        \State \Return {t[checkpoint\_index].get\_msf\_weight\_after\_operations(delta\_operations)}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -376,13 +376,13 @@ Finalmente, chegamos a rotina responsável por adicionar novas arestas a estrutu
 \begin{algorithm}[h!]
     \caption{Rotina Add Edge}\label{rmsf-add-edge}
     \begin{algorithmic}[1]
-        \Function{get\_msf}{\emph{u,v,w,t}}
-        \State \emph{edges\_by\_time[t] $\gets$ Edge(u,v,w)}
-        \For{\emph{i $\in$ (find\_left\_checkpoint\_index(t), n\_blocks)}}
-        \State \emph{t[i].add\_edge(u, v, w)}
+        \Function{get\_msf}{{u,v,w,t}}
+        \State {edges\_by\_time[t] $\gets$ Edge(u,v,w)}
+        \For{{i $\in$ (find\_left\_checkpoint\_index(t), n\_blocks)}}
+        \State {t[i].add\_edge(u, v, w)}
         \EndFor
-        \If{\emph{$($block\_size + 1$)^2$ = edges\_by\_time.size()}}
-        \State \emph{rebuild\_decomposition()}
+        \If{{$($block\_size + 1$)^2$ = edges\_by\_time.size()}}
+        \State {rebuild\_decomposition()}
         \EndIf
         \EndFunction
     \end{algorithmic}

@@ -129,11 +129,11 @@ Para isso, devemos lembrar que: cada aresta das \emph{link-cut trees} representa
 \begin{algorithm}[h!]
     \caption{Consulta Same Set}\label{uf:same-set}
     \begin{algorithmic}[1]
-        \Function{same\_set}{\emph{a, b, t}}
-        \IfNot {\emph{linkCutTree.is\_connected(a, b)}}
-        \State \Return \emph{false}
+        \Function{same\_set}{{a, b, t}}
+        \IfNot {{linkCutTree.is\_connected(a, b)}}
+        \State \Return {false}
         \EndIf
-        \State \Return \emph{linkCutTree.maximum\_edge(a, b) $\leq$ t}
+        \State \Return {linkCutTree.maximum\_edge(a, b) $\leq$ t}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -149,11 +149,11 @@ O primeiro deles é a transformação de elementos dos conjuntos em nossa coleç
 \begin{algorithm}[h!]
     \caption{Rotina Create Union}\label{uf:create-union}
     \begin{algorithmic}[1]
-        \Function{create\_union}{\emph{a, b, t}}
-        \State \emph{linkCutTree.create\_node(a)}
-        \State \emph{linkCutTree.create\_node(b)}
-        \State \emph{linkCutTree.link(a,b,t)}
-        \State \emph{edges\_by\_time[t] $\gets$ (a, b)}
+        \Function{create\_union}{{a, b, t}}
+        \State {linkCutTree.create\_node(a)}
+        \State {linkCutTree.create\_node(b)}
+        \State {linkCutTree.link(a,b,t)}
+        \State {edges\_by\_time[t] $\gets$ (a, b)}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -161,10 +161,10 @@ O primeiro deles é a transformação de elementos dos conjuntos em nossa coleç
 \begin{algorithm}[h!]
     \caption{Rotina Delete Union}\label{uf:delete-union}
     \begin{algorithmic}[1]
-        \Function{delete\_union}{\emph{t}}
-        \State \emph{(u,v) $\gets$ edges\_by\_time[t]}
-        \State \emph{linkCutTree.cut(u,v)}
-        \State \emph{edges\_by\_time.erase(t)}
+        \Function{delete\_union}{{t}}
+        \State {(u,v) $\gets$ edges\_by\_time[t]}
+        \State {linkCutTree.cut(u,v)}
+        \State {edges\_by\_time.erase(t)}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
