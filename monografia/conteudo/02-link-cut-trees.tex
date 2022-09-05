@@ -1,7 +1,7 @@
 %!TeX root=../monografia.tex
 
 %% ------------------------------------------------------------------------- %%
-\chapter{Link-Cut Tree}
+\chapter{Link-Cut Trees}
 \label{cap:link-cut-trees}
 
 Neste capítulo, apresentaremos as \emph{link-cut trees}, introduzida por ~\citet{10.1145/800076.802464}. Esta estrutura de dados serve como base para as estruturas retroativas apresentadas nos próximos capítulos.
@@ -16,7 +16,7 @@ As \emph{link-cut trees} são uma estrutura de dados que nos permite manter uma 
     \item \texttt{make\_root(u)}: enraíza no vértice $u$ a árvore que o contém.
     \item \texttt{link(u, v, w)}: dado que os vértices $u$ e $v$ estão em árvores separadas, transforma $v$ em raiz de sua árvore e o liga como filho de $u$, colocando peso $w$ na nova aresta criada.
     \item \texttt{cut(u, v)}: retira da floresta a aresta com pontas em $u$ e $v$, quebrando a árvore que continha estes vértices em duas novas árvores.
-    \item \texttt{is\_connected(u, v)}: retorna \texttt{verdadeiro} caso $u$ e $v$ pertençam à mesma árvore, \texttt{falso} caso contrario.
+    \item \texttt{is\_connected(u, v)}: retorna \texttt{verdadeiro} caso $u$ e $v$ pertençam à mesma árvore, \texttt{falso} caso contrário.
 \end{itemize}
 
 Por último, as \emph{link-cut trees} possuem a capacidade de realizar operações agregadas nos vértices, isto é, consultas acerca de propriedades de uma sub-árvore ou de um caminho entre dois vértices. Em particular, estamos interessados na rotina \texttt{maximum\_edge(u, v)}, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
@@ -90,14 +90,14 @@ Nessa seção, apresentaremos o código por trás das operações que estamos in
 \begin{itemize}
     \item \texttt{make\_identifier(u)}: transforma um nó $u$ em identificador de seu caminho preferido.
     \item \texttt{split(u)}: separa o caminho preferido em que o nó $u$ é identificador em dois, quebrando a conexão entre $u$ e seu filho preferido, caso exista. Ao final, tanto $u$ quanto o seu filho preferido inicial serão os identificadores de seus caminhos preferidos.
-    \item \texttt{join(u, v)}: recebe dois nós, $u$ e $v$ --- identificadores de seus caminhos e sendo $v$ um filho de $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando $uv$ em aresta preferida. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$. Ao final da operação, $u$ será o identificador do novo caminho criado.
+    \item \texttt{join(u, v)}: recebe dois nós, $u$ e $v$ --- identificadores de seus caminhos e sendo $v$ um filho de $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando $uv$ em aresta preferida de $u$. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$. Ao final da operação, $u$ será o identificador do novo caminho criado.
     \item \texttt{reverse\_path(u)}: recebe $u$, o identificador de um caminho preferido, e inverte a orientação desse caminho na árvore representada, isto é, o fim se transforma no começo e o começo no fim.
     \item \texttt{get\_path\_end\_node(u)}: retorna o vértice menos profundo do caminho preferido de $u$, em outras palavras, o vértice no fim do caminho preferido que contém $u$. Na árvore da Figura \ref{fig:arvore-simples}, a chamada \texttt{get\_path\_end\_node(G)} retorna o vértice \texttt{A}.
-    \item \texttt{get\_parent\_path\_node(u)}: retorna o vértice na floresta imediatamente acima do fim do caminho preferido que contém $u$; caso o caminho caminho preferido de $u$ contenha a raiz da árvore representada, este método retorna \texttt{null}. Aqui, na árvore da Figura \ref{fig:arvore-simples}, \texttt{get\_parent\_path\_node(M)} retorna o vértice \texttt{C} \texttt{get\_parent\_path\_node(L)} retorna \texttt{G}.
+    \item \texttt{get\_parent\_path\_node(u)}: retorna o vértice na floresta imediatamente acima do fim do caminho preferido que contém $u$; caso o caminho preferido de $u$ contenha a raiz da árvore representada, este método retorna \texttt{null}. Na árvore da Figura \ref{fig:arvore-simples}, \texttt{get\_parent\_path\_node(M)} retorna o vértice \texttt{C} e \texttt{get\_parent\_path\_node(L)} retorna \texttt{G}.
     \item \texttt{get\_maximum\_path\_value(u)}: recebe $u$, o identificador de um caminho preferido, e retorna o maior valor de uma aresta neste caminho.
 \end{itemize}
 
-Além disso, de modo a determinarmos a complexidade dos métodos das \emph{link-cut trees}, temos que \texttt{split}, \texttt{join}, \texttt{reverse\_path} e \texttt{get\_maximum\_path\_value} consomem tempo constante, enquanto \texttt{make\_identifier}, \texttt{get\_path\_end\_node} e \texttt{get\_parent\_path\_node} gastam tempo proporcional a $\Oh(\log n)$ amortizado, onde $n$ é o número de elementos nos caminhos preferidos.
+Além disso, de modo a determinarmos a complexidade dos métodos das \emph{link-cut trees}, temos que \texttt{split}, \texttt{join}, \texttt{reverse\_path} e \texttt{get\_maximum\_path\_value} consomem tempo constante, enquanto \texttt{make\_identifier}, \texttt{get\_path\_end\_node} e \texttt{get\_parent\_path\_node} gastam tempo a $\Oh(\log n)$ amortizado, onde $n$ é o número de vértices nos caminhos preferidos.
 
 \subsection{Rotina Access}
 \label{subsection:lct-access}
@@ -106,7 +106,7 @@ Uma rotina utilizada por todos os métodos das \emph{link-cut trees} que vamos i
 
 Para isso, começamos uma sequência de iterações, que vão crescendo um caminho preferido desde $u$ até que tal caminho contemple a raiz da árvore representada. Inicialmente, separamos a parte superior do caminho preferido de $u$ da parte inferior, fazendo com que este caminho comece pelo vértice $u$.
 
-Com isso, a rotina agora realiza uma série de iterações, mantendo a seguinte invariante: $u$ é identificador de um caminho preferido que começa nele e vai até um dos filhos de \texttt{above\_path}. Com essa invariante, conseguimos concatenar o caminho que começa em $u$ com o caminho preferido imediatamente acima dele, o qual é representado por \texttt{above\_path}. Desta maneira, sabemos que atingimos a raiz da árvore quando o caminho imediatamente acima é vazio, ou seja, \texttt{above\_path} é nulo.
+Com isso, a rotina agora realiza uma série de iterações, mantendo a seguinte invariante: $u$ é identificador de um caminho preferido que começa nele e vai até um dos filhos do vértice \texttt{above\_path}. Com essa invariante, conseguimos concatenar o caminho que começa em $u$ com o caminho preferido imediatamente acima dele, o qual é representado pelo vértice \texttt{above\_path}. Desta maneira, sabemos que atingimos a raiz da árvore quando o caminho imediatamente acima é vazio, ou seja, \texttt{above\_path} é nulo.
 
 \begin{algorithm}[h!]
     \caption{Rotina Access}\label{lct:access}
@@ -127,7 +127,7 @@ Com isso, a rotina agora realiza uma série de iterações, mantendo a seguinte 
     \end{algorithmic}
 \end{algorithm}
 
-Logo, fica claro que o consumo de tempo dessa rotina é algo proporcional ao número de iterações realizadas vezes o custo das chamadas que operam sob os caminhos preferidos. Em particular, \citet{demaine_holmgren_jian_stepanenko_ishaque} usam a técnica de \emph{heavy-light decomposition} para mostrar que, em uma sequência de $m$ operações \texttt{access}, são realizadas $\Oh(m \log n)$ iterações. Ademais, eles mostram que as chamadas realizadas a cada iteração custam $\Oh(1)$ amortizado. Portanto, a rotina \texttt{access} consome tempo $\Oh(log n)$ amortizado.
+Logo, fica claro que o consumo de tempo dessa rotina é algo proporcional ao número de iterações realizadas vezes o custo das chamadas que operam sobre os caminhos preferidos. Em particular, \citet{demaine_holmgren_jian_stepanenko_ishaque} usam a técnica de \emph{heavy-light decomposition} para mostrar que, em uma sequência de $m$ operações \texttt{access}, são realizadas $\Oh(m \log n)$ iterações. Ademais, eles mostram que as chamadas realizadas a cada iteração custam tempo $\Oh(1)$ amortizado. Portanto, a rotina \texttt{access} consome tempo $\Oh(\log n)$ amortizado.
 
 \begin{figure}
     \centering
@@ -199,11 +199,11 @@ Inicialmente, colocamos $v$ como raiz de sua árvore representada, e criamos um 
         \Require{$u$ e $v$ em árvores distintas}
         \Function{link}{{u, v, w}}
         \State {uv\_edge $\gets$ new Node(w)} \Comment{cria nó com peso $w$, representando a aresta}
-        \State \Comment{ligando $(v) - (uv\_edge)$}
+        \State \Comment{ligando \emph{(v) - (uv\_edge)}}
         \State {make\_root(v)}
         \State {access(v)}
         \State {join(v, uv\_edge)}
-        \State \Comment{ligando $(uv\_edge)-(u)$}
+        \State \Comment{ligando \emph{(uv\_edge)-(u)}}
         \State {make\_root(u)}
         \State {access(u)}
         \State {access(uv\_edge)}
@@ -219,11 +219,11 @@ Já a operação \texttt{cut(u, v)}, que separa dois nós ligados por uma aresta
     \begin{algorithmic}[1]
         \Require{$u$ e $v$ na mesma árvore e $uv$ uma aresta da floresta representada}
         \Function{cut}{{u, v}}
-        \State \Comment{cortando $(u) - (uv\_edge)$}
+        \State \Comment{cortando \emph{(u) - (uv\_edge)}}
         \State {make\_root(u)}
         \State {access(uv\_edge)}
         \State {split(uv\_edge)}
-        \State \Comment{cortando $(v) - (uv\_edge)$}
+        \State \Comment{cortando \emph{(v) - (uv\_edge)}}
         \State {make\_root(v)}
         \State {access(uv\_edge)}
         \State {split(uv\_edge)}
@@ -265,20 +265,20 @@ Por último, temos a função \texttt{maximum\_edge(u, v)}, que supõe que $u$ e
     \end{algorithmic}
 \end{algorithm}
 
-Assim, encerramos a explicação da implementação dos métodos das \emph{link-cut trees}. Além disso, podemos perceber que todos os métodos executam simplesmente chamadas para os modificadores de caminhos preferidos e para a rotina \texttt{access}. Portanto, temos que as funções apresentadas até agora consomem tempo proporcional a $\Oh(log n)$ amortizado.
+Assim, encerramos a explicação da implementação dos métodos das \emph{link-cut trees}. Além disso, podemos perceber que todos os métodos executam simplesmente chamadas para os modificadores de caminhos preferidos e para a rotina \texttt{access}. Portanto, temos que as funções apresentadas até agora consomem tempo amortizado $\Oh(\log n)$.
 
 %% ------------------------------------------------------------------------- %%
 %% ------------------------------------------------------------------------- %%
 %% ------------------------------------------------------------------------- %%
 %% ------------------------------------------------------------------------- %%
-\section{Splay Tree}
+\section{Splay Trees}
 \label{sec:lct-splay-trees}
 
-No artigo original, \citet{10.1145/800076.802464} propuseram a utilização de uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, eles apresentaram a splay tree --- \citet{10.1145/3828.3835}, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $\Oh(\log n)$ amortizado, onde $n$ é o numero de nós da floresta representada, com uma implementação muito mais elegante do que a da versão original. Portanto, usaremos as splay trees para armazenar os caminhos preferidos.
+No artigo original, \citet{10.1145/800076.802464} propuseram a utilização de uma árvore binária enviesada como estrutura para os caminhos preferidos. Porém, quatro anos depois, eles apresentaram a \emph{splay tree} --- \citet{10.1145/3828.3835}, que possibilita realizarmos as operações necessárias para a manipulação dos caminhos preferidos em tempo $\Oh(\log n)$ amortizado, onde $n$ é o numero de nós da floresta representada, com uma implementação muito mais elegante do que a da versão original. Portanto, usaremos as splay trees para armazenar os caminhos preferidos.
 
 Uma splay tree é uma árvore binária de busca auto-balanceável. Estas árvores utilizam rotações para se auto-balancear, através de uma operação chamada \texttt{splay}. A operação \texttt{splay} traz um nó para a raiz da árvore através de sucessivas rotações. Mas antes de nos aprofundarmos neste método, examinaremos como os caminhos preferidos são representados aqui.
 
-Primeiramente, em nosso uso, a ordenação dos nós na splay tree é dada pela profundidade destes nas \emph{link-cut trees}. Note que, para garantir a eficiência, não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores, apresentadas a seguir. Em contrapartida, com este método, eventualmente perdemos a capacidade de realizarmos buscas por chave na splay tree, porém não necessitamos dessa operação.
+Primeiramente, em nosso uso, a ordenação dos nós na splay tree é dada pela profundidade destes nas link-cut trees. Note que, para garantir a eficiência, não guardamos explicitamente esses valores. Em vez disso, utilizamos a ideia de chave implícita, isto é, só nos preocupamos em manter a ordem relativa dos nós após as operações de separação e união das árvores, apresentadas a seguir.
 
 Ademais, para implementar eficientemente a operação \texttt{get\_maximum\_path\_value}, mantemos o peso máximo dos nós em cada sub-árvore de uma splay tree.
 
@@ -305,7 +305,7 @@ Ademais, para implementar eficientemente a operação \texttt{get\_maximum\_path
         \draw[aresta] (fh) -- (h);
 
     \end{tikzpicture}
-    \caption{Uma possível configuração da splay tree que armazena o caminho preferido $\langle H,F,C,A \rangle$ da Figura \ref{fig:arvore-access}, onde $F$ é identificador do caminho. Os nós em formato retangular mostram as arestas da árvore representada, com o peso de tal aresta na parte inferior.}
+    \caption{Uma possível configuração da splay tree que armazena o caminho preferido $\langle H,F,C,A \rangle$ da Figura \ref{fig:arvore-access}, onde $F$ é o identificador do caminho. Os nós em formato retangular mostram as arestas da árvore representada, com o peso de tal aresta na parte inferior.}
     \label{fig:splay-path}
 \end{figure}
 
@@ -318,7 +318,7 @@ Com isso, os nós da splay tree têm os seguintes campos:
     \item \texttt{left\_child} e \texttt{right\_child}: apontadores para os filhos esquerdo e direito de um nó na splay tree.
     \item \texttt{value}: se o nó representa uma aresta da árvore representada guarda o peso desta aresta, senão guarda 0.
     \item \texttt{max\_subtree\_value}: guarda o valor máximo armazenado na sub-árvore do nó.
-    \item \texttt{is\_reversed}: valor booleano para sinalizar se a sub-árvore do nó está com sua ordem invertida ou não, isto é, se todas as posições de filhos esquerdos e direitos estão  invertidas nessa  sub-árvore.
+    \item \texttt{is\_reversed}: valor booleano para sinalizar se a sub-árvore do nó está com sua ordem invertida ou não, isto é, se todas as posições de filhos esquerdos e direitos estão invertidas nessa sub-árvore. Seu funcionamento é ilustrado na Figura \ref{fig:is-reversed-show}.
 \end{itemize}
 
 \begin{figure}
@@ -370,7 +370,7 @@ Com isso, os nós da splay tree têm os seguintes campos:
         \end{tikzpicture}
         \caption{splay tree após a propagação de todos os valores \texttt{is\_reversed}}
     \end{subfigure}
-    \caption{A árvore em (a) mostra os valores do booleano \texttt{is\_reversed} acima do rótulo de cada no. Já a árvore em (b) mostra a splay tree resultante após todas as inversões serem resolvidas.}
+    \caption{A árvore em (a) mostra os valores do booleano \texttt{is\_reversed} acima do rótulo de cada nó. Já a árvore em (b) mostra a splay tree resultante após todas as inversões serem resolvidas.}
     \label{fig:is-reversed-show}
 \end{figure}
 
@@ -379,15 +379,15 @@ Ademais, caso o nó seja a raiz da splay tree, o campo \texttt{parent} armazena 
 \subsection{Rotina Splay}
 \label{subsection:lct-splay-splay}
 
-A rotina \texttt{splay} é o que garante o auto-balanceamento de uma splay tree. Como já mencionamos, seu efeito é trazer um dado nó para a raiz da árvore por meio de uma série de rotações. Para que o custo total de $m$ operações em uma splay seja $\Oh (m \log n) $, resultando num custo $\Oh(\log n)$ amortizado por operação, a implementação deve garantir que o método \texttt{splay} é sempre acionado no nó acessado mais profundo da splay tree, em toda operação. Ademais, as rotações que trazem o nó para a raiz da árvore devem seguir uma ordem particular, descrita através dos \emph{passos de splay}, que aplicam rotações duplas ou unitárias, até que o nó que estamos aplicando a operação chegue à raiz. Por último, devido ao bit que indica a inversão da sub-árvore de cada nó, temos que tomar alguns cuidados extras na nossa implementação dos passos de splay.
+A rotina \texttt{splay} é o que garante o auto-balanceamento de uma splay tree. Como já mencionamos, seu efeito é trazer um dado nó para a raiz da árvore por meio de uma série de rotações. Para que o custo total de $m$ operações em uma splay com $n$ nós seja $\Oh (m \log n) $, resultando num custo $\Oh(\log n)$ amortizado por operação, a implementação deve garantir que o método \texttt{splay} seja sempre acionado no nó acessado mais profundo da splay tree, em toda operação. Ademais, as rotações que trazem o nó para a raiz da árvore devem seguir uma ordem particular, descrita através dos \emph{passos de splay}, que aplicam rotações duplas ou unitárias, até que o nó em que estamos aplicando a operação chegue à raiz. Por último, devido ao bit que indica a inversão da sub-árvore de cada nó, temos que tomar alguns cuidados extras na nossa implementação dos passos de splay.
 
 Em particular, podemos dizer que esta operação é responsável por transformar um vértice em identificador de seu caminho, ou seja, entendemos como sinônimos os métodos \texttt{make\_identifier} e \texttt{splay}.
 
-De modo a facilitarmos nossa explicação detalhada, chamamos \texttt{parent} o pai de um nó $u$ e de \texttt{grandparent} o pai de \texttt{parent}. Como dissemos, uma operação de \texttt{splay} consiste em realizamos diversos \emph{passos de splay}, que trazem $u$ cada vez mais próximo à raiz da árvore, isto é, em cada um desses passos, realizamos uma ou duas rotações que diminuem a profundidade de $u$. Porém, ao realizar estes passos, temos que nos preocupar com dois fatores:
+De modo a facilitarmos nossa explicação detalhada, chamamos de \texttt{parent} o pai de um nó $u$ e de \texttt{grandparent} o pai de \texttt{parent}. Como dissemos, uma operação de \texttt{splay} consiste em realizamos diversos \emph{passos de splay}, que trazem $u$ cada vez mais próximo à raiz da árvore, isto é, em cada um desses passos, realizamos uma ou duas rotações que diminuem a profundidade de $u$. Porém, ao realizar estes passos, temos que nos preocupar com dois fatores:
 
 \begin{itemize}
     \item A propagação do valor booleano $is\_reversed$ de \texttt{grandparent} e em seguida o de \texttt{parent}, fazendo as devidas reversões caso necessário. Isso nos fornece a invariante de que iremos fazer comparações entre os filhos corretos para determinar qual rotação fazer.
-    \item A orientação que \texttt{grandparent}, \texttt{parent} e $u$ se encontram, isto é, se estão em uma orientação de \textit{zig}, \textit{zig-zig} ou \textit{zig-zag}, como exemplificadas na Figura \ref{fig:zig-oris}. Dependendo da orientação, fazemos uma rotação em $u$ ou em \texttt{parent}, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
+    \item A orientação em que \texttt{grandparent}, \texttt{parent} e $u$ se encontram, isto é, se estão em uma orientação que Sleator e Tarjan chamaram de \textit{zig}, \textit{zig-zig} ou \textit{zig-zag}, como exemplificadas na Figura \ref{fig:zig-oris}. Dependendo da orientação, fazemos uma rotação em $u$ ou em \texttt{parent}, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
 \end{itemize}
 
 \begin{figure}
@@ -434,7 +434,7 @@ De modo a facilitarmos nossa explicação detalhada, chamamos \texttt{parent} o 
         \end{tikzpicture}
         \caption{zig-zag}
     \end{subfigure}
-    \caption{Orientações \textit{zig}, \textit{zig-zig} e \textit{zig-zag} na splay tree. Aqui, \texttt{P} e \texttt{GP} abreviam \texttt{parent} e \texttt{grandparent}, respectivamente. As orientações  \textit{zag}, \textit{zag-zag} e \textit{zag-zig} são simétricas à estas.}
+    \caption{Orientações \textit{zig}, \textit{zig-zig} e \textit{zig-zag} na splay tree. Aqui, \texttt{P} e \texttt{GP} abreviam \texttt{parent} e \texttt{grandparent}, respectivamente. As orientações  \textit{zag}, \textit{zag-zag} e \textit{zag-zig} são simétricas a estas.}
     \label{fig:zig-oris}
 \end{figure}
 
@@ -445,7 +445,7 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz da splay tree que 
     \caption{Rotina Splay}\label{splay:splay}
     \begin{algorithmic}[1]
         \Function{Splay}{{u}}
-        \WhileNot  {{u.is\_root()}} \Comment{$u$ não é raiz da LCT e nem da Splay}
+        \WhileNot  {{u.is\_root()}} \Comment{$u$ não é raiz da Splay}
         \State {parent $\gets$ u.parent}
         \State {grandparent $\gets$ parent.parent}
         \IfNot{{parent.is\_root()}}

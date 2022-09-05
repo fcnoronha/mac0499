@@ -93,6 +93,7 @@
 % Para pseudocódigos
 \usepackage{algpseudocode}
 \usepackage[noend]{algorithm}
+
 % Faz com que algoritmo use a numeração do capitulo
 \makeatletter 
 \renewcommand\thealgorithm{\thechapter.\arabic{algorithm}} 
@@ -112,7 +113,7 @@
 \algnewcommand\algorithmicforeach{\textbf{for each}}
 \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
 \algdef{SE}[IF]{IfNot}{EndIf}[1]{\algorithmicif\ \textbf{not}\ #1\ \algorithmicthen}{\algorithmicend\ \algorithmicif}
-\algdef{SE}[WHILE]{WhileNot}{EndIf}[1]{\algorithmicwhile\ \textbf{not}\ #1\ \algorithmicthen}{\algorithmicend\ \algorithmicwhile}
+\algdef{SE}[WHILE]{WhileNot}{EndWhile}[1]{\algorithmicwhile\ \textbf{not}\ #1}{\algorithmicend\ \algorithmicwhile}
 
 % para habilitar quebra de linha dentro do \texttt{} 
 \usepackage{lipsum}
