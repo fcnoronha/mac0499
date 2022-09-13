@@ -10,7 +10,7 @@ Neste capítulo, apresentaremos as \emph{link-cut trees}, introduzida por ~\cite
 \section{Ideia}
 \label{sec:lct-ideia}
 
-As \emph{link-cut trees} são uma estrutura de dados que nos permite manter uma floresta de árvores enraizadas com peso nas arestas, onde os nós de cada árvore possuem um número arbitrário de filhos. Ademais, a floresta armazenada por essa estrutura não é orientada --- isto é, suas arestas não possuem uma direção --- e devido à maneira que ela é usada para nas implementações a seguir, sua raiz é constantemente redefinida, de modo que perdemos o arranjo original das árvores. Com isso, essa estrutura nos fornece o seguinte conjunto de operações:
+As \emph{link-cut trees} são uma estrutura de dados que nos permite manter uma floresta de árvores enraizadas com peso nas arestas, onde os vértices de cada árvore possuem um número arbitrário de filhos. Ademais, a floresta armazenada por essa estrutura não é orientada --- isto é, suas arestas não possuem uma direção --- e devido à maneira que ela é usada para nas implementações a seguir, sua raiz é constantemente redefinida, de modo que perdemos o arranjo original das árvores. Com isso, essa estrutura nos fornece o seguinte conjunto de operações:
 
 \begin{itemize}
     \item \texttt{make\_root(u)}: enraíza no vértice $u$ a árvore que o contém.
@@ -88,9 +88,9 @@ Ademais, para armazenar os pesos das arestas da floresta, a estrutura usada ter�
 Nessa seção, apresentaremos o código por trás das operações que estamos interessados em implementar nas \emph{link-cut trees}. Em um primeiro momento, assumiremos que já sabemos como implementar alguns métodos que lidam com os caminhos preferidos. Desta forma, a implementação dos métodos abaixo fica reservada para a próxima seção.
 
 \begin{itemize}
-    \item \texttt{make\_identifier(u)}: transforma um nó $u$ em identificador de seu caminho preferido.
-    \item \texttt{split(u)}: separa o caminho preferido em que o nó $u$ é identificador em dois, quebrando a conexão entre $u$ e seu filho preferido, caso exista. Ao final, tanto $u$ quanto o seu filho preferido inicial serão os identificadores de seus caminhos preferidos.
-    \item \texttt{join(u, v)}: recebe dois nós, $u$ e $v$ --- identificadores de seus caminhos e sendo $v$ um filho de $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando $uv$ em aresta preferida de $u$. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$. Ao final da operação, $u$ será o identificador do novo caminho criado.
+    \item \texttt{make\_identifier(u)}: transforma um vértice $u$ em identificador de seu caminho preferido.
+    \item \texttt{split(u)}: separa o caminho preferido em que o vértice $u$ é identificador em dois, quebrando a conexão entre $u$ e seu filho preferido, caso exista. Ao final, tanto $u$ quanto o seu filho preferido inicial serão os identificadores de seus caminhos preferidos.
+    \item \texttt{join(u, v)}: recebe dois vértices, $u$ e $v$ --- identificadores de seus caminhos e sendo $v$ um filho de $u$ na árvore representada --- e concatena os respectivos caminhos preferidos, transformando $uv$ em aresta preferida de $u$. Com isso, separa $u$ da parte mais profunda de seu caminho preferido inicial, deixando o identificador de tal caminho com um ponteiro para $u$. Ao final da operação, $u$ será o identificador do novo caminho criado.
     \item \texttt{reverse\_path(u)}: recebe $u$, o identificador de um caminho preferido, e inverte a orientação desse caminho na árvore representada, isto é, o fim se transforma no começo e o começo no fim.
     \item \texttt{get\_path\_end\_node(u)}: retorna o vértice menos profundo do caminho preferido de $u$, em outras palavras, o vértice no fim do caminho preferido que contém $u$. Na árvore da Figura \ref{fig:arvore-simples}, a chamada \texttt{get\_path\_end\_node(G)} retorna o vértice \texttt{A}.
     \item \texttt{get\_parent\_path\_node(u)}: retorna o vértice na floresta imediatamente acima do fim do caminho preferido que contém $u$; caso o caminho preferido de $u$ contenha a raiz da árvore representada, este método retorna \texttt{null}. Na árvore da Figura \ref{fig:arvore-simples}, \texttt{get\_parent\_path\_node(M)} retorna o vértice \texttt{C} e \texttt{get\_parent\_path\_node(L)} retorna \texttt{G}.
@@ -168,7 +168,7 @@ Logo, fica claro que o consumo de tempo dessa rotina é algo proporcional ao nú
         \draw[pref] (n) -- (o) node[midway, above] {20};
 
     \end{tikzpicture}
-    \caption{Caminhos preferidos na árvore da Figura \ref{fig:arvore-simples} após uma operação de \texttt{access} no nó $H$. Com isso temos o novo conjunto de caminhos vértice-disjuntos $ \{ \langle H,F,C,A \rangle, \langle K,G,D,B \rangle, \langle M,I \rangle, \langle E \rangle, \langle J \rangle, \langle L \rangle, \langle O,N \rangle \} $. }
+    \caption{Caminhos preferidos na árvore da Figura \ref{fig:arvore-simples} após uma operação de \texttt{access} no vértice $H$. Com isso temos o novo conjunto de caminhos vértice-disjuntos $ \{ \langle H,F,C,A \rangle, \langle K,G,D,B \rangle, \langle M,I \rangle, \langle E \rangle, \langle J \rangle, \langle L \rangle, \langle O,N \rangle \} $. }
     \label{fig:arvore-access}
 \end{figure}
 
@@ -212,7 +212,7 @@ Inicialmente, colocamos $v$ como raiz de sua árvore representada, e criamos um 
     \end{algorithmic}
 \end{algorithm}
 
-Já a operação \texttt{cut(u, v)}, que separa dois nós ligados por uma aresta, é um pouco mais simples. Note que temos que separar as conexões entre $u$ e \texttt{uv\_edge}, assim como entre \texttt{uv\_edge} e $v$. O processo de separação é igual para as duas partes, por isso vamos explicar somente a separação de $u$ e \texttt{uv\_edge}.
+Já a operação \texttt{cut(u, v)}, que separa dois vértices ligados por uma aresta, é um pouco mais simples. Note que temos que separar as conexões entre $u$ e \texttt{uv\_edge}, assim como entre \texttt{uv\_edge} e $v$. O processo de separação é igual para as duas partes, por isso vamos explicar somente a separação de $u$ e \texttt{uv\_edge}.
 
 \begin{algorithm}[h!]
     \caption{Rotina Cut}\label{lct:cut}
@@ -374,14 +374,14 @@ Com isso, os nós da splay tree têm os seguintes campos:
     \label{fig:is-reversed-show}
 \end{figure}
 
-Ademais, caso o nó seja a raiz da splay tree, o campo \texttt{parent} armazena um ponteiro para o vértice que está logo acima do fim deste caminho preferido na árvore representada. Ou seja, a raiz de uma splay tree aponta para um nó de outra splay tree, aquela que contém o vértice a que seu caminho preferencial se liga na sua árvore representada.
+Ademais, caso o nó seja a raiz da splay tree, o campo \texttt{parent} armazena um ponteiro para o nó que está logo acima do fim deste caminho preferido na árvore representada. Ou seja, a raiz de uma splay tree aponta para um nó de outra splay tree, aquela que contém o vértice a que seu caminho preferencial se liga na sua árvore representada.
 
 \subsection{Rotina Splay}
 \label{subsection:lct-splay-splay}
 
 A rotina \texttt{splay} é o que garante o auto-balanceamento de uma splay tree. Como já mencionamos, seu efeito é trazer um dado nó para a raiz da árvore por meio de uma série de rotações. Para que o custo total de $m$ operações em uma splay com $n$ nós seja $\Oh (m \log n) $, resultando num custo $\Oh(\log n)$ amortizado por operação, a implementação deve garantir que o método \texttt{splay} seja sempre acionado no nó acessado mais profundo da splay tree, em toda operação. Ademais, as rotações que trazem o nó para a raiz da árvore devem seguir uma ordem particular, descrita através dos \emph{passos de splay}, que aplicam rotações duplas ou unitárias, até que o nó em que estamos aplicando a operação chegue à raiz. Por último, devido ao bit que indica a inversão da sub-árvore de cada nó, temos que tomar alguns cuidados extras na nossa implementação dos passos de splay.
 
-Em particular, podemos dizer que esta operação é responsável por transformar um vértice em identificador de seu caminho, ou seja, entendemos como sinônimos os métodos \texttt{make\_identifier} e \texttt{splay}.
+Em particular, podemos dizer que esta operação é responsável por transformar um nó em identificador de seu caminho, ou seja, entendemos como sinônimos os métodos \texttt{make\_identifier} e \texttt{splay}.
 
 De modo a facilitarmos nossa explicação detalhada, chamamos de \texttt{parent} o pai de um nó $u$ e de \texttt{grandparent} o pai de \texttt{parent}. Como dissemos, uma operação de \texttt{splay} consiste em realizamos diversos \emph{passos de splay}, que trazem $u$ cada vez mais próximo à raiz da árvore, isto é, em cada um desses passos, realizamos uma ou duas rotações que diminuem a profundidade de $u$. Porém, ao realizar estes passos, temos que nos preocupar com dois fatores:
 
@@ -390,7 +390,7 @@ De modo a facilitarmos nossa explicação detalhada, chamamos de \texttt{parent}
     \item A orientação em que \texttt{grandparent}, \texttt{parent} e $u$ se encontram, isto é, se estão em uma orientação que Sleator e Tarjan chamaram de \textit{zig}, \textit{zig-zig} ou \textit{zig-zag}, como exemplificadas na Figura \ref{fig:zig-oris}. Dependendo da orientação, fazemos uma rotação em $u$ ou em \texttt{parent}, sempre com a ideia de diminuirmos em 1 a profundidade de $u$.
 \end{itemize}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
@@ -449,6 +449,7 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz da splay tree que 
         \State {parent $\gets$ u.parent}
         \State {grandparent $\gets$ parent.parent}
         \IfNot{{parent.is\_root()}}
+        \State \Comment{caso o seja necessário, inverte os filhos do nó e propaga a inversão do bit}
         \State {grandparent.push\_reversed\_bit()}
         \State {parent.push\_reversed\_bit()}
         \If{{(grandparent.r\_child = parent) = (parent.r\_child = u)}}
@@ -464,16 +465,16 @@ Ao sair da função \texttt{splay}, o nó $u$ estará na raiz da splay tree que 
     \end{algorithmic}
 \end{algorithm}
 
-Assim como a operação acima, o restante da nossa implementação de uma splay tree é bastante tradicional. Com isso, nossos únicos cuidados extras são a manutenção do bit \texttt{is\_reversed}, do valor máximo das sub-árvores e da manutenção das chaves implícitas. Por exemplo, no método \texttt{rotate(u)}, temos como primeiro passo a propagação do bit \texttt{is\_reversed} de \texttt{grandparent} até $u$ e como última etapa o cálculo dos novos valores de \texttt{max\_subtree\_value}.
+Assim como a operação acima, o restante da nossa implementação de uma splay tree é bastante tradicional. Com isso, nossos únicos cuidados extras são a manutenção do bit \texttt{is\_reversed}, do valor máximo das sub-árvores e da consistência das chaves implícitas. Por exemplo, no método \texttt{rotate(u)}, temos como primeiro passo a propagação do bit \texttt{is\_reversed} de \texttt{grandparent} até $u$ e como última etapa o cálculo dos novos valores de \texttt{max\_subtree\_value}.
 
 \subsection{Rotinas Split e Join}
 \label{subsection:lct-splay-split-join}
 
 Temos também dois métodos importantes das splay trees usados na manutenção dos caminhos preferidos: \texttt{split} e \texttt{join}, responsáveis por separar e concatenar caminhos preferidos, respectivamente.
 
-Primeiramente, falaremos do método \texttt{split(u)}, que recebe um nó $u$, identificador de seu caminho preferido, e separa o caminho preferido que o contém em dois: um com os vértices menos profundos que $u$ em seu caminho, e outro com $u$ e os vértices mais profundos que $u$. Para isso, o método simplesmente separa a sub-árvore esquerda de $u$, como mostrado acima. Vale notar que, este método é destrutivo, removendo tanto o ponteiro para o filho preferido de $u$ quanto o ponteiro \texttt{parent} que tal filho possui para $u$. Logo, usamos essa rotina apenas para o \texttt{cut()} das \emph{link-cut trees}.
+Primeiramente, falaremos do método \texttt{split(u)}, que recebe um nó $u$, identificador de seu caminho preferido, e separa o caminho preferido que o contém em dois: um com os nós menos profundos que $u$ em seu caminho, e outro com $u$ e os nós mais profundos que $u$. Para isso, o método simplesmente separa a sub-árvore esquerda de $u$. Vale notar que, este método é destrutivo, removendo tanto o ponteiro para o filho preferido de $u$ quanto o ponteiro \texttt{parent} que tal filho possui para $u$. Logo, usamos essa rotina apenas para o \texttt{cut()} das \emph{link-cut trees}.
 
-\begin{algorithm}[h!]
+\begin{algorithm}[H]
     \caption{Rotina Split}\label{splay:split}
     \begin{algorithmic}[1]
         \Require{$u$ é identificador de seu caminho preferido}
@@ -510,20 +511,20 @@ Note que o vértice $u$ poderia ter uma sub-árvore direita, correspondendo à p
 
 Para finalizar, nossa splay tree possui quatro métodos auxiliares: o \texttt{reverse\_path}, \texttt{get\_path\_end\_node}, \texttt{get\_parent\_path\_node} e \texttt{get\_maximum\_path\_value}.
 
-Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador $u$ de um caminho e inverte a orientação desse caminho. Tal tarefa é realizada invertendo o valor do bit \texttt{is\_reversed} de $u$. Com isso, nas próximas operações realizadas neste nó, seus filhos serão trocados de posição e o bit será propagado na sua sub-árvore.
+Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador $u$ de um caminho e inverte a orientação desse caminho. Tal tarefa é realizada invertendo o valor do bit \texttt{is\_reversed} de $u$. Com isso, nas próximas operações realizadas neste nó, seus filhos serão trocados de posição e o bit será propagado nas suas sub-árvores.
 
 \begin{algorithm}[h!]
     \caption{Rotina Revese Path}\label{splay:reverse-path}
     \begin{algorithmic}[1]
         \Require{$u$ identificador de seu caminho preferido}
         \Function{revese\_path}{{u}}
-        \State {u.is\_reversed $\gets \neg$u.is\_reversed}
-        \State {u.push\_reversed\_bit()} \Comment{inverte os filhos de $u$ e propaga a inversão do bit}
+        \State {u.is\_reversed $\gets$ \textbf{not} u.is\_reversed}
+        % \State {u.push\_reversed\_bit()} \Comment{inverte os filhos de $u$ e propaga a inversão do bit}
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
 
-A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_path\_node(u)} são usados para acessar o fim e o pai do caminho preferido que contém $u$. Em particular, a primeira rotina retorna o vértice menos profundo do caminho preferido de $u$, fazendo isso ao acessar o vértice mais à esquerda na sua splay tree. Já o segundo método é responsável por retornar o vértice imediatamente acima do fim do caminho preferido que contém $u$. Caso tal caminho contenha a raiz da árvore representada, este método retorna \texttt{null}. Para fazer isso, efetuamos uma operação \texttt{splay} em $u$ e retornamos o valor de \texttt{parent}.
+A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_path\_node(u)} são usados para acessar o fim e o pai do caminho preferido que contém $u$. Em particular, a primeira rotina retorna o nó menos profundo do caminho preferido de $u$, fazendo isso ao acessar o nó mais à esquerda na sua splay tree. Já o segundo método é responsável por retornar o nó imediatamente acima do fim do caminho preferido que contém $u$. Caso tal caminho contenha a raiz da árvore representada, este método retorna \texttt{null}. Para fazer isso, efetuamos uma operação \texttt{splay} em $u$ e retornamos o valor de seu \texttt{parent}.
 
 \begin{algorithm}[h!]
     \caption{Consulta Get Path End Node}\label{splay:get-path-end}
@@ -550,7 +551,7 @@ A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_pa
     \end{algorithmic}
 \end{algorithm}
 
-Por último, temos a função \texttt{get\_maximum\_path\_value(u)}, que recebe um vértice $u$ identificador de caminho e retorna o maior valor de uma aresta no caminho preferencial de $u$. Em termos práticos, retorna o valor de \texttt{max\_subtree\_value}.
+Por último, temos a função \texttt{get\_maximum\_path\_value(u)}, que recebe um nó $u$ identificador de caminho e retorna o maior valor de uma aresta no caminho preferencial de $u$. Em termos práticos, retorna o valor de \texttt{max\_subtree\_value}.
 
 \begin{algorithm}[h!]
     \caption{Consulta Get Maximum Path Value}\label{splay:get-maximum-value}
