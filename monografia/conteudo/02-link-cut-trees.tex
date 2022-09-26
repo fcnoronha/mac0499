@@ -506,12 +506,14 @@ De maneira complementar, temos a rotina \texttt{join(u, v)}, que recebe dois nó
 
 Note que o vértice $u$ poderia ter uma sub-árvore direita, correspondendo à parte mais profunda de seu caminho preferido. Após a operação \texttt{join}, esse trecho de seu velho caminho preferido torna-se um novo caminho preferido que aponta --- através do ponteiro \texttt{parent} --- para o novo caminho preferido de $u$, que acabou de ser concatenado ao de~$v$.
 
+Como ambas as rotinas simplesmente leem e alteram variáveis, definimos seus respectivos custos como $\Oh(1)$.
+
 \subsection{Métodos auxiliares}
 \label{subsection:lct-splay-aux}
 
 Para finalizar, nossa splay tree possui quatro métodos auxiliares: o \texttt{reverse\_path}, \texttt{get\_path\_end\_node}, \texttt{get\_parent\_path\_node} e \texttt{get\_maximum\_path\_value}.
 
-Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador $u$ de um caminho e inverte a orientação desse caminho. Tal tarefa é realizada invertendo o valor do bit \texttt{is\_reversed} de $u$. Com isso, nas próximas operações realizadas neste nó, seus filhos serão trocados de posição e o bit será propagado nas suas sub-árvores.
+Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador $u$ de um caminho e inverte a orientação desse caminho. Tal tarefa é realizada invertendo o valor do bit \texttt{is\_reversed} de $u$. Com isso, nas próximas operações realizadas neste nó, seus filhos serão trocados de posição e o bit será propagado nas suas sub-árvores. Além disso, podemos perceber que seu custo é $\Oh(1)$.
 
 \begin{algorithm}[h!]
     \caption{Rotina Revese Path}\label{splay:reverse-path}
@@ -551,7 +553,9 @@ A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_pa
     \end{algorithmic}
 \end{algorithm}
 
-Por último, temos a função \texttt{get\_maximum\_path\_value(u)}, que recebe um nó $u$ identificador de caminho e retorna o maior valor de uma aresta no caminho preferencial de $u$. Em termos práticos, retorna o valor de \texttt{max\_subtree\_value}.
+Como as duas rotinas acima utilizam o método \texttt{splay}, podemos afirma que os respectivos custos são de $\Oh(\log n)$ amortizado.
+
+Por último, temos a função \texttt{get\_maximum\_path\_value(u)}, que recebe um nó $u$ identificador de caminho e retorna o maior valor de uma aresta no caminho preferencial de $u$. Em termos práticos, retorna o valor de \texttt{max\_subtree\_value}. Claramente, temos que o custo de tal função e $\Oh(1)$.
 
 \begin{algorithm}[h!]
     \caption{Consulta Get Maximum Path Value}\label{splay:get-maximum-value}

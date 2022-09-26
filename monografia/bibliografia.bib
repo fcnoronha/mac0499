@@ -35,24 +35,21 @@
 %}
 
 @inproceedings{10.1145/800076.802464,
-    author    = {Sleator, Daniel D. and Tarjan, Robert Endre},
+    author    = {Sleator, Daniel D. and Tarjan, Robert E.},
     title     = {A Data Structure for Dynamic Trees},
     year      = {1981},
     isbn      = {9781450373920},
-    publisher = {Association for Computing Machinery},
     address   = {New York, NY, USA},
     url       = {https://doi.org/10.1145/800076.802464},
     doi       = {10.1145/800076.802464},
     abstract  = {We propose a data structure to maintain a collection of vertex-disjoint trees under a sequence of two kinds of operations: a link operation that combines two trees into one by adding an edge, and a cut operation that divides one tree into two by deleting an edge. Our data structure requires O(log n) time per operation when the time is amortized over a sequence of operations. Using our data structure, we obtain new fast algorithms for the following problems:(1) Computing deepest common ancestors.(2) Solving various network flow problems including finding maximum flows, blocking flows, and acyclic flows.(3) Computing certain kinds of constrained minimum spanning trees.(4) Implementing the network simplex algorithm for the transshipment problem.Our most significant application is (2); we obtain an O(mn log n)-time algorithm to find a maximum flow in a network of n vertices and m edges, beating by a factor of log n the fastest algorithm previously known for sparse graphs.},
-    booktitle = {Proceedings of the Thirteenth Annual ACM Symposium on Theory of Computing},
+    booktitle = {Proceedings of the Thirteenth Annual ACM Symposium on Theory of Computing (STOC)},
     pages     = {114-122},
-    numpages  = {9},
-    location  = {Milwaukee, Wisconsin, USA},
-    series    = {STOC '81}
+    numpages  = {9}
 }
 
 @article{10.1145/3828.3835,
-    author     = {Sleator, Daniel D. and Tarjan, Robert Endre},
+    author     = {Sleator, Daniel D. and Tarjan, Robert E.},
     title      = {Self-Adjusting Binary Search Trees},
     year       = {1985},
     issue_date = {July 1985},
@@ -76,14 +73,11 @@
     issue_date = {May 2007},
     publisher  = {Association for Computing Machinery},
     address    = {New York, NY, USA},
-    volume     = {3},
-    number     = {2},
     issn       = {1549-6325},
     url        = {https://doi.org/10.1145/1240233.1240236},
     doi        = {10.1145/1240233.1240236},
     abstract   = {We introduce a new data structuring paradigm in which operations can be performed on a data structure not only in the present, but also in the past. In this new paradigm, called retroactive data structures, the historical sequence of operations performed on the data structure is not fixed. The data structure allows arbitrary insertion and deletion of operations at arbitrary times, subject only to consistency requirements. We initiate the study of retroactive data structures by formally defining the model and its variants. We prove that, unlike persistence, efficient retroactivity is not always achievable. Thus, we present efficient retroactive data structures for queues, doubly ended queues, priority queues, union-find, and decomposable search structures.},
     journal    = {ACM Trans. Algorithms},
-    pages      = {13-es},
     numpages   = {20},
     keywords   = {point location, time travel, persistence, History, rollback}
 }
@@ -107,7 +101,7 @@
 }
 
 @article{10.1145/62.2160,
-    author     = {Tarjan, Robert Endre and van Leeuwen, Jan},
+    author     = {Tarjan, Robert E. and van Leeuwen, Jan},
     title      = {Worst-Case Analysis of Set Union Algorithms},
     year       = {1984},
     issue_date = {April 1984},
@@ -167,7 +161,7 @@
 
 @article{frederickson1985data,
     title     = {Data structures for on-line updating of minimum spanning trees, with applications},
-    author    = {Frederickson, Greg N},
+    author    = {Frederickson, Greg N.},
     journal   = {SIAM Journal on Computing},
     volume    = {14},
     number    = {4},
@@ -189,8 +183,8 @@
 
 @article{kruskal1956shortest,
     title     = {On the shortest spanning subtree of a graph and the traveling salesman problem},
-    author    = {Kruskal, Joseph B},
-    journal   = {Proceedings of the American Mathematical society},
+    author    = {Kruskal, Joseph B.},
+    journal   = {Proceedings of the American Mathematical Society},
     volume    = {7},
     number    = {1},
     pages     = {48--50},
@@ -226,10 +220,9 @@
                  and Price, Eric},
     editor    = {Gudmundsson, Joachim},
     title     = {Confluently Persistent Tries for Efficient Version Control},
-    booktitle = {Algorithm Theory -- SWAT 2008},
+    booktitle = {Scandinavian Workshop on Algorithm Theory (SWAT)},
     year      = {2008},
-    publisher = {Springer Berlin Heidelberg},
-    address   = {Berlin, Heidelberg},
+    publisher = {Springer},
     pages     = {160--172},
     abstract  = {We consider a data-structural problem motivated by version control of a hierarchical directory structure in a system like Subversion. The model is that directories and files can be moved and copied between two arbitrary versions in addition to being added or removed in an arbitrary version. Equivalently, we wish to maintain a confluently persistent trie (where internal nodes represent directories, leaves represent files, and edge labels represent path names), subject to copying a subtree between two arbitrary versions, adding a new child to an existing node, and deleting an existing subtree in an arbitrary version.},
     isbn      = {978-3-540-69903-3}
@@ -250,22 +243,23 @@
     year      = {2009},
     isbn      = {0262033844},
     publisher = {The MIT Press},
-    edition   = {3rd},
     abstract  = {If you had to buy just one text on algorithms, Introduction to Algorithms is a magnificent choice. The book begins by considering the mathematical foundations of the analysis of algorithms and maintains this mathematical rigor throughout the work. The tools developed in these opening sections are then applied to sorting, data structures, graphs, and a variety of selected algorithms including computational geometry, string algorithms, parallel models of computation, fast Fourier transforms (FFTs), and more. This book's strength lies in its encyclopedic range, clear exposition, and powerful analysis. Pseudo-code explanation of the algorithms coupled with proof of their accuracy makes this book is a great resource on the basic tools used to analyze the performance of algorithms.}
 }
 
 @book{sarnak1986persistent,
     title     = {Persistent data structures},
-    author    = {Sarnak, Neil Ivor},
+    author    = {Sarnak, Neil I.},
     year      = {1986},
     publisher = {New York University}
 }
 
 @article{agarwalimplementation,
-    title  = {Implementation, Analysis and Application of Retroactive Data Structures},
-    author = {Agarwal, Suneeta and Panwaria, Prakhar},
-    pages  = {88--92},
-    year   = {2012},
-    doi    = {10.15224/978-981-07-1403-1-247},
-    isbn   = {978-981-07-1403-1}
+    title   = {Implementation, Analysis and Application of Retroactive Data Structures},
+    journal = {International Conference on Advances in Computer Science and Electronics Engineering},
+    month   = {02},
+    author  = {Agarwal, Suneeta and Panwaria, Prakhar},
+    pages   = {88--92},
+    year    = {2012},
+    doi     = {10.15224/978-981-07-1403-1-247},
+    isbn    = {978-981-07-1403-1}
 }
