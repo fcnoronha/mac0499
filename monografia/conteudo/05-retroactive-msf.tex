@@ -203,11 +203,11 @@ Além disso, na rotina \texttt{add\_edge}, podemos ter que adicionar a aresta na
 
 Como podemos ver, a versão original de \citet{10.1093/comjnl/bxaa135} oferece uma solução para o problema em que estamos interessados em resolver, porém, as restrições que a acompanham acabam se tornando um grande inconveniente. Logo, ao refletirmos sobre maneiras de melhorar a ideia apresentada, rapidamente notamos que a construção inicial da decomposição acaba se tornando um limitante para a estrutura.
 
-Em particular, a construção realizada na versão original se baseia no artigo proponente da ideia de estruturas de dados retroativas, de \citet{10.1145/1240233.1240236}, que mostra uma receita para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas --- traduzindo para o nosso caso, uma maneira para transformar a floresta geradora mínima incremental em uma retroativa. Entretanto, na abordagem sugerida pelo artigo, são realizadas diversas reconstruções da decomposição, conforme novas arestas vão sendo adicionadas. Mais especificamente, os autores sugerem uma reconstrução a cada $\frac{\sqrt{m}}{2}$ operações, de modo a garantir que nenhum bloco tenha tamanho maior que $\frac{3\sqrt{m}}{2}$.
+Em particular, a construção realizada na versão original se baseia no artigo proponente da ideia de estruturas de dados retroativas, de \citet{10.1145/1240233.1240236}, que mostra uma receita para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas --- traduzindo para o nosso caso, uma maneira para transformar a floresta geradora mínima incremental em uma retroativa. Entretanto, na abordagem sugerida pelo artigo, são realizadas diversas reconstruções da decomposição, conforme novas arestas vão sendo adicionadas. Mais especificamente, os autores sugerem uma reconstrução a cada $\frac{\sqrt{m}}{2}$ inserções, de modo a garantir que nenhum bloco tenha tamanho maior que $\frac{3\sqrt{m}}{2}$.
 
-Além disso, assumindo que a reconstrução possui um custo de $\Oh(m \log n)$ amortizado, podemos distribuir este gasto pelas $\frac{\sqrt{m}}{2}$ operações que levaram à reconstrução, fazendo com que o custo amortizado de cada operação continue sendo $\Oh(\sqrt{m} \log n)$. Todavia, para que a reconstrução tenha este custo, os autores sugerem que a estrutura parcialmente retroativa tenha uma versão persistente, de modo a  podermos utilizar uma única cópia para representar $F_0, F_1, \dots, F_{\sqrt{m}}$. Por sua vez, uma versão persistente da floresta geradora mínima incremental requer a implementação de uma \emph{link-cut tree} persistente, como a apresentada por \citet{10.1007/978-3-540-69903-3_16}. Porém, essa implementação é bastante sofisticada, e seu estudo fugiria do escopo deste trabalho.
+Além disso, assumindo que a reconstrução possui um custo de $\Oh(m \log n)$ amortizado, podemos distribuir este gasto pelas $\frac{\sqrt{m}}{2}$ inserções que levaram à reconstrução, fazendo com que o custo amortizado de cada operação continue sendo $\Oh(\sqrt{m} \log n)$. Todavia, para que a reconstrução tenha este custo, os autores sugerem que a estrutura parcialmente retroativa tenha uma versão persistente, de modo a  podermos utilizar uma única cópia para representar $F_0, F_1, \dots, F_{\sqrt{m}}$. Por sua vez, uma versão persistente da floresta geradora mínima incremental requer a implementação de uma \emph{link-cut tree} persistente, como a apresentada por \citet{10.1007/978-3-540-69903-3_16}. Porém, essa implementação é bastante sofisticada, e seu estudo fugiria do escopo deste trabalho.
 
-Logo, estamos interessados em resolver este problema utilizando uma versão não persistente da floresta geradora mínima incremental, criando uma cópia da estrutura para cada $F_i$. Desse modo, durante uma reconstrução, as operações do último bloco serão inseridas em $F_{\sqrt{m}}$, as operações do penúltimo bloco serão inseridas em $F_{\sqrt{m} - 1}$ e $F_{\sqrt{m}}$, e assim por diante. Portanto, podemos calcular o custo dessa reconstrução da seguinte maneira:
+Logo, estamos interessados em resolver este problema utilizando uma versão não persistente da floresta geradora mínima incremental, criando uma cópia da estrutura para cada $F_i$. Desse modo, durante uma reconstrução, as inserções do último bloco serão inseridas em $F_{\sqrt{m}}$, as inserções do penúltimo bloco serão inseridas em $F_{\sqrt{m} - 1}$ e $F_{\sqrt{m}}$, e assim por diante. Portanto, podemos calcular o custo dessa reconstrução da seguinte maneira:
 
 \begin{equation}
     \sum_{i=1}^{\sqrt{m}} (i \sqrt{m} \log n) =
@@ -217,7 +217,7 @@ Logo, estamos interessados em resolver este problema utilizando uma versão não
 
 Ou seja, com o custo da reconstrução apresentado acima, cada inserção teria agora um custo amortizado de $\Oh(m \log n)$, o que está longe do ideal. Neste ponto, nossa abordagem para solucionar o problema fica bastante criativa, com a apresentação de uma maneira totalmente nova de realizar tal tarefa.
 
-O principal ponto a ser notado é que, entre uma reconstrução e outra, gastamos muito tempo para reconstruir cada $F_i$ a partir do zero, e que talvez exista uma maneira de reaproveitar as estruturas da decomposição anterior durante a reconstrução da nova. Para facilitar a exposição, vamos diferenciar a notação relativa à nova decomposição em relação à antiga. Deste modo, definimos $m^*$ e $\sqrt{m^*}$ como o número de operações e o tamanho dos blocos na nova versão, além de $c_0^*, c_1^*, \dots, c_{\sqrt{m^*}}^*$ e $F_0^*, F_1^*, \dots, F_{\sqrt{m^*}}^*$ como as novas listas de \emph{checkpoints} e florestas geradoras mínimas incrementais.
+O principal ponto a ser notado é que, entre uma reconstrução e outra, gastamos muito tempo para reconstruir cada $F_i$ a partir do zero, e que talvez exista uma maneira de reaproveitar as estruturas da decomposição anterior durante a reconstrução da nova. Para facilitar a exposição, vamos diferenciar a notação relativa à nova decomposição em relação à antiga. Deste modo, definimos $m^*$ e $\sqrt{m^*}$ como o número de inserções e o tamanho dos blocos na nova versão, além de $c_0^*, c_1^*, \dots, c_{\sqrt{m^*}}^*$ e $F_0^*, F_1^*, \dots, F_{\sqrt{m^*}}^*$ como as novas listas de \emph{checkpoints} e florestas geradoras mínimas incrementais.
 
 Assim, nossa versão melhorada funciona da seguinte maneira:
 
@@ -235,72 +235,70 @@ A partir dessa versão, veremos que a reconstrução consome o mesmo tempo da re
 \subsection{Correção e complexidade}
 \label{sec:rmsf-complexidade}
 
-Antes de adentrarmos nos detalhes de como são as implementações dos métodos da nossa estrutura, vamos analisar a correção e a complexidade da versão aqui proposta. Primeiramente, precisamos obter um resultado relativamente simples, porém muito útil para nossa análise: o número de operações realizadas entre duas reconstruções.
+Antes de adentrarmos nos detalhes de como são as implementações dos métodos da nossa estrutura, vamos analisar a correção e a complexidade da versão aqui proposta. Primeiramente, precisamos obter um resultado relativamente simples, porém muito útil para nossa análise: o número de inserções realizadas entre duas reconstruções.
 
 \begin{lemma}
     \label{coro:amt-op}
-    Seja $m$, a quantidade atual de operações realizadas, um quadrado perfeito. Então o número de operações a serem realizadas até a próxima reconstrução é de $2 \sqrt{m} + 1$.
+    Seja $m$, a quantidade atual de inserções realizadas, um quadrado perfeito. Então o número de inserções a serem realizadas até a próxima reconstrução é de $2 \sqrt{m} + 1$.
 \end{lemma}
 \begin{proof}
-    Como sabemos, uma nova reconstrução acontece quando $m$ for um quadrado perfeito. Desse modo, na próxima reconstrução teremos um novo $m^*$ igual a $(\sqrt{m} + 1)^2$. Logo, podemos calcular a diferença entre estes dois valores:
+    Na nossa proposta, uma nova reconstrução acontece quando o número de inserções chegar ao próximo quadrado perfeito. Desse modo, na próxima reconstrução teremos um novo $m^*$ igual a $(\sqrt{m} + 1)^2$. Logo, podemos calcular a diferença entre estes dois valores:
     \begin{align*}
         m^* - m & = (\sqrt{m} + 1)^2 - m    \\
                 & = (m + 2\sqrt{m} + 1) - m \\
                 & = 2\sqrt{m} + 1.
     \end{align*}
-    Portanto, temos que $2\sqrt{m} + 1$ operações serão realizadas até a próxima reconstrução.
+    Portanto, temos que $2\sqrt{m} + 1$ inserções serão realizadas até a próxima reconstrução.
 \end{proof}
 
-Em seguida, vamos constatar que o deslocamento de $F_i^*$ até $c_i^*$ sempre consiste na adição de zero ou mais arestas, isto é, que $c_i \leq c_i^*$.
+Em seguida, vamos constatar que o deslocamento de $F_i^*$ até $c_i^*$ sempre consiste na adição de zero ou mais arestas, isto é, que $c_{i-2} \leq c_i^*$.
 
 \begin{theorem}
     \label{teo:adicao-arestas}
-    Durante uma reconstrução, a transformação de $F_{i-2}$ em $F_i^*$ sempre consiste na adição de novas arestas, em outras palavras, todas as arestas em $F_{i-2}$ devem estar $F_i^*$.
+    Durante uma reconstrução, para $i \geq 2$, todas as arestas de $F_{i-2}$ estão em $F_i^*$.
 \end{theorem}
 \begin{proof}
-    Primeiramente, temos que cuidar de $F_0^*$ e $F_1^*$, criadas durante a fase inicial da reconstrução. Neste caso, ambas as estruturas começam representando um grafo vazio, e apenas $F_1^*$ recebe novas arestas.
 
-    Vamos chamar $p_i$ a posição da operação que define $c_i$ na lista \texttt{edges\_by\_time} durante a última reconstrução, ou seja, $p_i = i \sqrt{m}$ para $i \in [0, \sqrt{m}]$. Analogamente, definimos $p_i^* = i\sqrt{m^*}$, para $i \in [0, \sqrt{m^*}]$.
+    Vamos definir $p_i = i \sqrt{m}$ a posição da inserção que define $c_i$ na lista \texttt{edges\_by\_time} durante a última reconstrução, e $p_i^*$ como a posição dessa inserção na lista \texttt{edges\_by\_time} após a reconstrução.
 
-    Estamos interessados em descobrir o intervalo que teremos que deslocar $F_i^*$, buscando determinar qual o número mínimo de arestas a serem adicionadas --- o que é atingindo quando todas as novas arestas são inseridas antes de $c_i$.
-
-    Logo, para $i \in [0, \sqrt{m}]$, temos:
+    Estamos interessados em mostrar que $p_{i-2}^* \leq i\sqrt{m^*}$, ou seja, que a nova posição que $c_i$ ocupa, após a reconstrução, faz parte de $F_i^*$. Para isso, podemos observar que, para $i \in [2, \sqrt{m}]$, temos:
     \begin{align*}
-        p_i & = i \sqrt{m}                 \\
-            & < i \sqrt{m} + 2\sqrt{m} + 1 \\
-            & = (i+2) \sqrt{m}             \\
-            & < (i+2) \sqrt{m^*}           \\
-            & = p_{i+2}^*.
+        p_{i-2} & = (i-2) \sqrt{m}                 \\
+                & < (i-2) \sqrt{m} + 2\sqrt{m} + 1 \\
+                & = i \sqrt{m} + 1                 \\
+                & < i \sqrt{m^*}
     \end{align*}
 
-    Portanto, a transformação de $F_{i-2}$ em $F_i^*$ funciona, pois, o deslocamento de $c_i$ para $c_{i+2}^*$ sempre adiciona mais arestas a estrutura.
+    Portanto, a transformação de $F_{i-2}$ em $F_i^*$ funciona, pois, mesmo se todas as novas inserções fossem adicionadas num instante de tempo anterior a $c_{i-2}$, tal inserção ainda faria parte da nova estrutura definida por $F_i^*$.
 \end{proof}
 
-Agora, precisamos descobrir qual o número máximo de posições que cada uma das $F_i^*$ pode ser deslocada, ou seja, o número máximo de arestas que podem existir entre um instante $c_{i-2}$ e $c_i^*$, para $i \in [2,\sqrt{m^*}]$.
+Ademais, podemos complementar o resultado acima cuidando de $F_0^*$ e $F_1^*$, criadas durante a fase inicial da reconstrução. Neste caso, ambas as estruturas começam representando um grafo vazio, e apenas $F_1^*$ recebe novas arestas, o que satisfaz o resultado apresentado.
+
+Agora, precisamos descobrir qual o número máximo de inserções feitas em $F_i^*$, ou seja, o número máximo de arestas que podem existir entre o instante $c_{i-2}$ e $c_i^*$, para $i \in [2,\sqrt{m^*}]$.
 
 \begin{theorem}
     \label{teo:deslocamento}
-    Durante uma reconstrução, no máximo $3 \sqrt{m^*}$ arestas são adicionadas a cada $F_i^*$.
+    Durante uma reconstrução, menos que $3 \sqrt{m^*}$ arestas são adicionadas a cada~$F_i^*$.
 \end{theorem}
 \begin{proof}
-    Sejam $p_i$ e $p_i^*$ as posições definidas no Teorema \ref{teo:adicao-arestas}. Da mesma maneira, começamos analisando a criação de $F_0^*$ e $F_1^*$. Como $c_0^* = 0$, nenhuma aresta é adicionada em $F_0^*$. Já para $F_1^*$, é necessário que todas as $\sqrt{m^*}$ arestas até $c_1^*$ sejam adicionadas, o que se encontra dentro do custo apresentado. Agora vamos cuidar do restante das $F_i^*$.
+    Sejam $p_i$ e $p_i^*$ as posições definidas no Teorema \ref{teo:adicao-arestas}. Da mesma maneira, começamos analisando a criação de $F_0^*$ e $F_1^*$. Como $c_0^* = 0$, nenhuma aresta é adicionada em $F_0^*$. Já para $F_1^*$, é necessário que todas as $\sqrt{m^*}$ arestas até $c_1^*$ sejam adicionadas a, o que satisfaz a definição do Teorema. Agora vamos cuidar do restante das $F_i^*$.
 
-    Aqui, estamos interessados em determinar qual o número máximo de arestas a serem adicionadas a cada $F_i^*$ --- o que acontece quando todas as novas arestas são inseridas após $c_i$, em outras palavras, quando nenhuma nova aresta é adicionada ao $i$-ésimo bloco ou a algum de seus antecessores.
+    Aqui, estamos interessados em determinar qual o número máximo de arestas a serem adicionadas a cada $F_i^*$ --- o que acontece quando todas as novas arestas são inseridas antes de $c_{i-2}$. Em outras palavras, quando $p_i^*$ é mais próximo $i \sqrt{m^*}$.
 
-    Em particular, podemos medir o deslocamento de $F_i^*$ neste caso fazendo, para $i \in [0, \sqrt{m}]$:
+    Neste caso, para $2 \leq i \leq \sqrt{m^*}$, o número de inserções para transformarmos $F_{i-2}$ em $F_i^*$ seria:
     \begin{align*}
         p_i^* - p_{i-2} & = i\sqrt{m^*} - (i-2)\sqrt{m}           \\
                         & = i(\sqrt{m}+1) - (i-2)\sqrt{m}         \\
                         & = i\sqrt{m} + i - i\sqrt{m} + 2\sqrt{m} \\
                         & = i + 2\sqrt{m}                         \\
-                        & \leq \sqrt{m} + 2\sqrt{m}               \\
+                        & \leq \sqrt{m^*} + 2\sqrt{m}             \\
                         & < 3\sqrt{m^*}.
     \end{align*}
 
-    Desta forma, podemos conferir que no máximo $3 \sqrt{m^*}$ arestas são adicionadas a cada $F_i^*$.
+    Desta forma, podemos conferir que menos que $3 \sqrt{m^*}$ arestas são adicionadas a cada~$F_i^*$ durante a reconstrução.
 \end{proof}
 
-Finalmente, devido ao deslocamento que será realizado em cada $F_i^*$ e utilizando os resultados acima, podemos ver que o custo total de uma reconstrução é de $\Oh(m^* \log{n})$ --- onde $n$ é o número de vértices do grafo. Além disso, podemos amortizar este custo em cada uma das $2\sqrt{m} + 1$ operações que levaram a essa reconstrução, assim o custo amortizado por cada inserção de aresta é de $\Oh(\sqrt{m^*} \log{n})$.
+Finalmente, utilizando os resultados acima, podemos ver que o custo total de uma reconstrução é de $\Oh(m^* \log{n})$, onde $n$ é o número de vértices do grafo. Além disso, podemos amortizar este custo pelas $2\sqrt{m} + 1$ inserções que levaram a essa reconstrução, concluindo que o custo amortizado por cada inserção de aresta é de $\Oh(\sqrt{m^*} \log{n})$.
 
 %% ------------------------------------------------------------------------- %%
 \section{Consultas Get MSF e Get MST Weight}
