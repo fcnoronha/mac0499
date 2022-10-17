@@ -26,7 +26,7 @@ Desta forma, a estrutura de dados que vamos apresentar dá suporta à seguinte i
     \item \texttt{get\_msf\_weight()}: retorna o custo de uma floresta maximal de peso mínimo do grafo corrente.
 \end{itemize}
 
-A partir destes métodos, é possível construir um grafo de maneira incremental, isto é, adicionando aresta por aresta, com o advento de termos sempre em mãos uma respectiva floresta maximal de peso mínimo. Em particular, a rotina \texttt{add\_edge} consumirá tempo $\Oh (\log n)$ amortizado por operação --- onde $n$ é o número de vértices do grafo, a rotina \texttt{get\_msf} consumirá tempo $\Oh (\log n)$ e \texttt{get\_msf\_weight} será executada em tempo constante.
+A partir destes métodos, é possível construir um grafo de maneira incremental, isto é, adicionando aresta por aresta, com o advento de termos sempre em mãos uma respectiva floresta maximal de peso mínimo. Em particular, a rotina \texttt{add\_edge} consumirá tempo $\Oh (\log n)$ amortizado por operação --- onde $n$ é o número de vértices do grafo, a rotina \texttt{get\_msf} consumirá tempo $\Oh(\min(n, m))$ --- com $m$ sendo o número de arestas do grafo, e \texttt{get\_msf\_weight} será executada em tempo constante.
 
 %% ------------------------------------------------------------------------- %%
 \section{Estrutura interna}
@@ -68,7 +68,7 @@ Já a consulta sobre o custo de uma floresta maximal de peso mínimo pode ser fa
     \end{algorithmic}
 \end{algorithm}
 
-Com isso, a consulta \texttt{get\_msf} tem um custo proporcional a $\Oh(min(m, n))$, onde $n$ é o número de vértices e $m$ é o número de arestas no grafo. Já a consulta \texttt{get\_msf\_weight} tem um custo $\Oh(1)$.
+Com isso, a consulta \texttt{get\_msf} tem um custo proporcional a $\Oh(\min(m, n))$, onde $n$ é o número de vértices e $m$ é o número de arestas no grafo. Já a consulta \texttt{get\_msf\_weight} tem custo $\Oh(1)$.
 
 %% ------------------------------------------------------------------------- %%
 \section{Rotina Add Edge}
@@ -78,7 +78,7 @@ Como a parte mais importante da estrutura, a rotina \texttt{add\_edge(u, v, w)} 
 
 O primeiro deles ocorre quando $u$ e $v$ pertencem a componentes distintas do grafo. Neste caso, simplesmente adicionamos a aresta $uv$ à floresta maximal de peso mínimo, ou seja, à floresta representada pelas \emph{link-cut trees}.
 
-O segundo caso ocorre quando $u$ e $v$ fazem parte da mesma componente do grafo. Neste caso, devemos decidir se essa aresta $uv$ deve ou não substituir alguma aresta na árvore geradora mínima dessa componente. Note que, se adicionarmos essa nova aresta na árvore, criaremos um ciclo, que consiste em todas as arestas no caminho de $u$ até $v$ na árvore, mais a nova aresta $uv$. Ademais, a adição da aresta $uv$ somente faz sentido caso ela diminua o custo total da árvore, em outras palavras, caso ela não seja a maior aresta deste ciclo. Dessa forma podemos simplesmente excluir a aresta com maior peso do ciclo, que pode ser $uv$ ou alguma outra, preservando a estrutura de árvore e possivelmente contribuindo para uma diminuição de seu custo total. Note que, este ciclo nunca vai ser criado na estrutura, apenas consultamos o valor da maior aresta entre $u$ e $v$, caso eles estejam conectados, e fazemos a devida comparação entre este valor e o da aresta $uv$.
+O segundo caso ocorre quando $u$ e $v$ fazem parte da mesma componente do grafo. Neste caso, devemos decidir se essa aresta $uv$ deve ou não substituir alguma aresta na árvore geradora mínima dessa componente. Note que, se adicionarmos essa nova aresta na árvore, criaremos um ciclo, que consiste em todas as arestas no caminho de $u$ até $v$ na árvore, mais a nova aresta $uv$. Ademais, a adição da aresta $uv$ somente faz sentido caso ela diminua o custo total da árvore, em outras palavras, caso ela não seja a maior aresta deste ciclo. Dessa forma podemos simplesmente excluir a aresta com maior peso do ciclo, que pode ser $uv$ ou alguma outra, preservando a estrutura de árvore e possivelmente contribuindo para uma diminuição de seu custo total. Note que este ciclo nunca vai ser criado na estrutura, apenas consultamos o valor da maior aresta entre $u$ e $v$, caso eles estejam conectados, e fazemos a devida comparação entre este valor e o da aresta $uv$.
 
 \begin{algorithm}[h!]
     \caption{Rotina Add Edge}\label{imsf-add-edge}
@@ -104,7 +104,7 @@ O segundo caso ocorre quando $u$ e $v$ fazem parte da mesma componente do grafo.
     \end{algorithmic}
 \end{algorithm}
 
-Com isso, como esta rotina usa apenas os métodos fornecidos pelas \emph{link-cut trees}, podemos concluir que ela consome tempo amortizado proporcional a $\Oh(\log n)$, onde $n$ é o número de vértices do grafo representado.
+Com isso, como esta rotina usa apenas os métodos fornecidos pelas \emph{link-cut trees}, podemos concluir que ela consome tempo amortizado $\Oh(\log n)$, onde $n$ é o número de vértices do grafo representado.
 
 %% ------------------------------------------------------------------------- %%
 \section{Versão dinâmica}

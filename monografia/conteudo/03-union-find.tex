@@ -23,7 +23,7 @@ Como já dissemos, na versão retroativa, estamos interessados em realizar as op
 
 Para isso, vamos trocar a operação \texttt{union(a, b)} da estrutura original por duas novas rotinas, \texttt{create\_union(a, b, t)} e \texttt{delete\_union(t)}. A primeira delas é responsável por adicionar uma união dos conjuntos que contém $a$ e $b$ no instante de tempo $t$, enquanto a segunda desfaz a união realizada em $t$. Além disso, colocamos um terceiro parâmetro $t$ na operação \texttt{same\_set}, para com isso conseguirmos consultar se dois elementos pertenciam ao mesmo conjunto neste dado instante $t$.
 
-Por exemplo, a Figura \ref{fig:uf-sets} mostra o estado de uma coleção de conjuntos disjuntos após quatro operações serem aplicadas. Antes da operação \texttt{delete\_union(3)}, as consultas \texttt{same\_set(a, b, 3)} e \texttt{same\_set(c, d, 3)} retornam \texttt{verdadeiro}, por outro lado \texttt{same\_set(a, d, 3)} e \texttt{same\_set(c, d, 3)} retornam \texttt{falso} após a chamada da função \texttt{delete\_union(3)}.
+Por exemplo, a Figura \ref{fig:uf-sets} mostra o estado de uma coleção de conjuntos disjuntos após quatro operações serem aplicadas. Antes da operação \texttt{delete\_union(3)}, as consultas \texttt{same\_set(a, b, 3)} e \texttt{same\_set(c, d, 3)} retornam \texttt{verdadeiro}. Por outro lado \texttt{same\_set(a, d, 3)} e \texttt{same\_set(c, d, 3)} retornam \texttt{falso} após a chamada da função \texttt{delete\_union(3)}.
 
 \begin{figure}[h!]
     \centering
@@ -98,7 +98,7 @@ Por exemplo, a Figura \ref{fig:uf-sets} mostra o estado de uma coleção de conj
             \draw ($(d)$) ellipse ({.7cm} and {.7cm});
         \end{tikzpicture}
     \end{subfigure}
-    \caption{Representação dos conjuntos com os elementos $\{a,b,c,d\}$ após a seguinte sequência de operações: \texttt{create\_union(a, b, 2)}, \texttt{create\_union(c, d, 3)}, \texttt{create\_union(b, c, 4)} e \texttt{delete\_union(3)}. Cada linha mostra o estado atual da coleção imediatamente após uma operação.}
+    \caption{Representação dos conjuntos com os elementos $\{a,b,c,d\}$ após a seguinte sequência de operações: \texttt{create\_union(a, b, 2)}, \texttt{create\_union(c, d, 3)}, \texttt{create\_union(b, c, 4)} e\\\texttt{delete\_union(3)}. Cada linha mostra o estado atual da coleção imediatamente após uma operação.}
     \label{fig:uf-sets}
 \end{figure}
 
@@ -146,7 +146,7 @@ A partir do custo da chamada \texttt{linkCutTree.is\_connected}, podemos percebe
 
 Por último, temos as rotinas de inserção e deleção de uniões. Aqui, as implementações são bem diretas, uma vez que essas operações se traduzem na inserção e deleção de uma aresta nas \emph{link-cut trees}, respectivamente. Com isso, temos apenas que nos preocupar com dois detalhes extras.
 
-O primeiro deles é a transformação de elementos dos conjuntos em nossa coleção para vértices da \emph{link-cut tree}. No pseudo-código abaixo, a função \texttt{create\_node(x)} cria um vértice para o elemento $x$ se e somente se ele ainda não possui um vértice correspondente na árvore. Essa rotina corresponde à rotina \texttt(make\_set) da implementação tradicional do union-find. Ademais, para dar suporte à deleção de uma união criada em um instante $t$, precisamos criar um mapeamento que guarda o par de elementos unidos tendo como chave o instante em que a união ocorreu. No pseudo-código esse mapeamento é realizado pela estrutura \texttt{edges\_by\_time}, que, caso seja uma \emph{hash table}, não muda a complexidade da rotina.
+O primeiro deles é a transformação de elementos dos conjuntos em nossa coleção para vértices da \emph{link-cut tree}. No pseudo-código abaixo, a função \texttt{create\_node(x)} cria um vértice para o elemento $x$ se e somente se ele ainda não possui um vértice correspondente na árvore. Essa rotina corresponde à rotina \texttt{make\_set} da implementação tradicional do union-find. Ademais, para dar suporte à deleção de uma união criada em um instante~$t$, precisamos criar um mapeamento que guarda o par de elementos unidos tendo como chave o instante em que a união ocorreu. No pseudo-código esse mapeamento é realizado pela estrutura \texttt{edges\_by\_time}, que, caso seja uma \emph{hash table}, não muda a complexidade da rotina.
 
 \begin{algorithm}[h!]
     \caption{Rotina Create Union}\label{uf:create-union}
@@ -171,4 +171,4 @@ O primeiro deles é a transformação de elementos dos conjuntos em nossa coleç
     \end{algorithmic}
 \end{algorithm}
 
-Utilizando o custo das chamadas \texttt{linkCutTree.link} e \texttt{linkCutTree.cut}, percebemos que o custo destas rotinas é $\Oh(\log n)$ amortizado.
+Utilizando o custo das chamadas \texttt{linkCutTree.link} e \texttt{linkCutTree.cut}, percebemos que o custo amortizado destas rotinas é $\Oh(\log n)$.
