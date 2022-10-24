@@ -261,15 +261,15 @@ Em seguida, vamos constatar que o deslocamento de $F_i^*$ até $c_i^*$ sempre co
 
     Vamos definir $p_i = i \sqrt{m}$, que é a posição da inserção que define $c_i$ na lista \texttt{edges\_by\_time} durante a última reconstrução, e $p_i^*$ como a posição dessa inserção na lista \texttt{edges\_by\_time} após a reconstrução.
 
-    Estamos interessados em mostrar que $p_{i-2}^* \leq i\sqrt{m^*}$, ou seja, que a nova posição que $c_i$ ocupa, após a reconstrução, faz parte de $F_i^*$. Para isso, podemos observar que, para $i \in [2, \sqrt{m}]$, temos:
+    Estamos interessados em mostrar que $p_{i-2}^* < i\sqrt{m^*}$, ou seja, que a nova posição que $c_i$ ocupa, após a reconstrução, faz parte de $F_i^*$. Para isso, podemos observar que, para $i \in [2, \sqrt{m}]$, temos:
     \begin{align*}
-        p_{i-2} & = (i-2) \sqrt{m}                 \\
-                & < (i-2) \sqrt{m} + 2\sqrt{m} + 1 \\
-                & = i \sqrt{m} + 1                 \\
-                & < i \sqrt{m^*}
+        p_{i-2}^* & \leq p_{i-2} + 2\sqrt{m} + 1     \\
+                  & = (i-2) \sqrt{m} + 2\sqrt{m} + 1 \\
+                  & = i \sqrt{m} + 1                 \\
+                  & < i \sqrt{m^*}
     \end{align*}
 
-    Logo, mesmo se todas as novas inserções fossem adicionadas num instante de tempo anterior a $c_{i-2}$, ou seja, que $p_{i-2}$ fosse incrementada em $2\sqrt{m} + 2$, ainda temos $p_{i-2}^* < i \sqrt{m^*}$.
+    Logo, mesmo se todas as novas inserções fossem adicionadas num instante de tempo anterior a $c_{i-2}$, ou seja, que a nova posição $p_{i-2}^*$ de $c_{i-2}$ fosse $2\sqrt{m} + 2$ a mais que a original $p_{i-2}$, ainda temos $p_{i-2}^* < i \sqrt{m^*}$.
 \end{proof}
 
 Ademais, podemos complementar o resultado acima cuidando de $F_0^*$ e $F_1^*$, criadas durante a fase inicial da reconstrução. Neste caso, ambas as estruturas começam representando um grafo vazio, e apenas $F_1^*$ recebe novas arestas, o que satisfaz o resultado apresentado.
@@ -283,9 +283,9 @@ Agora, precisamos descobrir qual o número máximo de inserções feitas em $F_i
 \begin{proof}
     Começamos analisando a criação de $F_0^*$ e $F_1^*$. Como $c_0^* = 0$, nenhuma aresta é adicionada em $F_0^*$. Já para $F_1^*$, é necessário que todas as $\sqrt{m^*}$ arestas até $c_1^*$ sejam adicionadas a $F_1^*$, o que satisfaz o teorema.
 
-    Em seguida, vamos determinar qual o número máximo de arestas a serem adicionadas a cada $F_i^*$, para $i \geq 2$. Para cada $F_i^*$, isso acontece quando todas as novas arestas são inseridas antes de $c_{i-2}$, em outras palavras, quando $p_i^*$ é mais próximo $i \sqrt{m^*}$.
+    Em seguida, vamos determinar qual o número máximo de arestas a serem adicionadas a cada $F_i^*$, para $i \geq 2$. Para cada $F_i^*$, isso acontece quando todas as novas arestas são inseridas antes de $c_{i-2}$, em outras palavras, quando $p_i^*$ é mais próximo de $i \sqrt{m^*}$.
 
-    Neste caso, para $2 \leq i \leq \sqrt{m^*}$, sejam $p_i$ e $p_i^*$ as posições definidas no Teorema \ref{teo:adicao-arestas}, o número de inserções para transformarmos $F_{i-2}$ em $F_i^*$ seria:
+    Neste caso, para $2 \leq i \leq \sqrt{m^*}$, sejam $p_i$ e $p_i^*$ as posições definidas no Teorema \ref{teo:adicao-arestas}. O número de inserções para transformarmos $F_{i-2}$ em $F_i^*$ seria:
     \begin{align*}
         p_i^* - p_{i-2} & = i\sqrt{m^*} - (i-2)\sqrt{m}           \\
                         & = i(\sqrt{m}+1) - (i-2)\sqrt{m}         \\
