@@ -13,6 +13,7 @@
 \usepackage[shortlabels]{enumitem}
 \usepackage[numbers]{natbib}
 \bibliographystyle{plainnat}
+  \def\bibfont{\small}
 
 \sloppy
 
@@ -65,7 +66,6 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
 
 \begin{document}
 \begin{frame}[fragile]\centering
-  \vspace{-.5\baselineskip}
   \begin{columns}[T]
 
     % ----------------------------------------------------------------------------------------
@@ -76,22 +76,22 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
       Estruturas de dados retroativas permitem a realização de operações que afetam não somente o estado atual da estrutura, mas também qualquer um de seus estados passados. Além disso, uma link-cut tree é uma estrutura de dados que permite a manutenção de uma floresta de árvores enraizadas com peso nas arestas, e onde os nós de cada árvore possuem um número arbitrário de filhos. Tal estrutura é muito utilizada como base para o desenvolvimento de estruturas de dados retroativas, e neste trabalho estudaremos as versões retroativas dos problemas de union-find e floresta geradora mínima.  Para isso, implementamos essas estruturas em \texttt{C++} e descrevemos as ideias por trás de seus funcionamentos. Ademais, apresentamos uma melhoria da solução originalmente apresentada para a floresta geradora mínima retroativa, que retira limitações sem piorar sua performance.
     \end{alertblock}
 
-    \begin{block}{bla}
-      blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla
-    \end{block}
-    \begin{block}{bla}
-      blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla
-    \end{block}
-    \begin{block}{bla}
-      blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla
-    \end{block}
-    \begin{block}{bla}
-      blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla
+    \begin{block}{Retroatividade}
+      De acordo com \citeauthor{10.5555/1614191}, \emph{estruturas de dados} são uma maneira de guardar e organizar dados de forma a facilitar o acesso e modificação destes. Em geral, estamos preocupados em fazer com que a estrutura represente e modifique os dados sempre em um único estado, o presente. Porém, em muitos casos, essa premissa faz com que modificações e consultas sejam difíceis de serem aplicados quando queremos realizá-las no passado.
+
+      \bigskip
+      Visando solucionar este tipo de problema, \citeauthor{10.1145/1240233.1240236} apresentaram a ideia de \emph{estruturas de dados retroativas}. Com elas, cada operação possui um instante de tempo associado, o que permite que elas sejam realizadas em qualquer momento. Em outras palavras, podemos agora realizar operações em qualquer estado passado da estrutura. Além disso, é possível remover uma operação que aconteceu em um certo instante de tempo, fazendo com que seus efeitos desapareçam da estrutura.
+
+      \bigskip
+      Neste trabalho, realizamos um estudo das versões retroativas de dois problemas bastante famosos em ciência da computação: o \emph{union-find} e a \emph{floresta geradora mínima}. Para isso, será necessária a apresentação de uma estrutura de dados chamada \emph{link-cut tree}, que servirá como base para as soluções de ambos os problemas.
     \end{block}
 
-    \begin{block}{bla}
-      blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla
+    \begin{block}{Link-Cut tree}
+
+
+      a
     \end{block}
+
 
 
 
@@ -101,23 +101,66 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
     % ----------------------------------------------------------------------------------------
     \onethirdcol
 
-    \begin{block}{bla}
-      blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla
+    \begin{figure}
+      \centering
+      \begin{tikzpicture}[
+          nointerno/.style={shape=circle, draw=black, minimum size=1cm},
+          pref/.style={ultra thick},
+          pptr/.style={densely dashed},
+        ]
+        \node[nointerno] (a) at (6, 30) {A};
+        \node[nointerno] (b) at (4, 27) {B};
+        \node[nointerno] (c) at (8, 27) {C};
+        \node[nointerno] (d) at (2, 24) {D};
+        \node[nointerno] (e) at (6, 24) {E};
+        \node[nointerno] (f) at (10, 24) {F};
+        \node[nointerno] (g) at (4, 21) {G};
+        \node[nointerno] (h) at (8, 21) {H};
+        \node[nointerno] (i) at (10, 21) {I};
+        \node[nointerno] (j) at (12, 21) {J};
+        \node[nointerno] (k) at (2, 18) {K};
+        \node[nointerno] (l) at (6, 18) {L};
+        \node[nointerno] (m) at (10, 18) {M};
+        \node[nointerno] (n) at (10, 15) {N};
+        \node[nointerno] (o) at (8, 12) {O};
+
+        \draw[pref] (a) -- (b) node[midway, left] {5};
+        \draw[pptr] (a) -- (c) node[midway, right] {1};
+        \draw[pref] (b) -- (d) node[midway, left] {7};
+        \draw[pref] (d) -- (g) node[midway, right] {2};
+        \draw[pref] (g) -- (k) node[midway, left] {10};
+        \draw[pptr] (g) -- (l) node[midway, right] {9};
+        \draw[pptr] (c) -- (f) node[midway, right] {7};
+        \draw[pref] (c) -- (e) node[midway, left] {4};
+        \draw[pptr] (f) -- (h) node[midway, left] {12};
+        \draw[pref] (f) -- (i) node[midway, right] {1};
+        \draw[pptr] (f) -- (j) node[midway, right] {8};
+        \draw[pref] (i) -- (m) node[midway, left] {11};
+        \draw[pptr] (m) -- (n) node[midway, left] {19};
+        \draw[pref] (n) -- (o) node[midway, left] {20};
+
+      \end{tikzpicture}
+      \caption{Árvore representada e seus caminhos preferidos. Na figura acima, as arestas escuras representam caminhos preferidos, com isso, temos o seguinte conjunto de caminhos vértice-disjuntos $ \{ \langle K,G,D,B,A \rangle, \langle E,C \rangle, \langle M,I,F \rangle, \langle L \rangle, \langle H \rangle, \langle J \rangle, \langle O,N \rangle \} $. }
+      \label{fig:arvore-simples}
+    \end{figure}
+
+    \begin{block}{Union-Find retroativo}
+
+      a
     \end{block}
 
 
+
+    \begin{block}{Floresta geradora mínima Retroativa}
+      a
+    \end{block}
 
     % ----------------------------------------------------------------------------------------
     % TERCEIRA COLUNA
     % ----------------------------------------------------------------------------------------
     \onethirdcol
-    \begin{block}{bla}
-      blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla blabla
-    \end{block}
 
-    \begin{alertblock}{Resumo}
-      Estruturas de dados retroativas permitem a realização de operações que afetam não somente o estado atual da estrutura, mas também qualquer um de seus estados passados. Além disso, uma link-cut tree é uma estrutura de dados que permite a manutenção de uma floresta de árvores enraizadas com peso nas arestas, e onde os nós de cada árvore possuem um número arbitrário de filhos. Tal estrutura é muito utilizada como base para o desenvolvimento de estruturas de dados retroativas, e neste trabalho estudaremos as versões retroativas dos problemas de union-find e floresta geradora mínima.  Para isso, implementamos essas estruturas em \texttt{C++} e descrevemos as ideias por trás de seus funcionamentos. Ademais, apresentamos uma melhoria da solução originalmente apresentada para a floresta geradora mínima retroativa, que retira limitações sem piorar sua performance.
-    \end{alertblock}
+
 
 
     \begin{block}{Informações e contato}
@@ -128,19 +171,7 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
     \end{block}
 
     \begin{block}{Referências}
-      \scriptsize{\begin{thebibliography}{99}
-          \bibitem{aho}
-          Aho, Alfred V. and Corasick, Margaret J.,
-          ``\textbf{Efficient string matching: an aid to bibliographic search},'' in \textit{Commun. ACM}, 1975, 18 (6), pp. 333–340.
-
-          \bibitem{weiner}
-          Peter Weiner,
-          ``\textbf{Linear pattern matching algorithms},'' in \textit{14th Symposium on Switching and Automata Theory}, 1973.
-
-          \bibitem{ukkonen}
-          Ukkonen, Esko,
-          ``\textbf{On-line construction of suffix trees}'', in \textit{Algorithmica}, 1995, 14 (3), pp. 249–260.
-        \end{thebibliography}}
+      \bibliography{bibliografia.bib}
     \end{block}
 
 
