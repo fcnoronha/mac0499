@@ -202,3 +202,32 @@
   \end{beamercolorbox}
   \vskip\smallskipamount
 }
+
+
+% example block definition
+\setbeamertemplate{block example begin}
+{
+\par\vskip\medskipamount%
+\begin{beamercolorbox}[colsep*=0ex,dp={2ex},center]{block title}
+  %     \begin{center}
+  \vskip-0.30cm
+  \usebeamerfont{block title}\large\insertblocktitle
+  %     {\parskip0pt\par}
+  %     \end{center}
+\end{beamercolorbox}%
+{\parskip0pt\par}%
+\ifbeamercolorempty[bg]{block title}
+{}
+{\ifbeamercolorempty[bg]{block body}{}{\nointerlineskip\vskip-0.5pt}}%
+\usebeamerfont{block body}%
+\vskip-0.5cm
+\begin{beamercolorbox}[colsep*=0ex,vmode]{block body}%
+  %{\vskip1ex}\vbox{}%
+  \justifying
+  }
+
+  \setbeamertemplate{block example end}
+  {
+\end{beamercolorbox}
+\vskip\smallskipamount
+}
