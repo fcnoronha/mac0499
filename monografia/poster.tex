@@ -6,6 +6,7 @@
 \usepackage[brazil]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{framed,graphicx,xcolor} % for shaded box
 
 \usepackage{tikz}
 \usetikzlibrary{matrix,shapes,positioning,shadows,trees,patterns}
@@ -93,6 +94,7 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
       \bigskip
       \begin{figure}
         \centering
+        \captionsetup{justification=centering}
         \begin{tikzpicture}[
             nointerno/.style={shape=circle, draw=black, minimum size=1cm},
             pref/.style={ultra thick},
@@ -133,6 +135,11 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
         \caption{Árvore representada e seus caminhos preferidos, a estruturação interna de uma link-cut tree. Na figura acima, as arestas escuras representam caminhos preferidos, com isso, temos o seguinte conjunto de caminhos vértice-disjuntos $ \{ \langle K,G,D,B,A \rangle, \langle E,C \rangle, \langle M,I,F \rangle, \langle L \rangle, \langle H \rangle, \langle J \rangle, \langle O,N \rangle \} $. }
       \end{figure}
 
+      \definecolor{shadecolor}{rgb}{0.74, 0.83, 0.9} % pale blue
+      \begin{shaded}
+        \textbf{Ideia:} Dividir a floresta em caminhos vértice-disjuntos, chamados \emph{caminhos preferidos}. Cada um desses caminhos é representado na forma de uma \textit{splay tree}, uma estrutura que nos permite unir e quebrar estes caminhos de forma bastante eficiente.
+      \end{shaded}
+
     \end{block}
 
     % ----------------------------------------------------------------------------------------
@@ -143,28 +150,31 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
     \begin{exampleblock}
 
 
-      Além disso, essa estrutura nos fornece o seguinte conjunto de operações:
-      \begin{itemize}
-        \item[$\bullet$] \textbf{\texttt{make\_root(u)}}: enraíza no vértice $u$ a árvore que o contém.
-        \item[$\bullet$] \textbf{\texttt{link(u, v, w)}}: dado que os vértices $u$ e $v$ estão em árvores separadas, transforma $v$ em raiz de sua árvore e o liga como filho de $u$, colocando peso $w$ na nova aresta criada.
-        \item[$\bullet$] \textbf{\texttt{cut(u, v)}}: retira da floresta a aresta com pontas em $u$ e $v$, quebrando a árvore que continha estes vértices em duas novas árvores.
-        \item[$\bullet$] \textbf{\texttt{is\_connected(u, v)}}: retorna \texttt{verdadeiro} caso $u$ e $v$ pertençam à mesma árvore, \texttt{falso} caso contrário.
-      \end{itemize}
+      A link-cut tree nos fornece o seguinte conjunto de operações:
 
-      Ademais, as link-cut trees possuem a capacidade de realizar consultas acerca de propriedades de uma sub-árvore ou de um caminho entre dois vértices. Em particular, estamos interessados na rotina \textbf{\texttt{maximum\_edge(u, v)}}, que nos informa o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$. Todas essas operações consomem tempo $\Oh(\log n)$ amortizado, onde $n$ é o número de vértices na floresta.
+      \definecolor{shadecolor}{rgb}{0.93, 0.80, 0.82} % pale pink
+      \begin{shaded}
+        \begin{itemize}
+          \item[$\bullet$] \textbf{\texttt{make\_root(u)}}: enraíza no vértice $u$ a árvore que o contém.
+          \item[$\bullet$] \textbf{\texttt{link(u, v, w)}}: dado que os vértices $u$ e $v$ estão em árvores separadas, transforma $v$ em raiz de sua árvore e o liga como filho de $u$, colocando peso $w$ na nova aresta criada.
+          \item[$\bullet$] \textbf{\texttt{cut(u, v)}}: retira da floresta a aresta com pontas em $u$ e $v$, quebrando a árvore que continha estes vértices em duas novas árvores.
+          \item[$\bullet$] \textbf{\texttt{is\_connected(u, v)}}: retorna \texttt{verdadeiro} caso $u$ e $v$ pertençam à mesma árvore, \texttt{falso} caso contrário.
+          \item[$\bullet$] \textbf{\texttt{maximum\_edge(u, v)}}: retorna o peso máximo de uma aresta no caminho entre os vértices $u$ e $v$.
+        \end{itemize}
+      \end{shaded}
+
+      Todas essas operações consomem tempo $\Oh(\log n)$ amortizado, onde $n$ é o número de vértices na floresta.
 
     \end{exampleblock}
 
-
-    % arruamr texto do UF e incluir a ideia
-
     \begin{block}{Union-Find retroativo}
 
-      Para isso, vamos trocar a operação \texttt{union(a, b)} da estrutura original por duas novas rotinas, \texttt{create\_union(a, b, t)} e \texttt{delete\_union(t)}. A primeira delas é responsável por adicionar uma união dos conjuntos que contém $a$ e $b$ no instante de tempo $t$, enquanto a segunda desfaz a união realizada em $t$. Além disso, colocamos um terceiro parâmetro $t$ na operação \texttt{same\_set}, para com isso conseguirmos consultar se dois elementos pertenciam ao mesmo conjunto neste dado instante $t$.
 
-      Por exemplo, a Figura mostra o estado de uma coleção de conjuntos disjuntos após quatro operações serem aplicadas. Antes da operação \texttt{delete\_union(3)}, as consultas \texttt{same\_set(a, b, 3)} e \texttt{same\_set(c, d, 3)} retornam \texttt{verdadeiro}. Por outro lado \texttt{same\_set(a, d, 3)} e \texttt{same\_set(c, d, 3)} retornam \texttt{falso} após a chamada da função \texttt{delete\_union(3)}.
+      O union-find é uma estrutura de dados utilizada para manter uma coleção de conjuntos disjuntos, isto é, conjuntos que não se intersectam.
 
+      \bigskip
       \begin{figure}[h!]
+        \captionsetup{justification=centering}
         \centering
         \begin{subfigure}{\textwidth}
           \centering
@@ -237,24 +247,40 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
             \draw ($(d)$) ellipse ({.7cm} and {.7cm});
           \end{tikzpicture}
         \end{subfigure}
-        \caption{Representação dos conjuntos com os elementos $\{a,b,c,d\}$ após a seguinte sequência de operações: \texttt{create\_union(a, b, 2)}, \texttt{create\_union(c, d, 3)}, \texttt{create\_union(b, c, 4)} e\\\texttt{delete\_union(3)}. Cada linha mostra o estado atual da coleção imediatamente após uma operação.}
+        \caption{Representação dos conjuntos com os elementos $\{a,b,c,d\}$ após a seguinte sequência de operações: \texttt{create\_union(a, b, 2)}, \texttt{create\_union(c, d, 3)}, \texttt{create\_union(b, c, 4)} e \texttt{delete\_union(3)}. Cada linha mostra o estado atual da coleção imediatamente após uma operação.}
         \label{fig:uf-sets}
       \end{figure}
 
+      Na sua versão retroativa, implementamos as seguintes operações:
+
+      \definecolor{shadecolor}{rgb}{0.93, 0.80, 0.82} % pale pink
+      \begin{shaded}
+        \begin{itemize}
+          \item[$\bullet$] \textbf{\texttt{create\_union(a, b, t)}}: adiciona a união dos conjuntos que contém $a$ e $b$ no instante de tempo $t$.
+          \item[$\bullet$] \textbf{\texttt{same\_set(a, b, t)}}: consulta se dois elementos pertenciam ao mesmo conjunto no instante $t$.
+          \item[$\bullet$] \textbf{\texttt{delete\_union(t)}}: desfaz a união realizada em $t$.
+        \end{itemize}
+      \end{shaded}
+
+
+      Por exemplo, a Figura \ref{fig:uf-sets} mostra o estado de uma coleção de conjuntos disjuntos após quatro operações serem aplicadas. Antes da operação \texttt{delete\_union(3)}, as consultas \texttt{same\_set(a, b, 3)} e \texttt{same\_set(c, d, 3)} retornam \texttt{verdadeiro}. Por outro lado \texttt{same\_set(a, d, 3)} e \texttt{same\_set(c, d, 3)} retornam \texttt{falso} após a chamada da função \texttt{delete\_union(3)}.
+
+      \definecolor{shadecolor}{rgb}{0.74, 0.83, 0.9} % pale blue
+      \begin{shaded}
+        \textbf{Ideia:} Fazer com que os elementos dos conjuntos sejam vértices na floresta mantida por uma link-cut tree, onde que cada aresta representa uma operação de \texttt{union}. Assim, uma chamada \texttt{create\_union(a, b, 3)} cria uma aresta de valor $3$ entre os vértices $a$ e $b$. Da mesma forma, uma chamada \texttt{delete\_union(t)} simplesmente exclui a aresta criada no instante $t$. Para conferir se dois elementos $a$ e $b$, no instante de tempo $t$, estão em um mesmo conjunto, basta conferir se eles estão em uma mesma árvore e se o valor da maior aresta no caminho entre eles é menor ou igual a $t$, o que significa que todas as uniões já foram realizadas no instante consultado.
+      \end{shaded}
+
     \end{block}
 
-
-
-    \begin{block}{Floresta geradora mínima Retroativa}
-      a
-    \end{block}
 
     % ----------------------------------------------------------------------------------------
     % TERCEIRA COLUNA
     % ----------------------------------------------------------------------------------------
     \onethirdcol
 
-
+    \begin{block}{Floresta geradora mínima Retroativa}
+      a
+    \end{block}
 
 
     \begin{block}{Informações e contato}
@@ -273,3 +299,4 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
 \end{frame}
 \end{document}
 
+% revisar
