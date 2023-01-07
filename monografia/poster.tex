@@ -288,7 +288,7 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
 
     \begin{block}{Floresta geradora mínima retroativa}
 
-      Como passo inicial temos que introduzir a \textbf{floresta geradora mínima incremental}, uma estrutura que utiliza as link-cut trees para fornecer uma maneira eficiente de consulta acerca da floresta geradora mínima de um grafo que esta sempre crescendo, isto é, que esta sofrendo a inserção de novas arestas.
+      Como passo inicial temos que introduzir a \textbf{floresta geradora mínima incremental}, uma estrutura que utiliza as link-cut trees para fornecer uma maneira eficiente de consulta acerca da floresta geradora mínima de um grafo que está sempre crescendo, isto é, que está sofrendo a inserção de novas arestas.
 
       \begin{figure}
         \centering
@@ -314,7 +314,7 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
             \bolinha{\,8\,}
           }^{F_4}
         \end{equation*}
-        \caption{Representação da lista de arestas inseridas com $m$ igual a $8$. Neste caso, cada bloco tem tamanho $2$. Assim, por exemplo, a estrutura $F_3$ contém todas as arestas adicionadas desde o instante $1$ até o instante $6$.}
+        \caption{Representação da lista de $8$ arestas inseridas. Neste caso, cada bloco tem tamanho $2$. Assim, por exemplo, a estrutura $F_3$ contém todas as arestas adicionadas desde o instante $1$ até o instante $6$.}
         \label{fig:sqrt-decomp-blocks-m16}
       \end{figure}
 
@@ -333,7 +333,7 @@ Instituto de Matemática e Estatística, Universidade de São Paulo}
         \textbf{Ideia:} Organizar cada operação retroativa de inserção numa lista ordenada pelo instante de tempo em que a aresta foi inserida. Em seguida, utilizar a técnica de \textbf{square-root decomposition} para dividir essa lista em $\sqrt{m}$ blocos, onde $m$ é o número total de operações na lista. Essa divisão --- ou como chamamos, reconstrução --- vai sendo refeita conforme novas operações de inserção vão sendo adicionadas, a fim de manter o tamanho dos blocos aproximadamente constante. Por último, é necessário distribuir as operações de cada bloco em diferentes florestas geradoras mínimas incrementais, fazendo com que uma consulta acerca do instante de tempo $t$ possa ser realizada de maneira eficiente por uma estrutura que contenha um grafo com um estado próximo ao instante $t$.
       \end{shaded}
 
-      Por último, além da ideia inicial \citet{10.1093/comjnl/bxaa135} para a floresta geradora mínima retroativa, foi necessário adaptar ideia apresentada por \citet{10.1145/1240233.1240236} para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas. Em particular, realizamos uma melhoria na etapa de reconstrução da estrutura, permitindo que ela seja realizada em tempo $\Oh(m \log n)$, onde $n$ é o número de vértices na floresta. Adicionalmente, escrevemos um artigo descrevendo essa melhoria, visando a sua publicação em algum veículo da área teórica de ciência da computação.
+      Por último, além da ideia inicial \citet{10.1093/comjnl/bxaa135} para a floresta geradora mínima retroativa, foi necessário adaptar a ideia apresentada por \citet{10.1145/1240233.1240236} para transformar estruturas parcialmente retroativas em estruturas totalmente retroativas. Em particular, realizamos uma melhoria na etapa de reconstrução da estrutura, permitindo que ela seja realizada em tempo $\Oh(m \log n)$, onde $n$ é o número de vértices na floresta. Adicionalmente, escrevemos um artigo descrevendo essa melhoria, visando a sua publicação em algum veículo da área teórica de ciência da computação.
 
     \end{block}
 
