@@ -52,9 +52,4 @@ Durante a etapa de desenvolvimento, foi necessário encontrar uma maneira fácil
 
 Além disso, a execução de testes automatizados é uma parte fundamental para o desenvolvimento de programas. Por causa disso, decidimos utilizar a biblioteca Google Test\footnote{\url{https://google.github.io/googletest}}, que permite a realização de testes unitários em \texttt{C++}. Para cada uma das estruturas, escrevemos uma suíte de testes com o intuito de simular os casos de borda e verificar a correção da implementação.
 
-Em especial, tivemos um pouco mais de cuidado para testar a implementação da floresta geradora mínima semi-retroativa, realizando um teste de estresse. Para isso, criamos um grafo com mil vértices e utilizamos um gerador de números aleatórios para criar suas duas mil arestas. Em seguida, associando um instante de tempo distinto para cada uma das arestas, comparamos a floresta geradora maximal de peso mínimo gerada pela nossa implementação com a floresta geradora maximal de peso mínimo encontrada pela execução do algorítimo de Kruskal. Esta checagem foi realizada diversas vezes durante a inserção de arestas na estrutura, a fim de garantir que a resposta gerada estava correta.
-
-% \section{Exceções e biblioteca padrão}
-% \todo{falar de como exceptions foram usadas para lidar operacoes invalidas nos codigos}
-% \todo{falar de estruturas da std lib}
-% \todo{dar uma olhada no codigo e ver oq + falar}
+Em especial, tivemos um pouco mais de cuidado para testar a implementação da floresta geradora mínima semi-retroativa, realizando um teste de estresse. Para isso, criamos um grafo com mil vértices e utilizamos um gerador de números aleatórios para criar suas duas mil arestas. Em seguida, associando um instante de tempo distinto para cada uma das arestas, comparamos a floresta geradora maximal de peso mínimo gerada pela nossa implementação com a floresta geradora maximal de peso mínimo encontrada pela execução do algoritmo de Kruskal. Esta checagem foi realizada diversas vezes durante a inserção de arestas na estrutura, a fim de garantir que a resposta gerada estava correta.

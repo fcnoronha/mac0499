@@ -316,7 +316,7 @@ Com isso, os nós da splay tree têm os seguintes campos:
 \begin{itemize}
     \item \texttt{parent}: apontador para o pai na splay tree.
     \item \texttt{left\_child} e \texttt{right\_child}: apontadores para os filhos esquerdo e direito de um nó na splay tree.
-    \item \texttt{value}: se o nó representa uma aresta da árvore representada guarda o peso desta aresta, senão guarda 0.
+    \item \texttt{value}: se o nó representa uma aresta da árvore representada, então guarda o peso desta aresta, senão guarda 0.
     \item \texttt{max\_subtree\_value}: guarda o valor máximo armazenado na sub-árvore do nó.
     \item \texttt{is\_reversed}: valor booleano para sinalizar se a sub-árvore do nó está com sua ordem invertida ou não, isto é, se todas as posições de filhos esquerdos e direitos estão invertidas nessa sub-árvore. Seu funcionamento é ilustrado na Figura \ref{fig:is-reversed-show}.
 \end{itemize}
@@ -516,10 +516,10 @@ Para finalizar, nossa splay tree possui quatro métodos auxiliares: o \texttt{re
 Primeiramente, o \texttt{reverse\_path(u)} recebe o identificador $u$ de um caminho e inverte a orientação desse caminho. Tal tarefa é realizada invertendo o valor do bit \texttt{is\_reversed} de $u$. Com isso, nas próximas operações realizadas neste nó, seus filhos serão trocados de posição e o bit será propagado nas suas sub-árvores. Além disso, podemos perceber que seu custo é $\Oh(1)$.
 
 \begin{algorithm}[h!]
-    \caption{Rotina Revese Path}\label{splay:reverse-path}
+    \caption{Rotina Reverse Path}\label{splay:reverse-path}
     \begin{algorithmic}[1]
         \Require{$u$ identificador de seu caminho preferido}
-        \Function{revese\_path}{{u}}
+        \Function{reverse\_path}{{u}}
         \State {u.is\_reversed $\gets$ \textbf{not} u.is\_reversed}
         % \State {u.push\_reversed\_bit()} \Comment{inverte os filhos de $u$ e propaga a inversão do bit}
         \EndFunction
@@ -553,7 +553,7 @@ A seguir, os métodos \texttt{get\_path\_end\_node(u)} e \texttt{get\_parent\_pa
     \end{algorithmic}
 \end{algorithm}
 
-Como as duas rotinas acima utilizam o método \texttt{splay}, podemos afirma que os respectivos custos são de $\Oh(\log n)$ amortizado.
+Como as duas rotinas acima utilizam o método \texttt{splay}, podemos afirmar que os respectivos custos são de $\Oh(\log n)$ amortizado.
 
 Por último, temos a função \texttt{get\_maximum\_path\_value(u)}, que recebe um nó $u$ identificador de caminho e retorna o maior valor de uma aresta no caminho preferencial de $u$. Em termos práticos, retorna o valor de \texttt{max\_subtree\_value}. Claramente, temos que o custo de tal função é $\Oh(1)$.
 
