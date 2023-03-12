@@ -71,13 +71,10 @@
 
 \title[From partial to full retroactivity without persistence]
 {From partial to full retroactivity without the use of a persistent data structure}
-% \title[Faster rebuilding in the (semi-)retroactive MSF]
-% {Faster rebuilding in the \\ (semi-)retroactive minimum spanning forest}
 % \thanks{C. G. Fernandes was partially supported by CNPq (Proc.~308116/2016-0 and~423833/2018-9).}
 
 \author{Cristina G. Fernandes \ and \ Felipe C. Noronha}
 \email{cris@ime.usp.br}
-% \author{Felipe C. Noronha}
 \email{felipe.castro.noronha@usp.br}
 
 \address{Department of Computer Science, University of São Paulo, Brazil}
@@ -106,8 +103,8 @@ vertices in the graph.
 \section{Introduction}
 
 Problems in dynamic graphs have many applications, as they can be used to model a variety 
-of real situations where the graph models a network of sorts that is changing over time. 
-A subclass of these problems that is already interesting and challenging are the so called 
+of real situations where the graph models a network of sorts that are changing over time. 
+A subclass of these problems that is already interesting and challenging are the so-called 
 incremental problems, in which the considered graph is growing with time, through the 
 addition of edges.  
 
@@ -142,11 +139,6 @@ and to answer queries not only on the current state of the data structure,
 but also on the state of the data structure at any time~$t$, that is, 
 the state in which the data structure would be if we applied only the updates 
 in the sequence with time stamp at most~$t$.
-
-% So, to perform a forgotten update that should have been done in the past, or to undo an update previously done by mistake, 
-% seems to requires to keep track of the updates and of the order in which they are performed. 
-% the sequence is sorted by these time stamps.
-% Retroactivity takes into account the moment at which operations are perfomed. 
 
 Specifically, in the context of retroactivity, one wants to be able to insert into 
 the sequence an update with a time stamp $t$, possibly indicating a time in the past, 
@@ -236,17 +228,21 @@ This leads to an amortized query and edge addition time of $\Oh(\sqrt{m}\lg n)$.
 The space used by their implementation is $\Theta(m\sqrt{m})$ 
 because they used a collection of $\Oh(\sqrt{m})$ independent link-cut trees. 
 
-Our initial goal was to improve on their implementation, allowing the length 
+Our initial goal was to improve Andrade Junior and Seabra's implementation, allowing the length 
 of the update sequence for the incremental MSF to grow arbitrarily, 
 rebuilding the data structure from time to time according to the technique 
-of Demaine et al.~\cite{DemaineIL2007}.  However, to achieve the same time 
+of Demaine et al.~\cite{DemaineIL2007}. In order to achieve the proposed time 
 consumption, their technique uses persistent link-cut trees, otherwise the 
 rebuilding of the collection of independent link-cut trees would take 
 $\Omega(m \sqrt{m})$ time, incurring in an $\Omega(m)$ slowdown per operation.
-There is a sophisticated functional implementation of link-cut trees described in 
-the literature~\cite{DemaineLP2008}, based on the use of the so called \emph{fingers}. 
+However, if we were to use that same structure, we would fall into the same $\Omega(m)$
+slowdown per operation problem. That is because, the rebuilding process of the data structure
+would require the reassemble of a whole new collection of persistent link-cut trees, resulting 
+in a $\Omega(m \sqrt{m} \log{m})$ time consumption, or $\Omega(m \log{m})$ amortized by operation.
 
-Instead of following this approach, we came up with a simple way to use 
+In order to avoid this, we could have used a sophisticated functional implementation of link-cut 
+trees described in  the literature~\cite{DemaineLP2008}, based on the use of the so called \emph{fingers},
+but due to its complexity we decided to go on another route. Instead, we came up with a simple way to use 
 the previous version of the collection of independent link-cut trees to 
 build its new version.  Our result can be applied in general, to transform 
 any partially retroactive data structure into a fully retroactive one, 
@@ -256,7 +252,6 @@ technique of Demaine et al.~\cite{DemaineIL2007}.  We applied our technique
 implementing a semi-retroactive version for the incremental MSF, that supports 
 addition of edges and queries at any time, in amortized time $\Oh(\sqrt{m}\lg n)$ 
 per edge insertion and MSF cost query, and uses space $\Theta(m\sqrt{m})$.  
-This implementation is available. 
 The update sequence length $m$ can be arbitrarily larger than~$n$, 
 so our bounds do not conflict with the lower bounds of Henzinger and Wu~\cite{HenzingerW2021}.
 
@@ -329,9 +324,6 @@ which adds an amortized cost of $\Oh(\sqrt{m}\,T(m))$ per retroactive operation.
 They also argue that the space used is $\Oh(m\,T(m))$. 
 
 \section{Rebuilding process without a persistent data structure}\label{sec:rebuilding}
-% Descrição da reconstrução
-% Prova da correção
-% Análise do tempo e espaço
 
 We call \emph{semi-retroactive} a data structure that gives support to retroactive 
 queries, and to retroactive insertions into the update sequence, but not to removals. 
@@ -581,14 +573,6 @@ The space used by Demaine et al.~\cite{DemaineIL2007} strategy is $\Oh(m\,T(m))$
 where $T(m)$ is the time for a retroactive update in the partially retroactive data structure. 
 
 \section{Semi-retroactive incremental MSF}\label{sec:incMSF}
-% Apresentação do problema
-% Descrição geral da biblioteca:
-% quais as operações suportadas
-% Descrição da solução apresentada por Andrade
-% qual a ED usada
-% qual o consumo de tempo das operações suportadas na implementação
-% Nossa motivação para tentar eliminar as restrições e consequente desenvolvimento dessa nova approach
-% Explicação de como utilizar a nova ideia para solucionar o problema
 
 The approach of de Andrade Junior and Seabra~\cite{deAndradeJrS2022} for the 
 semi-retroactive incremental MSF solution offers support for the following interface:
@@ -710,30 +694,17 @@ It takes time $\Oh(\log k + \ell\log n)$, where $\ell$ is the number of edges ad
 \end{algorithm}
 
 The running time is dominated by the insertion operations 
-on the incremental MSFs.  As argue in Subsection~\ref{subsec:semi}, 
+on the incremental MSFs.  As argued in Subsection~\ref{subsec:semi}, 
 this process will excute $\Oh(m)$ such operations and, 
 because each of these operations has an amortized cost of $\Oh(\log{n})$,
 the total amortized cost of {\sc rebuild} is $\Oh(m \log{n})$.  This cost, distributed 
 over the $\Theta(\sqrt{m})$ operations that take place between two rebuildings,
 adds an $\Oh(\sqrt{m}\,\log{n})$ amortized consumption time per operation.
 
-
-% \section{Semi-retroactive incremental MSF}\label{sec:incMSF}
-% Descrição geral da biblioteca:
-% quais as operações suportadas
-% qual a ED usada
-% qual o consumo de tempo das operações suportadas na implementação
-
 \section{Final remarks}\label{sec:final}
 
 This work is part of the Bachelor's dissertation of Felipe C.\ Noronha, 
 at the Department of Computer Science of the University of São Paulo, Brazil.
-
-% Next steps: to expand the implementation to allow for cancelation of edge additions. 
-% What is involved?
-
-% This is still different from a fully retroactive dynamic MSF. 
-% What is missing towards this? 
 
 During our study of the work of de Andrade Junior and Seabra, we noticed 
 that they did not really implement full retroactivity, because their 
@@ -760,4 +731,3 @@ and Technological Development -- CNPq (Proc.~310979/2020-0 and~423833/2018-9).
 \bibliography{retroactive.bib}
 
 \end{document}
-
