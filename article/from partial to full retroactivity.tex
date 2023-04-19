@@ -73,11 +73,11 @@
 {From partial to full retroactivity without the use of a persistent data structure}
 % \thanks{C. G. Fernandes was partially supported by CNPq (Proc.~308116/2016-0 and~423833/2018-9).}
 
-\author{Cristina G. Fernandes \ and \ Felipe C. Noronha}
-\email{cris@ime.usp.br}
-\email{felipe.castro.noronha@usp.br}
+% \author{Cristina G. Fernandes \ and \ Felipe C. Noronha}
+% \email{cris@ime.usp.br}
+% \email{felipe.castro.noronha@usp.br}
 
-\address{Department of Computer Science, University of São Paulo, Brazil}
+% \address{Department of Computer Science, University of São Paulo, Brazil}
 
 \date{\today}
 
@@ -232,12 +232,9 @@ Our initial goal was to improve Andrade Junior and Seabra's implementation, allo
 of the update sequence for the incremental MSF to grow arbitrarily, 
 rebuilding the data structure from time to time according to the technique 
 of Demaine et al.~\cite{DemaineIL2007}. In order to achieve the proposed time 
-consumption, their technique uses persistent link-cut trees, otherwise the 
-rebuilding of the collection of independent link-cut trees would take 
-$\Omega(m \sqrt{m})$ time, incurring in an $\Omega(m)$ slowdown per operation.
-However, if we were to use that same structure, we would fall into the same $\Omega(m)$
-slowdown per operation problem. That is because, the rebuilding process of the data structure
-would require the reassemble of a whole new collection of persistent link-cut trees, resulting 
+consumption, this technique requires the use of persistent link-cut trees, otherwise 
+the rebuilding process of the data structure
+would require the reassemble of a whole new collection of link-cut trees, resulting 
 in a $\Omega(m \sqrt{m} \log{m})$ time consumption, or $\Omega(m \log{m})$ amortized by operation.
 
 In order to avoid this, we could have used a sophisticated functional implementation of link-cut 
@@ -321,7 +318,11 @@ The retroactive updates branch off
 a new version of the data structure for each modified $D_i$.  
 The cost for the rebuilding is therefore $\Oh(m\,T(m))$, 
 which adds an amortized cost of $\Oh(\sqrt{m}\,T(m))$ per retroactive operation. 
-They also argue that the space used is $\Oh(m\,T(m))$. 
+They also argue that the space used is $\Oh(m\,T(m))$.
+
+Finally, the explicit justification for requiring a persistent version of the data structure, 
+as shown in the original proof for Theorem 5, is to reduce space usage. But its necessity in 
+achieving the proposed time consumption is also implicitly evident, as explained above.
 
 \section{Rebuilding process without a persistent data structure}\label{sec:rebuilding}
 
@@ -560,7 +561,7 @@ so the time is $\Oh(\sqrt{m}\,T(m)+Q(m))$.
 % and apply to~$D'_{k'}$ all the updates in~$S'$ after $t'_{k'}$. 
 % The resulting $D'_0,D'_1,\ldots,D'_{k'}$ are the new versions of the data structures for $S'$. 
 
-% \subsection{Space consuption}
+% \subsection{Space consumption}
 
 \medskip 
 
@@ -649,7 +650,7 @@ For details, please check our implementation, available at the following link: \
 
 \medskip
 
-To emphazise the simplicity of the rebuilding step, we present below 
+To emphasize the simplicity of the rebuilding step, we present below 
 the idea in pseudocode, using the notation from Subsection~\ref{subsec:semi}.
 The procedure receives an integer $k$, a sequence $D$ with the link-cut trees $D_0,\ldots,D_k$, 
 the sequence $t$ where $t_i$ is the last time stamp of an edge in $D_i$ for $i=0,\ldots,k$, and
@@ -695,7 +696,7 @@ It takes time $\Oh(\log k + \ell\log n)$, where $\ell$ is the number of edges ad
 
 The running time is dominated by the insertion operations 
 on the incremental MSFs.  As argued in Subsection~\ref{subsec:semi}, 
-this process will excute $\Oh(m)$ such operations and, 
+this process will execute $\Oh(m)$ such operations and, 
 because each of these operations has an amortized cost of $\Oh(\log{n})$,
 the total amortized cost of {\sc rebuild} is $\Oh(m \log{n})$.  This cost, distributed 
 over the $\Theta(\sqrt{m})$ operations that take place between two rebuildings,
