@@ -231,10 +231,10 @@ Our initial goal was to improve de Andrade Junior and Seabra's implementation,
 allowing the length of the update sequence for the incremental MSF to grow arbitrarily.
 Theorem~5 in~\cite{DemaineIL2007} has two parts.  In the first part, the authors
 are concerned with the running time, and describe the above mentioned technique.
-They do not give details on how to keep the $\sqrt{m}$ checkpoints and the data 
-structures so that, after many insertions and removals of operations, at most 
-$(3/2)\sqrt{m}$ operations occurr between consecutive checkpoints, with $m$ 
-changing and all. The second part of the proof is concerned with saving space, 
+At this point, they do not give details on how to keep the $\sqrt{m}$ checkpoints 
+and the data structures so that, after many insertions and removals of operations, 
+at most $(3/2)\sqrt{m}$ operations occurr between consecutive checkpoints, with 
+$m$ changing and all. The second part of the proof is concerned with saving space, 
 and describes how to rebuild the data structure from time to time to keep this
 invariant.  In order to save space, their technique uses persistent link-cut 
 trees in this rebuilding process.  This also assures that the time consumption
