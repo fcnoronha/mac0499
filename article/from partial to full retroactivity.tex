@@ -228,29 +228,50 @@ The space used by their implementation is $\Theta(m\sqrt{m})$
 because they used a collection of $\Oh(\sqrt{m})$ independent link-cut trees. 
 
 Our initial goal was to improve de Andrade Junior and Seabra's implementation,
-allowing the length of the update sequence for the incremental MSF to grow arbitrarily,
-rebuilding the data structure from time to time according to the technique 
-of Demaine et al.~\cite{DemaineIL2007}. In order to achieve the proposed time 
-consumption, this technique requires the use of persistent link-cut trees, otherwise 
-the rebuilding process of the data structure
-would require the reassemble of a whole new collection of link-cut trees, resulting 
-in a $\Omega(m \sqrt{m} \log{m})$ time consumption, or $\Omega(m \log{m})$ amortized by operation.
+allowing the length of the update sequence for the incremental MSF to grow arbitrarily.
+Theorem~5 in~\cite{DemaineIL2007} has two parts.  In the first part, the authors
+are concerned with the running time, and describe the above mentioned technique.
+They do not give details on how to keep the $\sqrt{m}$ checkpoints and the data 
+structures so that, after many insertions and removals of operations, at most 
+$(3/2)\sqrt{m}$ operations occurr between consecutive checkpoints, with $m$ 
+changing and all. The second part of the proof is concerned with saving space, 
+and describes how to rebuild the data structure from time to time to keep this
+invariant.  In order to save space, their technique uses persistent link-cut 
+trees in this rebuilding process.  This also assures that the time consumption
+stays within the claimed bounds.  The rebuilding process done with traditional
+(non persistent) link-cut trees in a straightforward way would require the 
+reassemble of a whole new collection of link-cut trees, resulting in an 
+$\Omega(m \sqrt{m} \log{m})$ time consumption, or $\Omega(m \log{m})$ 
+amortized by operation.
 
-In order to avoid this, we could have used a sophisticated functional implementation of link-cut 
-trees described in  the literature~\cite{DemaineLP2008}, based on the use of the so called \emph{fingers},
-but due to its complexity we decided to go on another route. Instead, we came up with a simple way to use 
-the previous version of the collection of independent link-cut trees to 
-build its new version.  Our result can be applied in general, to transform 
-any partially retroactive data structure into a fully retroactive one, 
-without the need of a persistent version of the involved data structure.  
-The strategy achieves the same slowdown in updates and queries that the 
-technique of Demaine et al.~\cite{DemaineIL2007}.  We applied our technique 
-implementing a semi-retroactive version for the incremental MSF, that supports 
-addition of edges and queries at any time, in amortized time $\Oh(\sqrt{m}\lg n)$ 
-per edge insertion and MSF cost query, and uses space $\Theta(m\sqrt{m})$.  
-The update sequence length $m$ can be arbitrarily larger than~$n$, 
-so our bounds do not conflict with the lower bounds of Henzinger and Wu~\cite{HenzingerW2021}. Our amortized time is better than the $\tilde{\Oh}(n)$ time 
-bound per operation from Henzinger and Wu~\cite{HenzingerW2021} for $m = o(n^2)$.
+% Our initial goal was to improve de Andrade Junior and Seabra's implementation,
+% allowing the length of the update sequence for the incremental MSF to grow arbitrarily,
+% rebuilding the data structure from time to time according to 
+% the technique of Demaine et al.~\cite{DemaineIL2007}. 
+% In order to achieve the proposed time consumption, this technique requires 
+% the use of persistent link-cut trees, otherwise the rebuilding process of 
+% the data structure would require the reassemble of a whole new collection 
+% of link-cut trees, resulting in a $\Omega(m \sqrt{m} \log{m})$ time consumption, 
+% or $\Omega(m \log{m})$ amortized by operation.
+
+There are sophisticated functional implementations of link-cut trees described in 
+the literature~\cite{DemaineLP2008}, based on the use of the so called \emph{fingers}.  
+But we were not focused on the space savings, so we looked for a simpler way to 
+implement Demaine et al.~\cite{DemaineIL2007} strategy with the same running time 
+per operation.  Indeed, we came up with a simple way to use the previous version 
+of the collection of independent link-cut trees to build its new version.  
+Our result can be applied in general, to transform any partially retroactive 
+data structure into a fully retroactive one, without the need of a persistent 
+version of the involved data structure.  The strategy achieves the same slowdown 
+in updates and queries that the technique of Demaine et al.~\cite{DemaineIL2007}.  
+We applied our technique implementing a semi-retroactive version for the 
+incremental MSF, that supports addition of edges and queries at any time, 
+in amortized time $\Oh(\sqrt{m}\lg n)$ per edge insertion and MSF cost query, 
+and uses space $\Theta(m\sqrt{m})$.  The update sequence length $m$ can be 
+arbitrarily larger than~$n$, so our bounds do not conflict with the lower 
+bounds of Henzinger and Wu~\cite{HenzingerW2021}. Our amortized time is better 
+than the $\tilde{\Oh}(n)$ time bound per operation from Henzinger and 
+Wu~\cite{HenzingerW2021} for $m = o(n^2)$.
 
 The remaining of the paper is organized as follows. 
 In Section~\ref{sec:review}, we review the strategy of Demaine, Iacono, and 
