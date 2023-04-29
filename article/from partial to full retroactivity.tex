@@ -103,7 +103,7 @@ vertices in the graph.
 \section{Introduction}
 
 Problems in dynamic graphs have many applications, as they can be used to model a variety 
-of real situations where the graph models a network of sorts that are changing over time. 
+of real situations where the graph models a network of sorts that is changing over time. 
 A subclass of these problems that is already interesting and challenging are the so-called 
 incremental problems, in which the considered graph is growing with time, through the 
 addition of edges.  
@@ -119,7 +119,7 @@ The \emph{incremental MSF} is the problem of keeping track of an MSF in a graph 
 $n$ vertices that is changing through the addition of new edges with specified costs.  
 We may assume the initial graph is empty. 
 Frederickson~\cite{Frederickson1983} described how to solve this problem efficiently 
-using the so called link-cut trees, and addressed the more general dynamic MSF, 
+using link-cut trees, and addressed the more general dynamic MSF,
 that also allows deletion of edges.  The cost per update of his method is $\Oh(\sqrt{m})$, 
 where $m$ is the number of edges in the graph at the moment of the update.
 
@@ -166,10 +166,9 @@ slowdown per update operation, where $m$ is the length of the update sequence.
 In general, assuming that certain known conjectures in complexity theory hold, 
 this slowdown is essentially tight~\cite{ChenDGWXY2018}.
 Years later, Demaine et al.~\cite{DemaineKLSY2015} provided a transformation 
-from partially retroactive data structures that happen to be what they called 
-\emph{time-fusible}, into fully retroactive ones, with a logarithmic time 
-slowdown per operation, and applied this transformation to obtain a more 
-efficient fully retroactive priority queue. 
+from \emph{time-fusible} partially retroactive data structures into fully
+retroactive ones, with a logarithmic time slowdown per operation and applied
+this transformation to obtain a more efficient fully retroactive priority queue.
 
 It is known that a data structure used to solve a dynamic problem, such as the 
 dynamic MSF problem, can be used as a partially retroactive solution for the problem.  
@@ -200,7 +199,7 @@ support to the insertion of new edge additions at any time, and also to the remo
 of an edge addition that occurred at some given time $t$.  Their implementation 
 gives support to edge addition at any time $t$ and answers queries at any time $t$.  
 It does not allow for the removal of an edge addition from the update sequence, 
-so we decided to refer to this as a semi-retroactive incremental MSF solution.  
+so we refer to this as a semi-retroactive incremental MSF solution.
 (Roditty and Zwick~\cite{RodittyZ2016}, studying strong connectivity, considered
 yet another version of retroactivity that was called \emph{incremental}, 
 where one is allowed to add an edge only at the present time, not in the past, 
@@ -219,17 +218,17 @@ and then it temporarily applies, to the data structure of this checkpoint,
 the updates between the checkpoint and $t$, to be able to answer the query properly.  
 After answering the query, 
 it rolls back these updates to recover the checkpoint state of the data structure.  
-For the purpose of their experimental study, they assumed the length $m$ 
-of the time line was known from the start, and that the updates had time 
-stamps from 1 to $m$, so they do not ever rebuild the data structure. 
+For the purpose of their experimental study, de Andrade Junior and Seabra assumed
+the length $m$ of the time line was known from the start, and that the updates
+had time stamps from 1 to $m$, so they do not ever rebuild the data structure.
 Also, as Frederickson~\cite{Frederickson1983}, 
 they used link-cut trees as the data structure for each checkpoint.  
 This leads to an amortized query and edge addition time of $\Oh(\sqrt{m}\lg n)$.  
 The space used by their implementation is $\Theta(m\sqrt{m})$ 
 because they used a collection of $\Oh(\sqrt{m})$ independent link-cut trees. 
 
-Our initial goal was to improve Andrade Junior and Seabra's implementation, allowing the length 
-of the update sequence for the incremental MSF to grow arbitrarily, 
+Our initial goal was to improve de Andrade Junior and Seabra's implementation,
+allowing the length of the update sequence for the incremental MSF to grow arbitrarily,
 rebuilding the data structure from time to time according to the technique 
 of Demaine et al.~\cite{DemaineIL2007}. In order to achieve the proposed time 
 consumption, this technique requires the use of persistent link-cut trees, otherwise 
@@ -250,13 +249,14 @@ implementing a semi-retroactive version for the incremental MSF, that supports
 addition of edges and queries at any time, in amortized time $\Oh(\sqrt{m}\lg n)$ 
 per edge insertion and MSF cost query, and uses space $\Theta(m\sqrt{m})$.  
 The update sequence length $m$ can be arbitrarily larger than~$n$, 
-so our bounds do not conflict with the lower bounds of Henzinger and Wu~\cite{HenzingerW2021}.
+so our bounds do not conflict with the lower bounds of Henzinger and Wu~\cite{HenzingerW2021}. Our amortized time is better than the $\tilde{\Oh}(n)$ time 
+bound per operation from Henzinger and Wu~\cite{HenzingerW2021} for $m = o(n^2)$.
 
 The remaining of the paper is organized as follows. 
 In Section~\ref{sec:review}, we review the strategy of Demaine, Iacono, and 
 Langerman~\cite{DemaineIL2007} to transform a partially retroactive data structure 
 into a fully retroactive one.
-Section~\ref{sec:rebuilding} contains the description of new proposed rebuilding step, 
+Section~\ref{sec:rebuilding} contains the description of the new proposed rebuilding step, 
 its correctness proof, and its time complexity analysis. 
 In Section~\ref{sec:incMSF}, we formalize the semi-retroactive incremental MSF
 and, for completeness, revise how it is implemented using the proposed rebuilding approach. 
@@ -326,8 +326,9 @@ achieving the proposed time consumption is also implicitly evident, as explained
 
 \section{Rebuilding process without a persistent data structure}\label{sec:rebuilding}
 
-We call \emph{semi-retroactive} a data structure that gives support to retroactive 
-queries, and to retroactive insertions into the update sequence, but not to removals. 
+We refer to a data structure that gives support to retroactive queries, 
+and to retroactive insertions into the update sequence, but not to removals, 
+as a \emph{semi-retroactive} data structure.
 This kind of data structure is obviously weaker than a fully retroactive one, and
 is not comparable with a partially retroactive one, because the later gives support 
 to queries only at the present, and to retroactive insertions and removals on the 
@@ -395,7 +396,7 @@ The key fact that assures that this works is the following.
   When $m=k^2$, the data structure $D_i$ contained the first $ik$ updates in~$S$. 
   Let $t_i$ be the time of the last update in $D_i$ at that moment.
   Since then, the $2k+1$ updates in $S^+$ occurred, 
-  and any of them that had time $t \leq t_i$ were applied to~$D_i$. 
+  and any of them that had time $t \leq t_i$ was applied to~$D_i$. 
   Because $ik+(2k+1) < ik+i+2k+2 = (i+2)(k+1)$, 
   even if all the $2k+1$ updates in $S^+$ were applied to~$D_i$,
   all updates in $D_i$ would be among the first $(i+2)(k+1)$ updates in $S'$. 
@@ -417,9 +418,9 @@ not anymore related to the number of retroactive operations done so far.
 The length of the update sequence might grow and shrink over time. 
 
 So the strategy is more similar to the original one of Demaine et al.~\cite{DemaineIL2007}. 
-Let $m$ be the number of updates in the update sequence $S$ at a 
+Let $m$ be the number of updates in the update sequence $S$ at the
 moment of a rebuilding that resulted in the partially retroactive 
-data structures $D_1,\ldots,D_k$, where $k=\ceil{\sqrt{m}}$.
+data structures $D_0,D_1,\ldots,D_k$, where $k=\ceil{\sqrt{m}}$.
 Let $\underline{k} = \floor{\sqrt{m}}$.
 Then $D_i$ contains the first $i\underline{k}$ updates in~$S$, 
 for $i=1,\ldots,k-1$, and $D_k$ contains all updates in~$S$. 
@@ -569,23 +570,23 @@ The space used by our strategy might be different from the space of
 the persistent data structure used by Demaine et al.~\cite{DemaineIL2007}. 
 Assuming that the space used by the partially retroactive 
 data structure is linear, each $D_i$ uses space $\Theta(ik)$, 
-and thus the total space used by $D_1,\ldots,D_k$ is $\Theta(m\sqrt{m})$. 
+and thus the total space used by $D_0,D_1,\ldots,D_k$ is $\Theta(m\sqrt{m})$. 
 The space used by Demaine et al.~\cite{DemaineIL2007} strategy is $\Oh(m\,T(m))$, 
 where $T(m)$ is the time for a retroactive update in the partially retroactive data structure. 
 
 \section{Semi-retroactive incremental MSF}\label{sec:incMSF}
 
 The approach of de Andrade Junior and Seabra~\cite{deAndradeJrS2022} for the 
-semi-retroactive incremental MSF solution offers support for the following interface:
+semi-retroactive incremental MSF solution offers support to the following interface:
 \begin{itemize}
-\item \texttt{add\_edge}$(u,v,w,t)$: add to the graph $G$, at the time $t$,
+\item \texttt{add\_edge}$(u,v,w,t)$: add to the graph $G$, at time $t$,
   an edge of cost $w$ and endpoints $u$ and $v$;
 \item \texttt{get\_msf}$(t)$: return a list with the edges of an MSF of $G$ at
   time~$t$.
 \end{itemize}
 
 To implement this, one needs to keep an incremental MSF, which, in
-this case, is the partial retroactive data structure. Its interface is
+this case, is a partial retroactive data structure. Its interface is
 pretty similar to the semi-retroactive version, and the only difference
 is that we drop the argument for time $t$ in both the edge addition and 
 query operations. This can be implemented using link-cut trees~\cite{SleatorT1981} 
@@ -658,7 +659,7 @@ the current sequence $S$ with $(k+1)^2$ edge addition pairs $(e,s)$, stored
 for instance in a balanced binary search tree with the time stamp $s$ as key.
 It returns the new block size $k+1$, the sequence $D'$ with 
 the link-cut trees $D'_0,\ldots,D'_{k+1}$ and the sequence $t'$ 
-where $t'_i$ is the last time stamp od an edge in~$D'_i$ for $i=0,\ldots,k+1$. 
+where $t'_i$ is the last time stamp of an edge in~$D'_i$ for $i=0,\ldots,k+1$. 
 In this pseudocode, for a pair $p=(e,s)$ in $S$, we use 
 $p.\textrm{time}$ to refer to $s$. % and $p.\textrm{edge}$ to refer to $e$. 
 The procedure {\sc newIncrementalMSF} returns 
@@ -704,29 +705,32 @@ adds an $\Oh(\sqrt{m}\,\log{n})$ amortized consumption time per operation.
 
 \section{Final remarks}\label{sec:final}
 
-This work is part of the Bachelor's dissertation of Felipe C.\ Noronha, 
-at the Department of Computer Science of the University of São Paulo, Brazil.
+% This work is part of the Bachelor's dissertation of Felipe C.\ Noronha, 
+% at the Department of Computer Science of the University of São Paulo, Brazil.
 
-During our study of the work of de Andrade Junior and Seabra, we noticed 
-that they did not really implement full retroactivity, because their 
-implementation does not allow for removals from the update sequence. 
-Even though the problem considered is incremental, a fully retroactive 
-version of the problem should allow for the removal of edge additions.
-Note that this does not correspond to an implementation of a retroactive 
-dynamic MSF, because it does not keep in the update sequence edge 
-additions and edge removals.  The update sequence contains only 
-edge additions. 
+During our study of the work of de Andrade Junior and Seabra, we noticed that
+they did not really implement full retroactivity, because their implementation
+does not allow for removals from the update sequence.  Even though the problem
+considered is incremental, a fully retroactive version of the problem should
+allow for the removal of edge additions.  Note that this does not correspond
+to an implementation of a retroactive dynamic MSF, because it does not keep
+in the update sequence edge additions and edge removals.  The update sequence
+contains only edge additions.
 
 Our current implementation also does not give support to removals of edge additions.
-Our next step is to study the beautiful algorithm of Holm, de Lichtenberg, and 
-Thorup~\cite{HolmLT2001} to maintain dynamic graphs.  Their algorithm is also 
-based on link-cut trees.  Our goal is to use this to obtain, using our approach, 
-an implementation of a fully retroactive incremental MSF. 
+The algorithm of Holm, de Lichtenberg, and Thorup~\cite{HolmLT2001} maintains
+dynamic graphs efficiently.  Their algorithm is also based on link-cut trees.
+It would be interesting to use their ideas to achieve an implementation of
+a fully retroactive incremental MSF.
+% Our next step is to study the beautiful algorithm of Holm, de Lichtenberg, and
+% Thorup~\cite{HolmLT2001} to maintain dynamic graphs.  Their algorithm is also
+% based on link-cut trees.  Our goal is to use this to obtain, using our approach,
+% an implementation of a fully retroactive incremental MSF.
 
-\section*{Acknowledgments}
+% \section*{Acknowledgments}
 
-Cristina~G.~Fernandes was partially supported by the National Council for Scientific
-and Technological Development -- CNPq (Proc.~310979/2020-0 and~423833/2018-9).
+% Cristina~G.~Fernandes was partially supported by the National Council for Scientific
+% and Technological Development -- CNPq (Proc.~310979/2020-0 and~423833/2018-9).
 
 \bibliographystyle{plain}
 \bibliography{retroactive.bib}
