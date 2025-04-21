@@ -1,0 +1,810 @@
+
+% Template for Elsevier CRC journal article
+% version 1.2 dated 09 May 2011
+
+% This file (c) 2009-2011 Elsevier Ltd.  Modifications may be freely made,
+% provided the edited file is saved under a different name
+
+% This file contains modifications for Procedia Computer Science
+
+% Changes since version 1.1
+% - added "procedia" option compliant with ecrc.sty version 1.2a
+%   (makes the layout approximately the same as the Word CRC template)
+% - added example for generating copyright line in abstract
+
+%-----------------------------------------------------------------------------------
+
+%% This template uses the elsarticle.cls document class and the extension package ecrc.sty
+%% For full documentation on usage of elsarticle.cls, consult the documentation "elsdoc.pdf"
+%% Further resources available at http://www.elsevier.com/latex
+
+%-----------------------------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                          %%
+%% Important note on usage                                  %%
+%% -----------------------                                  %%
+%% This file should normally be compiled with PDFLaTeX      %%
+%% Using standard LaTeX should work but may produce clashes %%
+%%                                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% The '3p' and 'times' class options of elsarticle are used for Elsevier CRC
+%% The 'procedia' option causes ecrc to approximate to the Word template
+\documentclass[3p,times,procedia]{elsarticle}
+
+%% The `ecrc' package must be called to make the CRC functionality available
+\usepackage{ecrc}
+\usepackage{amsmath,amssymb,amsthm}    
+\usepackage{amsaddr}
+\usepackage{tikz}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+%% The ecrc package defines commands needed for running heads and logos.
+%% For running heads, you can set the journal name, the volume, the starting page and the authors
+
+%% set the volume if you know. Otherwise `00'
+\volume{00}
+
+%% set the starting page if not 1
+\firstpage{1}
+
+%% Give the name of the journal
+\journalname{Procedia Computer Science}
+
+%% Give the author list to appear in the running head
+%% Example \runauth{C.V. Radhakrishnan et al.}
+\runauth{C. G. Fernandes, F. C. Noronha}
+
+%% The choice of journal logo is determined by the \jid and \jnltitlelogo commands.
+%% A user-supplied logo with the name <\jid>logo.pdf will be inserted if present.
+%% e.g. if \jid{yspmi} the system will look for a file yspmilogo.pdf
+%% Otherwise the content of \jnltitlelogo will be set between horizontal lines as a default logo
+
+%% Give the abbreviation of the Journal.
+\jid{procs}
+
+%% Give a short journal name for the dummy logo (if needed)
+\jnltitlelogo{Procedia Computer Science}
+
+%% Provide the copyright line to appear in the abstract
+%% Usage:
+%   \CopyrightLine[<text-before-year>]{<year>}{<restt-of-the-copyright-text>}
+%   \CopyrightLine[Crown copyright]{2011}{Published by Elsevier Ltd.}
+%   \CopyrightLine{2011}{Elsevier Ltd. All rights reserved}
+\CopyrightLine{2025}{Published by Elsevier Ltd.}
+
+%% Hereafter the template follows `elsarticle'.
+%% For more details see the existing template files elsarticle-template-harv.tex and elsarticle-template-num.tex.
+
+%% Elsevier CRC generally uses a numbered reference style
+%% For this, the conventions of elsarticle-template-num.tex should be followed (included below)
+%% If using BibTeX, use the style file elsarticle-num.bst
+
+%% End of ecrc-specific commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+%% The amsthm package provides extended theorem environments
+%% \usepackage{amsthm}
+
+%% The lineno packages adds line numbers. Start line numbering with
+%% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
+%% for the whole article with \linenumbers after \end{frontmatter}.
+%% \usepackage{lineno}
+
+%% natbib.sty is loaded by default. However, natbib options can be
+%% provided with \biboptions{...} command. Following options are
+%% valid:
+
+%%   round  -  round parentheses are used (default)
+%%   square -  square brackets are used   [option]
+%%   curly  -  curly braces are used      {option}
+%%   angle  -  angle brackets are used    <option>
+%%   semicolon  -  multiple citations separated by semi-colon
+%%   colon  - same as semicolon, an earlier confusion
+%%   comma  -  separated by comma
+%%   numbers-  selects numerical citations
+%%   super  -  numerical citations as superscripts
+%%   sort   -  sorts multiple citations according to order in ref. list
+%%   sort&compress   -  like sort, but also compresses numerical citations
+%%   compress - compresses without sorting
+%%
+%% \biboptions{comma,round}
+
+% \biboptions{}
+
+% if you have landscape tables
+\usepackage[figuresright]{rotating}
+
+% put your own definitions here:
+%   \newcommand{\cZ}{\cal{Z}}
+%   \newtheorem{def}{Definition}[section]
+%   ...
+
+% add words to TeX's hyphenation exception list
+%\hyphenation{author another created financial paper re-commend-ed Post-Script}
+
+% declarations for front matter
+
+\begin{document}
+
+\begin{frontmatter}
+
+%% Title, authors and addresses
+
+%% use the tnoteref command within \title for footnotes;
+%% use the tnotetext command for the associated footnote;
+%% use the fnref command within \author or \address for footnotes;
+%% use the fntext command for the associated footnote;
+%% use the corref command within \author for corresponding author footnotes;
+%% use the cortext command for the associated footnote;
+%% use the ead command for the email address,
+%% and the form \ead[url] for the home page:
+%%
+%% \title{Title\tnoteref{label1}}
+%% \tnotetext[label1]{}
+%% \author{Name\corref{cor1}\fnref{label2}}
+%% \ead{email address}
+%% \ead[url]{home page}
+%% \fntext[label2]{}
+%% \cortext[cor1]{}
+%% \address{Address\fnref{label3}}
+%% \fntext[label3]{}
+
+\dochead{XIII Latin American Algorithms, Graphs, and Optimization Symposium}
+%% Use \dochead if there is an article header, e.g. \dochead{Short communication}
+%% \dochead can also be used to include a conference title, if directed by the editors
+%% e.g. \dochead{17th International Conference on Dynamical Processes in Excited States of Solids}
+
+\title{From partial to full retroactivity without the use of a persistent data structure}
+
+%% use optional labels to link authors explicitly to addresses:
+%% \author[label1,label2]{<author name>}
+%% \address[label1]{<address>}
+%% \address[label2]{<address>}
+
+\author{Cristina G. Fernandes}
+\ead{cris@ime.usp.br}
+\author{Felipe C. Noronha}
+\ead{felipe.castro.noronha@usp.br}
+\address{Department of Computer Science, University of São Paulo, Brazil}
+
+\begin{abstract}
+    In their original paper on retroactivity, Demaine, Iacono, and Langerman described 
+    a way to transform a partially retroactive data structure into a fully retroactive 
+    one under a condition that assures that there is an efficient persistent version 
+    of the data structure involved. In this paper, we describe a simple way to implement 
+    this transformation that does not depend on any condition and does not use a 
+    persistent version of the involved data structure. The strategy achieves the 
+    same slowdown in updates and queries. We applied this technique implementing a (halfway) 
+    retroactive data structure for the incremental minimum spanning forest (MSF) problem,
+    which we make available. Our implementation gives support to retroactive edge additions 
+    and retroactive queries on the cost of an MSF, both in $\Oh(\sqrt{m}\lg n)$ amortized time, 
+    where $m$ is the number of edge additions that occurred, and $n$ is the number of 
+    vertices in the graph.
+\end{abstract}
+
+\begin{keyword}
+    Retroactive data structures \sep incremental minimum spanning forest \sep link-cut trees
+\end{keyword}
+
+\end{frontmatter}
+
+%%
+%% Start line numbering here if you want
+%%
+% \linenumbers
+
+\section{Introduction}
+
+Problems in dynamic graphs have many applications, as they can be used to model a variety 
+of real situations where the graph models a network of sorts that is changing over time. 
+A subclass of these problems that is already interesting and challenging are the so-called 
+incremental problems, in which the considered graph is growing with time, through the 
+addition of edges.  
+
+The \emph{Minimum Spanning Tree (MST)} problem consists of, given a connected 
+graph $G$ with costs on its edges, finding a spanning tree of~$G$ with minimum cost. 
+To describe the incremental version of this well-known problem, 
+we consider a generalization on graphs that are not necessarily connected. 
+The \emph{Minimum Spanning Forest (MSF)} problem consists of, given a graph~$G$ with 
+costs on its edges, finding a maximal spanning forest of~$G$ with minimum cost. 
+
+The \emph{incremental MSF} is the problem of keeping track of an MSF in a graph on 
+$n$ vertices that is changing through the addition of new edges with specified costs.  
+We may assume the initial graph is empty. 
+Frederickson~\cite{Frederickson1983} described how to solve this problem efficiently 
+using link-cut trees, and addressed the more general dynamic MSF,
+that also allows deletion of edges.  The cost per update of his method is $\Oh(\sqrt{m})$, 
+where $m$ is the number of edges in the graph at the moment of the update.
+
+The concept of retroactivity in data structures was introduced by Demaine, Iacono, 
+and Langerman~\cite{DemaineIL2007}.  Its applications include practical situations 
+where the involved data might be manipulated in imperfect ways, and once in a while 
+there is a need to correct some erroneous operation done, or to perform some operation 
+that was forgotten.
+
+A data structure usually gives support to updates and queries.  
+Generally, the order in which the updates are performed interferes with the state 
+of the data structure. 
+Consider a data structure that starts empty, and suffers a sequence of updates, 
+each with a time stamp that registers the time it occurred. 
+The goal of retroactivity is to allow one to efficiently manipulate this update sequence, 
+and to answer queries not only on the current state of the data structure, 
+but also on the state of the data structure at any time~$t$, that is, 
+the state in which the data structure would be if we applied only the updates 
+in the sequence with time stamp at most~$t$.
+
+Specifically, in the context of retroactivity, one wants to be able to insert into 
+the sequence an update with a time stamp $t$, possibly indicating a time in the past, 
+and to remove some update from the sequence, given its time stamp.
+We assume the time stamps are all distinct.  Moreover, given a time~$t$, 
+one would like to answer queries on the state of the data structure at time~$t$. 
+If one can efficiently answer only queries on the current state of the data structure, 
+but not on its state at an arbitrary time $t$, the data structure is said to be 
+\emph{partially retroactive}.  In the literature, retroactivity is some times used 
+to refer to all variants of retroactivity, and the expression \emph{fully retroactive}
+is then used to refer to an implementation that provides the complete set of retroactive
+operations: insertion and removal of updates at any time, as well as answering queries 
+at any time. 
+
+Demaine, Iacono, and Langerman~\cite{DemaineIL2007} introduced the concept of retroactivity. 
+They described fully retroactive versions of queues, doubly ended queues, priority 
+queue, union-find, and also a more efficient partially retroactive priority queue.
+A persistent data structure is a data structure that always preserves the 
+previous version of itself when it is modified~\cite{DriscollSST1989}.
+They also described a way to transform a partially retroactive data structure 
+into a fully retroactive one under a condition that assures that there is 
+an efficient persistent version of the data structure involved.  
+This transformation results in an $\Oh(\sqrt{m})$ 
+slowdown per update operation, where $m$ is the length of the update sequence.
+In general, assuming that certain known conjectures in complexity theory hold, 
+this slowdown is essentially tight~\cite{ChenDGWXY2018}.
+Years later, Demaine et al.~\cite{DemaineKLSY2015} provided a transformation 
+from \emph{time-fusible} partially retroactive data structures into fully
+retroactive ones, with a logarithmic time slowdown per operation and applied
+this transformation to obtain a more efficient fully retroactive priority queue.
+
+It is known that a data structure used to solve a dynamic problem, such as the 
+dynamic MSF problem, can be used as a partially retroactive solution for the problem.  
+For instance, an efficient data structure for the dynamic MSF problem works as an 
+efficient partially retroactive MSF solution: the insertions and removals of edges 
+of the graph are the updates, and the query is the cost of an MSF in the current graph.  
+For partial retroactivity, addition or removal of edges at any time $t$ can be made 
+in the present version, and as addition and removal are the inverse of each other, 
+one achieves partial retroactivity.  
+There are efficient implementations for dynamic MSF~\cite{HolmLT2001,HolmRWN2015}, 
+that assure $\Oh(\lg^4 n)$ time amortized per operation, for simple graphs on $n$ vertices. 
+So the same bound per operation holds for the partially retroactive MSF problem. 
+
+Recently, Henzinger and Wu~\cite{HenzingerW2021} presented lower bounds for the 
+time per operation of a fully retroactive data structure for the MSF problem and 
+for connectivity, under the OMv conjecture~\cite{HenzingerKNS2015}.  The lower 
+bounds are in terms of the number $n$ of vertices of the graph: for any $\eps>0$,
+there is no fully retroactive solution that takes $\Oh(n^{1-\eps})$ time per 
+operation for these problems.  The authors also presented a fully retroactive
+data structure for connectivity, maximum degree, and MSF in $\tilde{\Oh}(n)$ 
+per operation.  
+
+The study of de Andrade Junior and Seabra~\cite{deAndradeJrS2022} about retroactivity 
+addresses the incremental MSF problem.  In the incremental MSF problem, the only update
+supported is the addition of edges.  So the update sequence, in this case, consists 
+of a series of edge additions.  To support full retroactivity, one would have to give 
+support to the insertion of new edge additions at any time, and also to the removal 
+of an edge addition that occurred at some given time $t$.  Their implementation 
+gives support to edge addition at any time $t$ and answers queries at any time $t$.  
+It does not allow for the removal of an edge addition from the update sequence, 
+so we refer to this as a semi-retroactive incremental MSF solution.
+(Roditty and Zwick~\cite{RodittyZ2016}, studying strong connectivity, considered
+yet another version of retroactivity that was called \emph{incremental}, 
+where one is allowed to add an edge only at the present time, not in the past, 
+but can remove from the update sequence any edge addition, given its time stamp.) 
+
+The implementation of de Andrade Junior and Seabra is inspired on the
+aforementioned technique of Demaine, Iacono, and Langerman~\cite[Theorem~5]{DemaineIL2007}
+for transforming partially retroactive data structures into fully retroactive ones.
+This technique uses the idea of square-root decomposition,
+that breaks a time line of length~$m$ into $\sqrt{m}$ checkpoints, 
+keeping the state of the data structure at these $\sqrt{m}$ checkpoints, 
+as well as the whole sequence of updates.  
+To answer queries at an arbitrary time $t$, 
+it computes what is the checkpoint previous to~$t$, as close as possible to $t$, 
+and then it temporarily applies, to the data structure of this checkpoint, 
+the updates between the checkpoint and $t$, to be able to answer the query properly.  
+After answering the query, 
+it rolls back these updates to recover the checkpoint state of the data structure.  
+For the purpose of their experimental study, de Andrade Junior and Seabra assumed
+the length $m$ of the time line was known from the start, and that the updates
+had time stamps from 1 to $m$, so they do not ever rebuild the data structure.
+Also, as Frederickson~\cite{Frederickson1983}, 
+they used link-cut trees as the data structure for each checkpoint.  
+This leads to an amortized query and edge addition time of $\Oh(\sqrt{m}\lg n)$.  
+The space used by their implementation is $\Theta(m\sqrt{m})$ 
+because they used a collection of $\Oh(\sqrt{m})$ independent link-cut trees. 
+
+Our initial goal was to improve de Andrade Junior and Seabra's implementation,
+allowing the length of the update sequence for the incremental MSF to grow arbitrarily.
+Theorem~5 in~\cite{DemaineIL2007} has two parts.  In the first part, the authors
+are concerned with the running time, and describe the above mentioned technique.
+At this point, they do not give details on how to keep the $\sqrt{m}$ checkpoints 
+and the data structures so that, after many insertions and removals of operations, 
+at most $(3/2)\sqrt{m}$ operations occurr between consecutive checkpoints, with 
+$m$ changing and all. The second part of the proof is concerned with saving space, 
+and describes how to rebuild the data structure from time to time to keep this
+invariant.  In order to save space, their technique uses persistent link-cut 
+trees in this rebuilding process.  This also assures that the time consumption
+stays within the claimed bounds.  The rebuilding process done with traditional
+(non persistent) link-cut trees in a straightforward way would require the 
+reassemble of a whole new collection of link-cut trees, resulting in an 
+$\Omega(m \sqrt{m} \log{m})$ time consumption, or $\Omega(m \log{m})$ 
+amortized by operation.
+
+There are sophisticated functional implementations of link-cut trees described in 
+the literature~\cite{DemaineLP2008}, based on the use of the so called \emph{fingers}.  
+But we were not focused on the space savings, so we looked for a simpler way to 
+implement Demaine et al.~\cite{DemaineIL2007} strategy with the same running time 
+per operation.  Indeed, we came up with a simple way to use the previous version 
+of the collection of independent link-cut trees to build its new version.  
+Our result can be applied in general, to transform any partially retroactive 
+data structure into a fully retroactive one, without the need of a persistent 
+version of the involved data structure.  The strategy achieves the same slowdown 
+in updates and queries that the technique of Demaine et al.~\cite{DemaineIL2007}.  
+We applied our technique implementing a semi-retroactive version for the 
+incremental MSF, that supports addition of edges and queries at any time, 
+in amortized time $\Oh(\sqrt{m}\lg n)$ per edge insertion and MSF cost query, 
+and uses space $\Theta(m\sqrt{m})$.  The update sequence length $m$ can be 
+arbitrarily larger than~$n$, so our bounds do not conflict with the lower 
+bounds of Henzinger and Wu~\cite{HenzingerW2021}. Our amortized time is better 
+than the $\tilde{\Oh}(n)$ time bound per operation from Henzinger and 
+Wu~\cite{HenzingerW2021} for $m = o(n^2)$.
+
+The remaining of the paper is organized as follows. 
+In Section~\ref{sec:review}, we review the strategy of Demaine, Iacono, and 
+Langerman~\cite{DemaineIL2007} to transform a partially retroactive data structure 
+into a fully retroactive one.
+Section~\ref{sec:rebuilding} contains the description of the new proposed rebuilding step, 
+its correctness proof, and its time complexity analysis. 
+In Section~\ref{sec:incMSF}, we formalize the semi-retroactive incremental MSF
+and, for completeness, revise how it is implemented using the proposed rebuilding approach. 
+Final remarks are presented in Section~\ref{sec:final}.
+
+\section{From partial to full retroactivity: a brief review}\label{sec:review}
+
+Demaine, Iacono, and Langerman~\cite{DemaineIL2007} described a way to transform 
+a partially retroactive data structure into a fully retroactive one under certain conditions.
+Their result considers that the data structures use the RAM model of computation, 
+and work in the pointer-machine model of Tarjan~\cite{Tarjan1979}.
+They also use, in their result, the so called \emph{rollback method}, in which 
+auxiliary information is stored when certain updates are performed on the data
+structures, so that one can reverse these updates if needed.
+
+For the sake of completeness, we restate their result and describe their method. 
+Then, in the next section, we describe our simplified version of their result. 
+
+\begin{theorem}[Theorem~5 in~\cite{DemaineIL2007}]
+  Let $m$ denote the number of updates in the current update sequence. 
+  Any partially retroactive data structure in the pointer-machine model with 
+  constant indegree, supporting $T(m)$-time retroactive operations and $Q(m)$-time
+  queries about the present, can be transformed into a fully retroactive data
+  structure with amortized $\Oh(\sqrt{m}\,T(m))$-time retroactive operations and 
+  $\Oh(\sqrt{m}\,T(m)+Q(m))$-time fully retroactive queries using $\Oh(m\,T(m))$ space.
+\end{theorem}
+
+They define $\sqrt{m}$ checkpoints $t_1,\ldots,t_{\sqrt{m}}$ and maintain $\sqrt{m}$ 
+versions $D_1,\ldots,D_{\sqrt{m}}$ of the partially retroactive data structure, 
+where the structure $D_i$ contains all updates that occurred before time $t_i$.
+Each $t_i$ is defined so that, when $D_i$ was constructed, it contained 
+the first $i\sqrt{m}$ of the $m$ updates, for $i=1,\ldots,\sqrt{m}$. 
+They keep track of the entire sequence of updates.
+
+When a retroactive operation is performed for time $t$, they perform the operation 
+on all data structures $D_i$ with $t_i>t$, which costs $\Oh(\sqrt{m}\,T(m))$ time.  
+When a retroactive query is made at time $t$, they find the largest $i$ such that 
+$t_i \leq t$, and perform on $D_i$ all updates from the current update sequence that 
+have time between $t_i$ and $t$, keeping track of auxiliary information for later rollback. 
+Then they perform the query on the resulting structure, and rollback these 
+updates to restore the state of the structure $D_i$ previous to the query.
+
+They assure that, at any time, between $\sqrt{m}/2$ and $(3/2)\sqrt{m}$ 
+updates have to be performed on $D_i$ to answer any query.  
+This implies that the time to answer a query is $\Oh(\sqrt{m}\,T(m)+Q(m))$.  
+The way they assure this is by rebuilding $D_1,\ldots,D_{\sqrt{m}}$ from time to time. 
+
+Let $m$ denote the number of updates in the update sequence when the last rebuilding took place.
+In the beginning, $m=0$. 
+By assumption, the partially retroactive data structure has constant indegree, so they use 
+a persistent version of it, obtained according to Driscoll et al.~\cite{DriscollSST1989}.
+After $\sqrt{m}/2$ retroactive operations, they update the value of $m$ and 
+rebuild the persistent data structure from scratch in time $\Oh(m\,T(m))$. 
+When rebuilding the persistent data structure for the current number $m$ of updates, 
+they perform the sequence of $m$ updates on a fully persistent version of an 
+initially empty partially retroactive data structure, and keep a pointer $D_i$ 
+to the version obtained after the first $i\sqrt{m}$ updates, for $i = 1,\ldots,\sqrt{m}$. 
+The retroactive updates branch off 
+a new version of the data structure for each modified $D_i$.  
+The cost for the rebuilding is therefore $\Oh(m\,T(m))$, 
+which adds an amortized cost of $\Oh(\sqrt{m}\,T(m))$ per retroactive operation. 
+They also argue that the space used is $\Oh(m\,T(m))$.
+
+Finally, the explicit justification for requiring a persistent version of the data structure, 
+as shown in the original proof for Theorem 5, is to reduce space usage. But its necessity in 
+achieving the proposed time consumption is also implicitly evident, as explained above.
+
+\section{Rebuilding process without a persistent data structure}\label{sec:rebuilding}
+
+We refer to a data structure that gives support to retroactive queries, 
+and to retroactive insertions into the update sequence, but not to removals, 
+as a \emph{semi-retroactive} data structure.
+This kind of data structure is obviously weaker than a fully retroactive one, and
+is not comparable with a partially retroactive one, because the later gives support 
+to queries only at the present, and to retroactive insertions and removals on the 
+update sequence.  For semi-retroactive data structures, we refer to retroactive 
+updates, instead of retroactive operations, as only insertion of updates are allowed. 
+
+In this section, we describe a rebuilding process that is as efficient, in terms 
+of time, as the original one by Demaine et al.~\cite{DemaineIL2007}, but is simpler 
+to implement, as it does not use a persistent version of the involved data structure. 
+
+We will describe two variants of the rebuilding process. The first one is simpler
+and serves to derive a semi-retroactive data structure from a partially retroactive 
+one.  The second one serves to derive a fully retroactive data structure from a 
+partially retroactive one. 
+
+\subsection{Semi-retroactivity}\label{subsec:semi}
+
+Our strategy follows the same idea of Demaine el at., but it does not 
+rely on the use of a persistent version of the data structure involved. 
+Also, for semi-retroactivity, we propose the use of slightly different 
+checkpoints and rebuilding moments, that make it easier to implement 
+and analyze the correctness of the strategy. 
+
+Let $m$ denote the number of updates in the current update sequence. 
+As we are considering semi-retroactivity, there are no removals of updates, 
+and $m$ is also the number of retroactive operations that happened until now, 
+that is, the total number of retroactive updates. 
+
+We will use $D_0$ to refer to an empty data structure, 
+which is the initial state of the data structure, when $m=0$. 
+We will rebuild the data structures $D_0,D_1,\ldots,D_{\sqrt{m}}$ every 
+time $m$ is a perfect square, that is, $m=k^2$ for a positive integer $k$.
+Because $(k+1)^2-k^2 = 2k+1$, this means that the data structures built 
+when $m=k^2$ will be rebuilt after exactly $2k+1=\Theta(\sqrt{m})$ retroactive updates.
+
+Let $S$ be the list of updates when $m=k^2$. 
+Let~$S^+$ be the list of subsequent $2k+1$ updates, 
+that arrived after the rebuilding that resulted in~$D_0,D_1,\ldots,D_k$,
+and let $S'$ be the union of $S$ and $S^+$.  
+Consider these lists sorted by the time of the updates. 
+
+When $m=k^2$, a rebuilding occurred and $D_i$ becomes the partially retroactive 
+data structure with the first $ik$ updates in $S$ for $i=0,1,\ldots,k$. 
+The retroactive queries and subsequent $2k+1$ retroactive updates in $S^+$ 
+are treated as in Section~\ref{sec:review}. 
+When $m$ reaches $(k+1)^2$, it is time to rebuild the data structures.  
+The idea is quite simple.  Let $D'_0$ and $D'_1$ be two new empty data structures 
+and let $D'_{i+2}$ refer to the current $D_i$ for $i=0,1,\ldots,k-1$.  Disregard $D_k$.   
+Let $t'_0 = t'_1 = 0$ and, for $i=2,\ldots,k+1$, 
+let $t'_i$ be the time of the last update in $D'_i$.
+For $i=1,\ldots,k+1$, apply to $D'_i$ the updates in~$S'$ 
+after~$t'_i$ so that $D'_i$ stores exactly $i(k+1)$ updates.
+The resulting $D'_0,D'_1,\ldots,D'_{k+1}$ are the new versions of the data structures for~$S'$. 
+
+\medskip 
+
+The key fact that assures that this works is the following. 
+
+\begin{lemma}
+  For $i=0,1,\ldots,k-1$, every update in $D_i$ is within 
+  the first $(i+2)(k+1)$ updates for the sequence $S'$ of updates. 
+\end{lemma}
+
+\begin{proof}
+  When $m=k^2$, the data structure $D_i$ contained the first $ik$ updates in~$S$. 
+  Let $t_i$ be the time of the last update in $D_i$ at that moment.
+  Since then, the $2k+1$ updates in $S^+$ occurred, 
+  and any of them that had time $t \leq t_i$ was applied to~$D_i$. 
+  Because $ik+(2k+1) < ik+i+2k+2 = (i+2)(k+1)$, 
+  even if all the $2k+1$ updates in $S^+$ were applied to~$D_i$,
+  all updates in $D_i$ would be among the first $(i+2)(k+1)$ updates in $S'$. 
+\end{proof}
+
+Note that the statement does not hold with $i+1$ in the place of $i+2$. 
+During the rebuilding, the number of updates applied to $D_i$ to get $D'_{i+2}$ 
+is at most $(i+2)(k+1)-ik = 2k+2+i < 3(k+1)$, for $i=0,1,\ldots,k-1$.  
+The number of updates applied to $D'_1$ is exactly $k+1$.  That is, within the 
+rebuilding, $\Oh(k) = \Oh(\sqrt{m})$ updates are applied to obtain each $D'_i$.
+
+\subsection{Full retroactivity}\label{subsec:fully}
+
+To achieve full retroactivity, 
+we must also give support to removals of updates from the update sequence.  
+For this, we are not able to use the perfect squares as the moments 
+of rebuilding, because the possible length of the update sequence is
+not anymore related to the number of retroactive operations done so far. 
+The length of the update sequence might grow and shrink over time. 
+
+So the strategy is more similar to the original one of Demaine et al.~\cite{DemaineIL2007}. 
+Let $m$ be the number of updates in the update sequence $S$ at the
+moment of a rebuilding that resulted in the partially retroactive 
+data structures $D_0,D_1,\ldots,D_k$, where $k=\ceil{\sqrt{m}}$.
+Let $\underline{k} = \floor{\sqrt{m}}$.
+Then $D_i$ contains the first $i\underline{k}$ updates in~$S$, 
+for $i=1,\ldots,k-1$, and $D_k$ contains all updates in~$S$. 
+We refer to the updates in $S$ as \emph{old}.
+
+Let $\ell=1$ if $m = 0$ and $\ell=2\underline{k}-1$ if $m \geq 1$. 
+After $\ell$ retroactive operations, that now might be insertions 
+or removals of updates, we will rebuild the data structures.
+Let $m'$ be the number of updates in the current sequence~$S'$ 
+after these $\ell$ operations are performed. 
+Let $k'= \ceil{\sqrt{m'}}$ and $\underline{k}' = \floor{\sqrt{m}}$. 
+
+\begin{claim}
+  $|\underline{k}' - \underline{k}| \leq 1$.
+\end{claim}
+\begin{proof}
+  If $m = 0$, then $m' = m + 1 = 1$, and $\underline{k}' = 1 = \underline{k}+1$.
+  So suppose that $m \geq 1$, and note that $m-\ell \leq m' \leq m+\ell$.  
+  Then $\sqrt{m-\ell} \leq \sqrt{m'}$.  
+  But $m-\ell = m - (2\underline{k}-1) \geq m - 2\sqrt{m} + 1 = (\sqrt{m}-1)^2$, 
+  because $m \geq 1$. 
+  Hence $\sqrt{m-\ell} \geq \sqrt{m}-1$, 
+  which implies that 
+  $\underline{k}' \geq \floor{\sqrt{m-\ell}} \geq \floor{\sqrt{m}-1} = \underline{k}-1$. 
+  Similarly, $\sqrt{m'} \leq \sqrt{m+\ell}$, and
+  $m+\ell = m + 2\underline{k}-1 < m + 2\sqrt{m} + 1 = (\sqrt{m}+1)^2$. 
+  Thus $\sqrt{m+\ell} < \sqrt{m}+1$, 
+  which implies that 
+  $\underline{k}' \leq \floor{\sqrt{m+\ell}} \leq \floor{\sqrt{m}+1} = \underline{k}+1$. 
+\end{proof}
+
+If $\underline{k}' \geq \underline{k}$, then
+$i\underline{k}+2\underline{k}-1 \leq i\underline{k}'+2\underline{k}'-1 < (i+2)\underline{k}'$.
+Hence all the $i\underline{k}$ old updates that were not removed 
+are within the $(i+2)\underline{k}'$ first updates in~$S'$, 
+even if all the at most $2\underline{k}-1$ new updates inserted are before $t_i$. 
+
+If $\underline{k}' = \underline{k}-1$, then $m'<m$, 
+which means that at most $\underline{k}-1$ of the $2\underline{k}-1$ 
+operations that occurred since the last rebuilding are insertions. 
+Also, as $k' \leq \underline{k}'+1$, 
+we only need to use $D_i$ to obtain $D'_{i+2}$ for $i+2 \leq k'$, 
+which means that $i \leq k'-2 < \underline{k}'$.  
+So, $i\underline{k}+\underline{k}-1 = i(\underline{k}'+1)+\underline{k}' 
+= (i+1)\underline{k}'+i <  (i+2)\underline{k}'$. 
+
+Hence, we can proceed essentially as in the previous subsection.
+Let $D'_0$ and $D'_1$ be two new empty data structures 
+and let $D'_{i+2}$ refer to the current $D_i$ for~$i=0,1,\ldots,k'-1$.  Disregard $D_k$.   
+Let $t'_0 = t'_1 = 0$ and, for $i=2,\ldots,k'$, 
+let~$t'_i$ be the time of the last update in $D'_i$.
+For $i=1,\ldots,k'-1$, apply to $D'_i$ the updates in~$S'$ 
+after~$t'_i$ so that $D'_i$ stores exactly $i\underline{k}'$ updates, 
+and apply to~$D'_{k'}$ all the updates in~$S'$ after $t'_{k'}$. 
+The resulting $D'_0,D'_1,\ldots,D'_{k'}$ are the new versions of the data structures for $S'$. 
+
+Note that, within the rebuilding, 
+the number of updates we perform on $D'_1$ is $\underline{k}'$, 
+the number of updates we perform on $D'_{k'}$ is $m'-m \leq 2\underline{k}'-1$, 
+and, for $2 \leq i \leq k'-1$, we perform at most 
+$i\underline{k}' - (i-2)\underline{k}+2\underline{k}-1
+ = i(\underline{k}'-\underline{k})+4\underline{k}-1 
+\leq i+4\underline{k}-1 \leq k'+4\underline{k}-2 \leq 5k'+2$ updates. 
+For every $i$, this number is $\Oh(k') = \Oh(\sqrt{m'})$.
+
+
+The time to execute a retroactive operation remains the same, 
+despite the change in the number of operations between rebuildings.
+Let $m$ and $\bar{m}$ be the number of updates in the sequence at 
+the last rebuilding and when an operation is done, respectively.
+For a retroactive insertion or removal of an update, the amortized time 
+is $\Oh(\sqrt{m}\,T(\bar{m})) = \Oh(\sqrt{\bar{m}}\,T(\bar{m}))$.  
+Let $\underline{k} = \floor{\sqrt{m}}$ and $\ell = 2\underline{k}-1$. 
+Because $m-\ell < \bar{m} < m+\ell$, we have that $\underline{k} = \Oh(\sqrt{\bar{m}})$. 
+For a retroactive query, the number of updates applied to the 
+appropriate~$D_i$ and rolled back is $\Oh(\underline{k}) = \Oh(\sqrt{\bar{m}})$, 
+so the time is $\Oh(\sqrt{m}\,T(m)+Q(m))$.  
+
+
+\medskip 
+
+The space used by our strategy might be different from the space of 
+the persistent data structure used by Demaine et al.~\cite{DemaineIL2007}. 
+Assuming that the space used by the partially retroactive 
+data structure is linear, each $D_i$ uses space $\Theta(ik)$, 
+and thus the total space used by $D_0,D_1,\ldots,D_k$ is $\Theta(m\sqrt{m})$. 
+The space used by Demaine et al.~\cite{DemaineIL2007} strategy is $\Oh(m\,T(m))$, 
+where $T(m)$ is the time for a retroactive update in the partially retroactive data structure. 
+
+\section{Semi-retroactive incremental MSF}\label{sec:incMSF}
+
+The approach of de Andrade Junior and Seabra~\cite{deAndradeJrS2022} for the 
+semi-retroactive incremental MSF solution offers support to the following interface:
+\begin{itemize}
+\item \texttt{add\_edge}$(u,v,w,t)$: add to the graph $G$, at time $t$,
+  an edge of cost $w$ and endpoints $u$ and $v$;
+\item \texttt{get\_msf}$(t)$: return a list with the edges of an MSF of $G$ at
+  time~$t$.
+\end{itemize}
+
+To implement this, one needs to keep an incremental MSF, which, in
+this case, is a partial retroactive data structure. Its interface is
+pretty similar to the semi-retroactive version, and the only difference
+is that we drop the argument for time $t$ in both the edge addition and 
+query operations. This can be implemented using link-cut trees~\cite{SleatorT1981} 
+as an underlying structure for maintaining the current MSF. Specifically, 
+every time a new edge $uv$ is added, we can check in the link-cut trees if 
+this new edge would form a cycle with the stored forest. If not, then we 
+proceed to add it to the forest.  
+Otherwise, we find an edge $e$ with maximum cost on the path between $u$ 
+and $v$ in the stored forest, and if the cost of the new edge $uv$ is smaller 
+than the cost of~$e$, we remove $e$ and add $uv$ to the forest.
+Also, when a query for MSF is performed, 
+we simply return all the edges currently stored in the link-cut trees.
+
+Following on, to implement the semi-retroactive version of the incremental MSF, 
+as described in Section~\ref{sec:review}, the idea of square-root decomposition 
+is used to divide the time line of length $m$ in blocks of size $\sqrt{m}$. 
+Because of the restrictions imposed by de Andrade Junior and Seabra --- 
+that $m$ is known beforehand and that each operation time is an integer in 
+the interval $[1, m]$ --- it is possible to avoid rebuilding, and to build 
+these $\sqrt{m}$ blocks right up front, as the first step in the structure 
+initialization.  Each of these blocks is defined by a checkpoint $t_i$ such 
+that $t_i = i \sqrt{m}$, with $i \in [1, \sqrt{m}]$. Then, each checkpoint 
+$t_i$ is followed by a respective incremental MSF $D_i$, where $D_i$ has 
+all the edge insertions that took place before the moment $t_i$.
+An empty incremental MSF~$D_0$ is also used.
+
+From that, the implementation of de Andrade Junior and Seabra follows 
+the expected.  The operation \texttt{add\_edge}$(u,v,w,t)$ is performed 
+by adding the respective edge to each $D_i$ such that $t < t_i$, for
+$i \in [1,\sqrt{m}]$.  The \texttt{get\_msf}$(t)$ consists of finding 
+the largest $i$ such that $t_i < t$, and then performing all the 
+insertions that take place between $t_i$ and~$t$ on~$D_i$.
+After that, it is possible to return the current MSF stored 
+in~$D_i$ and then roll back these last performed insertions.
+The empty incremental MSF~$D_0$ is used when $t$ is smaller than~$t_1$.
+
+Now, let us take a look at the time consumption of this approach.
+Recall that $n$ denotes the number of vertices of the graph, 
+and therefore in the link-cut trees.  First of all, the query for 
+the edges in the link-cut trees costs $\Oh(n)$, and all the other 
+routines used from the link-cut trees have an amortized cost of 
+$\Oh(\log{n})$ per operation.  For the \texttt{add\_edge} routine, 
+in the worst case, we have to add one new edge to each $D_i$, hence 
+its amortized time consumption is $\Oh(\sqrt{m}\,\log{n})$. Finally, 
+the time consumption of the \texttt{get\_msf} is $\Oh(n+\sqrt{m}\,\log{n})$,
+because of the updates that need to be applied and rolled back, 
+and the query for the edges in a versions of the link-cut trees.
+
+\medskip
+
+The development of the idea presented in this paper was driven by
+the desire to get rid of the limitations presented in de Andrade 
+Junior and Seabra's solution for the semi-retroactive MSF problem.  
+The main difference is that we implement the rebuilding steps, 
+and hence we do not restrict the amount of operations or their time range.
+The rebuilding steps are implemented according to 
+the approach presented in Subsection~\ref{subsec:semi}.
+Edge insertions and queries are treated similarly to their implementation, 
+but now the checkpoints change during the process, as the rebuildings happen.
+% For details, please check our implementation, available at the following link: \\
+% {\small \texttt{https://github.com/fcnoronha/mac0499/tree/main/implementations}}
+
+\medskip
+
+To emphasize the simplicity of the rebuilding step, we present below 
+the idea in pseudocode, using the notation from Subsection~\ref{subsec:semi}.
+The procedure receives an integer $k$, a sequence $D$ with the link-cut trees $D_0,\ldots,D_k$, 
+the sequence $t$ where $t_i$ is the last time stamp of an edge in $D_i$ for $i=0,\ldots,k$, and
+the current sequence $S$ with $(k+1)^2$ edge addition pairs $(e,s)$, stored 
+for instance in a balanced binary search tree with the time stamp $s$ as key.
+It returns the new block size $k+1$, the sequence $D'$ with 
+the link-cut trees $D'_0,\ldots,D'_{k+1}$ and the sequence $t'$ 
+where $t'_i$ is the last time stamp of an edge in~$D'_i$ for $i=0,\ldots,k+1$. 
+In this pseudocode, for a pair $p=(e,s)$ in $S$, we use 
+$p.\textrm{time}$ to refer to $s$. % and $p.\textrm{edge}$ to refer to $e$. 
+The procedure {\sc newIncrementalMSF} returns 
+a new data structure representing a spanning forest with no edges. 
+It takes~$\Oh(1)$ time in our implementation. 
+The procedure {\sc kth}$(S,i)$ returns the element in~$S$ with the $i$th smallest key, 
+in time $\Oh(\log k)$, because $S$ has $\Oh(k^2)$ elements. 
+The procedure {\sc addEdges}$(S,t_s,t_f,F)$ updates the MSF stored in~$F$ 
+considering the addition of all edges in~$S$ with time stamp more than~$t_s$ 
+and at most $t_f$.
+It takes time $\Oh(\log k + \ell\log n)$, where $\ell$ is the number of edges added.
+
+\medskip
+
+\begin{algorithm}[h!]
+    \caption{Rebuilding procedure}\label{rmsf-build-decomp}
+    \begin{algorithmic}[1]
+        \Function{rebuild}{$k,D,t,S$}
+        \State $D'_0 \gets$ {\sc newIncrementalMSF}$()$
+        \State $D'_1 \gets$ {\sc newIncrementalMSF}$()$
+        \For{$i \gets 2$ {\bf to} $k+1$}
+        \State $D'_i \gets D_{i-2}$
+        \EndFor
+        \State $t_{-1} \gets 0$ \hfill {\footnotesize $\rhd$ sentinel}
+        \State $t'_0 \gets 0$ 
+        \For{$i \gets 1$ {\bf to} $k+1$}
+        \State $p \gets$ {\sc kth}$(S,i(k+1))$ \hfill {\footnotesize $\rhd$ $i(k+1)$th edge in $S$}
+        \State $t'_i \gets p.\textrm{time}$ \hfill {\footnotesize $\rhd$ time stamp of the $i(k+1)$th edge in $S$}
+        \State {\sc addEdges}$(S,t_{i-2},t'_i,D'_i)$
+        \EndFor
+        \State \Return $k+1,D',t'$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+The running time is dominated by the insertion operations 
+on the incremental MSFs.  As argued in Subsection~\ref{subsec:semi}, 
+this process will execute $\Oh(m)$ such operations and, 
+because each of these operations has an amortized cost of $\Oh(\log{n})$,
+the total amortized cost of {\sc rebuild} is $\Oh(m \log{n})$.  This cost, distributed 
+over the $\Theta(\sqrt{m})$ operations that take place between two rebuildings,
+adds an $\Oh(\sqrt{m}\,\log{n})$ amortized consumption time per operation.
+
+\section{Final remarks}\label{sec:final}
+
+
+During our study of the work of de Andrade Junior and Seabra, we noticed that
+they did not really implement full retroactivity, because their implementation
+does not allow for removals from the update sequence.  Even though the problem
+considered is incremental, a fully retroactive version of the problem should
+allow for the removal of edge additions.  Note that this does not correspond
+to an implementation of a retroactive dynamic MSF, because it does not keep
+in the update sequence edge additions and edge removals.  The update sequence
+contains only edge additions.
+
+Our current implementation also does not give support to removals of edge additions.
+The algorithm of Holm, de Lichtenberg, and Thorup~\cite{HolmLT2001} maintains
+dynamic graphs efficiently.  Their algorithm is also based on link-cut trees.
+It would be interesting to use their ideas to achieve an implementation of
+a fully retroactive incremental MSF.
+
+%% The Appendices part is started with the command \appendix;
+%% appendix sections are then done as normal sections
+%% \appendix
+
+%% \section{}
+%% \label{}
+
+%% References
+%%
+%% Following citation commands can be used in the body text:
+%% Usage of \cite is as follows:
+%%   \cite{key}         ==>>  [#]
+%%   \cite[chap. 2]{key} ==>> [#, chap. 2]
+%%
+
+%% References with BibTeX database:
+
+\bibliographystyle{elsarticle-num}
+\bibliography{retroactive.bib}
+
+%% Authors are advised to use a BibTeX database file for their reference list.
+%% The provided style file elsarticle-num.bst formats references in the required Procedia style
+
+%% For references without a BibTeX database:
+
+% \begin{thebibliography}{00}
+
+%% \bibitem must have the following form:
+%%   \bibitem{key}...
+%%
+
+% \bibitem{}
+
+% \end{thebibliography}
+
+\end{document}
+
+%%
+%% End of file `procs-template.tex'.
+
