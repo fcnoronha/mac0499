@@ -43,6 +43,28 @@
 \usepackage{algpseudocode}
 \usepackage{algorithm}
 
+\usepackage{standalone}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newcommand{\NP}{\mbox{NP}}
+\newcommand{\PP}{\mbox{P}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\calT}{\mathcal{T}}
+\newcommand{\Oh}{\mathrm{O}}
+
+\newtheorem{theorem}              {Theorem}[section]
+\newtheorem{lemma}     	[theorem] {Lemma}        
+\newtheorem{conjecture}	[theorem] {Conjecture}   
+\newtheorem{property}  	[theorem] {Property}   
+\newtheorem{definition}	[theorem] {Definition}   
+\newtheorem{proposition}[theorem] {Proposition}   
+\newtheorem{corollary}	[theorem] {Corollary}
+\newtheorem{fact}	[theorem] {Fact}     
+\newtheorem{claim}	[theorem] {Claim}  
+
 %% The ecrc package defines commands needed for running heads and logos.
 %% For running heads, you can set the journal name, the volume, the starting page and the authors
 
@@ -248,7 +270,7 @@ We assume the time stamps are all distinct.  Moreover, given a time~$t$,
 one would like to answer queries on the state of the data structure at time~$t$. 
 If one can efficiently answer only queries on the current state of the data structure, 
 but not on its state at an arbitrary time $t$, the data structure is said to be 
-\emph{partially retroactive}.  In the literature, retroactivity is some times used 
+\emph{partially retroactive}.  In the literature, retroactivity is sometimes used 
 to refer to all variants of retroactivity, and the expression \emph{fully retroactive}
 is then used to refer to an implementation that provides the complete set of retroactive
 operations: insertion and removal of updates at any time, as well as answering queries 
@@ -334,7 +356,7 @@ Theorem~5 in~\cite{DemaineIL2007} has two parts.  In the first part, the authors
 are concerned with the running time, and describe the above mentioned technique.
 At this point, they do not give details on how to keep the $\sqrt{m}$ checkpoints 
 and the data structures so that, after many insertions and removals of operations, 
-at most $(3/2)\sqrt{m}$ operations occurr between consecutive checkpoints, with 
+at most $(3/2)\sqrt{m}$ operations occur between consecutive checkpoints, with 
 $m$ changing and all. The second part of the proof is concerned with saving space, 
 and describes how to rebuild the data structure from time to time to keep this
 invariant.  In order to save space, their technique uses persistent link-cut 
@@ -426,8 +448,7 @@ When rebuilding the persistent data structure for the current number $m$ of upda
 they perform the sequence of $m$ updates on a fully persistent version of an 
 initially empty partially retroactive data structure, and keep a pointer $D_i$ 
 to the version obtained after the first $i\sqrt{m}$ updates, for $i = 1,\ldots,\sqrt{m}$. 
-The retroactive updates branch off 
-a new version of the data structure for each modified $D_i$.  
+The retroactive updates branch off a new version of the data structure for each modified $D_i$.  
 The cost for the rebuilding is therefore $\Oh(m\,T(m))$, 
 which adds an amortized cost of $\Oh(\sqrt{m}\,T(m))$ per retroactive operation. 
 They also argue that the space used is $\Oh(m\,T(m))$.
@@ -543,7 +564,7 @@ After $\ell$ retroactive operations, that now might be insertions
 or removals of updates, we will rebuild the data structures.
 Let $m'$ be the number of updates in the current sequence~$S'$ 
 after these $\ell$ operations are performed. 
-Let $k'= \ceil{\sqrt{m'}}$ and $\underline{k}' = \floor{\sqrt{m}}$. 
+Let $k'= \ceil{\sqrt{m'}}$ and $\underline{k}' = \floor{\sqrt{m'}}$. 
 
 \begin{claim}
   $|\underline{k}' - \underline{k}| \leq 1$.
