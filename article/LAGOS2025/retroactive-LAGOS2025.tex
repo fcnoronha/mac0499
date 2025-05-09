@@ -383,20 +383,21 @@ amortized time by operation.  So, we came up with a simple way to use the
 previous version of the collection of independent link-cut trees to build 
 its new version.  
 
-Our strategy can be applied in general, to transform any partially retroactive 
-data structure into a fully retroactive one, when one is not willing to use
-or does not have a persistent version of the involved data structure to apply
-the space saving strategy from Theorem~5 in~\cite{DemaineIL2007}. 
-It achieves the same slowdown in updates and queries that their technique. 
-We applied our strategy to obtain the improvement we wanted on de Andrade 
-Junior and Seabra's implementation, leading to a semi-retroactive version 
-for the incremental MSF, that supports addition of edges and queries at any 
-time, in amortized time $\Oh(\sqrt{m}\lg n)$ per edge insertion and MSF cost 
-query, and uses space $\Theta(m\sqrt{m})$.  The update sequence length $m$ 
-can be arbitrarily larger than~$n$, so our bounds do not conflict with the lower 
-bounds of Henzinger and Wu~\cite{HenzingerW2021}. Our amortized time is better 
-than the $\tilde{\Oh}(n)$ time bound per operation from Henzinger and 
-Wu~\cite{HenzingerW2021} for $m = o(n^2)$.
+Our main contribution is that our strategy can be applied in general, 
+to transform any partially retroactive data structure into a fully retroactive 
+one, when one is not willing to use or does not have a persistent version of 
+the involved data structure to apply the space saving strategy from Theorem~5 
+in~\cite{DemaineIL2007}.  It achieves the same slowdown in updates and queries 
+that their technique.  We applied our strategy to obtain the improvement we 
+wanted on de Andrade Junior and Seabra's implementation.  So, a secundary 
+contribution is an implementation, whose code we made available, of a 
+semi-retroactive version for the incremental MSF, that supports addition of 
+edges and queries at any time, in amortized time $\Oh(\sqrt{m}\lg n)$ per 
+edge insertion and MSF cost query, and uses space $\Theta(m\sqrt{m})$.  
+% (Note that the update sequence length $m$ can be arbitrarily larger than~$n$, 
+% so our bounds do not conflict with the lower bounds of Henzinger and Wu~\cite{HenzingerW2021}. 
+% Our amortized time is better than the $\tilde{\Oh}(n)$ time bound per operation 
+% from Henzinger and Wu~\cite{HenzingerW2021} for $m = o(n^2)$.)
 
 The remaining of the paper is organized as follows. 
 In Section~\ref{sec:review}, we review the strategy of Demaine, Iacono, and 
