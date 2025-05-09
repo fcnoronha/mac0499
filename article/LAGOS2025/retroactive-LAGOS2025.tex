@@ -48,6 +48,10 @@
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
+\usepackage{letltxmacro}
+\LetLtxMacro{\oldsqrt}{\sqrt}
+\renewcommand{\sqrt}[2][\mkern8mu]{\mkern-1mu\mathop{\oldsqrt[#1]{#2}}}
+
 \newcommand{\NP}{\mbox{NP}}
 \newcommand{\PP}{\mbox{P}}
 \newcommand{\eps}{\epsilon}
@@ -183,7 +187,8 @@
 %% \dochead can also be used to include a conference title, if directed by the editors
 %% e.g. \dochead{17th International Conference on Dynamical Processes in Excited States of Solids}
 
-\title{From partial to full retroactivity without the use of a persistent data structure}
+\title{How to go from partial to full retroactivity in details}
+% \title{From partial to full retroactivity without the use of a persistent data structure}
 
 %% use optional labels to link authors explicitly to addresses:
 %% \author[label1,label2]{<author name>}
@@ -198,22 +203,23 @@
 \cortext[cor1]{Corresponding author}
 
 \begin{abstract}
-    In their original paper on retroactivity, Demaine, Iacono, and Langerman described 
-    a way to transform a partially retroactive data structure into a fully retroactive 
-    one under a condition that assures that there is an efficient persistent version 
-    of the data structure involved. In this paper, we describe a simple way to implement 
-    this transformation that does not depend on any condition and does not use a 
-    persistent version of the involved data structure. The strategy achieves the 
-    same slowdown in updates and queries. We applied this technique implementing a (halfway) 
-    retroactive data structure for the incremental minimum spanning forest (MSF) problem,
-    which we make available. Our implementation gives support to retroactive edge additions 
-    and retroactive queries on the cost of an MSF, both in $\Oh(\sqrt{m}\lg n)$ amortized time, 
-    where $m$ is the number of edge additions that occurred, and $n$ is the number of 
-    vertices in the graph.
+  The concept of retroactivity in data structures was introduced by Demaine, Iacono, 
+  and Langerman.  In their original paper on retroactivity, they described a way to 
+  transform a partially retroactive data structure into a fully retroactive one.
+  Their description is focused on space savings, which require the use of a
+  persistent version of the data structure involved.  We focus on the case in 
+  which one does not have or does not want to use a persistent data structure. 
+  We describe and analyse in details how to implement their transformation in this case.
+  As a secondary contribution, using our strategy, we implemented a (halfway) 
+  retroactive data structure for the incremental minimum spanning forest (MSF) problem, 
+  that we make available. 
+  % Our implementation gives support to retroactive edge additions and retroactive queries 
+  % on the cost of an MSF, both in $\Oh(\sqrt{m}\lg n)$ amortized time, where $m$ is the 
+  % number of edge additions that occurred, and $n$ is the number of vertices in the graph.
 \end{abstract}
 
 \begin{keyword}
-    Retroactive data structures \sep incremental minimum spanning forest \sep link-cut trees
+  Retroactive data structures \sep incremental minimum spanning forest \sep link-cut trees
 \end{keyword}
 
 \end{frontmatter}
@@ -231,7 +237,7 @@ A subclass of these problems that are already interesting and challenging are th
 incremental problems, in which the considered graph is growing with time, through the 
 addition of edges.  
 
-The \emph{Minimum Spanning Tree (MST)} problem consists of, given a connected 
+The \emph{Minimum Spanning Tree} problem consists of, given a connected 
 graph $G$ with costs on its edges, finding a spanning tree of~$G$ with minimum cost. 
 To describe the incremental version of this well-known problem, 
 we consider a generalization on graphs that are not necessarily connected. 
@@ -262,32 +268,35 @@ and to answer queries not only on the current state of the data structure,
 but also on the state of the data structure at any time~$t$, that is, 
 the state in which the data structure would be if we applied only the updates 
 in the sequence with time stamp at most~$t$.
-
 Specifically, in the context of retroactivity, one wants to be able to insert into 
 the sequence an update with a time stamp $t$, possibly indicating a time in the past, 
 and to remove some update from the sequence, given its time stamp.
 We assume the time stamps are all distinct.  Moreover, given a time~$t$, 
 one would like to answer queries on the state of the data structure at time~$t$. 
+
 If one can efficiently answer only queries on the current state of the data structure, 
 but not on its state at an arbitrary time $t$, the data structure is said to be 
 \emph{partially retroactive}.  In the literature, retroactivity is sometimes used 
 to refer to all variants of retroactivity, and the expression \emph{fully retroactive}
 is then used to refer to an implementation that provides the complete set of retroactive
 operations: insertion and removal of updates at any time, as well as answering queries 
-at any time. 
+at any time.  
 
-Demaine, Iacono, and Langerman~\cite{DemaineIL2007} introduced the concept of retroactivity. 
-They described fully retroactive versions of queues, doubly ended queues, priority 
-queue, union-find, and also a more efficient partially retroactive priority queue.
-A persistent data structure is a data structure that always preserves the 
-previous version of itself when it is modified~\cite{DriscollSST1989}.
-They also described a way to transform a partially retroactive data structure 
-into a fully retroactive one under a condition that assures that there is 
-an efficient persistent version of the data structure involved.  
-This transformation results in an $\Oh(\sqrt{m})$ 
-slowdown per update operation, where $m$ is the length of the update sequence.
+Demaine, Iacono, and Langerman~\cite{DemaineIL2007} described fully 
+retroactive versions of queues, doubly ended queues, priority queue, union-find, 
+and also a more efficient partially retroactive priority queue.
+They also described how to transform a partially retroactive data structure into 
+a fully retroactive one with an $\Oh(\sqrt{m})$ slowdown per update operation, 
+where $m$ is the length of the update sequence. 
 In general, assuming that certain known conjectures in complexity theory hold, 
 this slowdown is essentially tight~\cite{ChenDGWXY2018}.
+The transformation is done, at first, by keeping $\Oh(\sqrt{m})$ versions of the 
+partially retroactive data structure. 
+Under a condition that assures that there is an efficient persistent version 
+of the data structure involved, they show how to achieve a more effective space
+consumption without losing in the time consumption. 
+(A persistent data structure is a data structure that always preserves the 
+previous version of itself when it is modified~\cite{DriscollSST1989}.)
 Years later, Demaine et al.~\cite{DemaineKLSY2015} provided a transformation 
 from \emph{time-fusible} partially retroactive data structures into fully
 retroactive ones, with a logarithmic time slowdown per operation and applied
@@ -320,7 +329,7 @@ supported is the addition of edges.  So the update sequence, in this case, consi
 of a series of edge additions.  To support full retroactivity, one would have to give 
 support to the insertion of new edge additions at any time, and also to the removal 
 of an edge addition that occurred at some given time $t$.  Their implementation 
-gives support to edge addition at any time $t$ and answers queries at any time $t$.  
+gives support to edge addition at any time~$t$ and answers queries at any time~$t$.  
 It does not allow for the removal of an edge addition from the update sequence, 
 so we refer to this as a semi-retroactive incremental MSF solution.
 (Roditty and Zwick~\cite{RodittyZ2016}, studying strong connectivity, considered
@@ -331,10 +340,9 @@ but can remove from the update sequence any edge addition, given its time stamp.
 The implementation of de Andrade Junior and Seabra is inspired on the
 aforementioned technique of Demaine, Iacono, and Langerman~\cite[Theorem~5]{DemaineIL2007}
 for transforming partially retroactive data structures into fully retroactive ones.
-This technique uses the idea of square-root decomposition,
-that breaks a time line of length~$m$ into $\sqrt{m}$ checkpoints, 
-keeping the state of the data structure at these $\sqrt{m}$ checkpoints, 
-as well as the whole sequence of updates.  
+This technique uses the idea of square-root decomposition, that breaks a time line 
+of length~$m$ into $\sqrt{m}$ checkpoints, keeping the state of the data structure 
+at these $\sqrt{m}$ checkpoints, as well as the whole sequence of updates.  
 To answer queries at an arbitrary time $t$, 
 it computes what is the checkpoint previous to~$t$, as close as possible to $t$, 
 and then it temporarily applies, to the data structure of this checkpoint, 
@@ -348,40 +356,44 @@ Also, as Frederickson~\cite{Frederickson1983},
 they used link-cut trees as the data structure for each checkpoint.  
 This leads to an amortized query and edge addition time of $\Oh(\sqrt{m}\lg n)$.  
 The space used by their implementation is $\Theta(m\sqrt{m})$ 
-because they used a collection of $\Oh(\sqrt{m})$ independent link-cut trees. 
+because they used a collection of $\Theta(\sqrt{m})$ independent link-cut trees. 
+Our initial goal in this work was to improve de Andrade Junior and Seabra's 
+implementation, allowing the length of the update sequence for the incremental 
+MSF to grow arbitrarily, without increasing its running time or space consumption.
 
-Our initial goal was to improve de Andrade Junior and Seabra's implementation,
-allowing the length of the update sequence for the incremental MSF to grow arbitrarily.
 Theorem~5 in~\cite{DemaineIL2007} has two parts.  In the first part, the authors
 are concerned with the running time, and describe the above mentioned technique.
-At this point, they do not give details on how to keep the $\sqrt{m}$ checkpoints 
+At this point, they do not give details on how to keep the~$\sqrt{m}$ checkpoints 
 and the data structures so that, after many insertions and removals of operations, 
-at most $(3/2)\sqrt{m}$ operations occur between consecutive checkpoints, with 
-$m$ changing and all. The second part of the proof is concerned with saving space, 
-and describes how to rebuild the data structure from time to time to keep this
-invariant.  In order to save space, their technique uses persistent link-cut 
-trees in this rebuilding process.  This also assures that the time consumption
-stays within the claimed bounds.  The rebuilding process done with traditional
-(non persistent) link-cut trees in a straightforward way would require the 
-reassemble of a whole new collection of link-cut trees, resulting in an 
-$\Omega(m \sqrt{m} \log{m})$ time consumption, or $\Omega(m \log{m})$ 
-amortized by operation.
-
+at most~$(3/2)\sqrt{m}$ operations occur between consecutive checkpoints, with~$m$ 
+changing and all. The second part of the proof is concerned with saving space, and 
+describes how to rebuild the data structure from time to time to keep this invariant.  
+In order to save space, under the same time consumption, their technique uses 
+a persistent version of the data structure in this rebuilding process.  
 There are sophisticated functional implementations of link-cut trees described in 
 the literature~\cite{DemaineLP2008}, based on the use of the so called \emph{fingers}.  
-But we were not focused on the space savings, so we looked for a simpler way to 
-implement Demaine et al.~\cite{DemaineIL2007} strategy with the same running time 
-per operation.  Indeed, we came up with a simple way to use the previous version 
-of the collection of independent link-cut trees to build its new version.  
-Our result can be applied in general, to transform any partially retroactive 
-data structure into a fully retroactive one, without the need of a persistent 
-version of the involved data structure.  The strategy achieves the same slowdown 
-in updates and queries that the technique of Demaine et al.~\cite{DemaineIL2007}.  
-We applied our technique implementing a semi-retroactive version for the 
-incremental MSF, that supports addition of edges and queries at any time, 
-in amortized time $\Oh(\sqrt{m}\lg n)$ per edge insertion and MSF cost query, 
-and uses space $\Theta(m\sqrt{m})$.  The update sequence length $m$ can be 
-arbitrarily larger than~$n$, so our bounds do not conflict with the lower 
+But we were not focused on the space savings, so we concentrated on looking for 
+a simple way to keep the $\sqrt{m}$ checkpoints and the link-cut trees so that, 
+after many insertions and removals of operations, at most $(3/2)\sqrt{m}$ 
+operations occur between consecutive checkpoints, with~$m$ changing and all.
+We did not find an efficient way in the lines of rebalancing of B-tree nodes, 
+so we considered the rebuilding process.  But rebuilding from scratch a whole 
+new collection of link-cut trees from time to time would extrapolate the 
+amortized time by operation.  So, we came up with a simple way to use the 
+previous version of the collection of independent link-cut trees to build 
+its new version.  
+
+Our strategy can be applied in general, to transform any partially retroactive 
+data structure into a fully retroactive one, when one is not willing to use
+or does not have a persistent version of the involved data structure to apply
+the space saving strategy from Theorem~5 in~\cite{DemaineIL2007}. 
+It achieves the same slowdown in updates and queries that their technique. 
+We applied our strategy to obtain the improvement we wanted on de Andrade 
+Junior and Seabra's implementation, leading to a semi-retroactive version 
+for the incremental MSF, that supports addition of edges and queries at any 
+time, in amortized time $\Oh(\sqrt{m}\lg n)$ per edge insertion and MSF cost 
+query, and uses space $\Theta(m\sqrt{m})$.  The update sequence length $m$ 
+can be arbitrarily larger than~$n$, so our bounds do not conflict with the lower 
 bounds of Henzinger and Wu~\cite{HenzingerW2021}. Our amortized time is better 
 than the $\tilde{\Oh}(n)$ time bound per operation from Henzinger and 
 Wu~\cite{HenzingerW2021} for $m = o(n^2)$.
