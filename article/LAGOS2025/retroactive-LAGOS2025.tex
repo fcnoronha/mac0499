@@ -412,7 +412,7 @@ Final remarks are presented in Section~\ref{sec:final}.
 \section{From partial to full retroactivity: a brief review}\label{sec:review}
 
 Demaine, Iacono, and Langerman~\cite{DemaineIL2007} described a way to transform 
-a partially retroactive data structure into a fully retroactive one under certain conditions.
+a partially retroactive data structure into a fully retroactive one.
 Their result considers that the data structures use the RAM model of computation, 
 and work in the pointer-machine model of Tarjan~\cite{Tarjan1979}.
 They also use, in their result, the so called \emph{rollback method}, in which 
@@ -446,11 +446,10 @@ have time between $t_i$ and $t$, keeping track of auxiliary information for late
 Then they perform the query on the resulting structure, and rollback these 
 updates to restore the state of the structure $D_i$ previous to the query.
 
-They assure that, at any time, between $\sqrt{m}/2$ and $(3/2)\sqrt{m}$ 
-updates have to be performed on $D_i$ to answer any query.  
-This implies that the time to answer a query is $\Oh(\sqrt{m}\,T(m)+Q(m))$.  
-The way they assure this is by rebuilding $D_1,\ldots,D_{\sqrt{m}}$ from time to time. 
-
+They assure that, at any time, between $\sqrt{m}/2$ and $(3/2)\sqrt{m}$ updates have 
+to be performed on $D_i$ to answer any query.  This implies that the time to answer a 
+query is $\Oh(\sqrt{m}\,T(m)+Q(m))$.  To achieve the $\Oh(m\,T(m))$ space consumption, 
+the way they assure this is by rebuilding $D_1,\ldots,D_{\sqrt{m}}$ from time to time.  
 Let $m$ denote the number of updates in the update sequence when the last rebuilding took place.
 In the beginning, $m=0$. 
 By assumption, the partially retroactive data structure has constant indegree, so they use 
@@ -466,29 +465,29 @@ The cost for the rebuilding is therefore $\Oh(m\,T(m))$,
 which adds an amortized cost of $\Oh(\sqrt{m}\,T(m))$ per retroactive operation. 
 They also argue that the space used is $\Oh(m\,T(m))$.
 
-Finally, the explicit justification for requiring a persistent version of the data structure, 
-as shown in the original proof for Theorem 5, is to reduce space usage. But its necessity in 
-achieving the proposed time consumption is also implicitly evident, as explained above.
+% Finally, the explicit justification for requiring a persistent version of the data structure, 
+% as shown in the original proof for Theorem 5, is to reduce space usage. But its necessity in 
+% achieving the proposed time consumption is also implicitly evident, as explained above.
 
 \section{Rebuilding process without a persistent data structure}\label{sec:rebuilding}
 
-We refer to a data structure that gives support to retroactive queries, 
-and to retroactive insertions into the update sequence, but not to removals, 
-as a \emph{semi-retroactive} data structure.
+In this section, we concentrate on the case in which one does not want to use a persistent data structure, 
+or such a structure is not available.  We describe a rebuilding process that is as efficient, in terms of 
+time, as the original one by Demaine et al.~\cite{DemaineIL2007}, but that does not use a persistent 
+version of the involved data structure.  
+% is simpler to implement, as it does not use a persistent version of the involved data structure. 
+
+We refer to a data structure that gives support to retroactive queries, and to retroactive insertions 
+into the update sequence, but not to removals, as a \emph{semi-retroactive} data structure.
 This kind of data structure is obviously weaker than a fully retroactive one, and
 is not comparable with a partially retroactive one, because the later gives support 
 to queries only at the present, and to retroactive insertions and removals on the 
 update sequence.  For semi-retroactive data structures, we refer to retroactive 
 updates, instead of retroactive operations, as only insertion of updates are allowed. 
 
-In this section, we describe a rebuilding process that is as efficient, in terms 
-of time, as the original one by Demaine et al.~\cite{DemaineIL2007}, but is simpler 
-to implement, as it does not use a persistent version of the involved data structure. 
-
-We will describe two variants of the rebuilding process. The first one is simpler
-and serves to derive a semi-retroactive data structure from a partially retroactive 
-one.  The second one serves to derive a fully retroactive data structure from a 
-partially retroactive one. 
+We will describe two variants of the rebuilding process. The first one is simpler and 
+serves to derive a semi-retroactive data structure from a partially retroactive one.  
+The second one serves to derive a fully retroactive data structure from a partially retroactive one. 
 
 \subsection{Semi-retroactivity}\label{subsec:semi}
 
@@ -545,7 +544,7 @@ The key fact that assures that this works is the following.
   and any of them that had time $t \leq t_i$ was applied to~$D_i$. 
   Because $ik+(2k+1) < ik+i+2k+2 = (i+2)(k+1)$, 
   even if all the $2k+1$ updates in $S^+$ were applied to~$D_i$,
-  all updates in $D_i$ would be among the first $(i+2)(k+1)$ updates in $S'$. 
+  all updates in $D_i$ would be among the first $(i+2)(k+1)$ updates in $S'$.
 \end{proof}
 
 Note that the statement does not hold with $i+1$ in the place of $i+2$. 
@@ -562,8 +561,8 @@ For this, we are not able to use the perfect squares as the moments
 of rebuilding, because the possible length of the update sequence is
 not anymore related to the number of retroactive operations done so far. 
 The length of the update sequence might grow and shrink over time. 
-
 So the strategy is more similar to the original one of Demaine et al.~\cite{DemaineIL2007}. 
+
 Let $m$ be the number of updates in the update sequence $S$ at the
 moment of a rebuilding that resulted in the partially retroactive 
 data structures $D_0,D_1,\ldots,D_k$, where $k=\ceil{\sqrt{m}}$.
@@ -595,7 +594,7 @@ Let $k'= \ceil{\sqrt{m'}}$ and $\underline{k}' = \floor{\sqrt{m'}}$.
   $m+\ell = m + 2\underline{k}-1 < m + 2\sqrt{m} + 1 = (\sqrt{m}+1)^2$. 
   Thus $\sqrt{m+\ell} < \sqrt{m}+1$, 
   which implies that 
-  $\underline{k}' \leq \floor{\sqrt{m+\ell}} \leq \floor{\sqrt{m}+1} = \underline{k}+1$. 
+  $\underline{k}' \leq \floor{\sqrt{m+\ell}} \leq \floor{\sqrt{m}+1} = \underline{k}+1$.
 \end{proof}
 
 If $\underline{k}' \geq \underline{k}$, then
@@ -648,13 +647,12 @@ so the time is $\Oh(\sqrt{m}\,T(m)+Q(m))$.
 
 \medskip 
 
-The space used by our strategy might be different from the space of 
-the persistent data structure used by Demaine et al.~\cite{DemaineIL2007}. 
-Assuming that the space used by the partially retroactive 
-data structure is linear, each $D_i$ uses space $\Theta(ik)$, 
+As for the space used by our strategy, assuming that the space used by the 
+partially retroactive data structure is linear, each $D_i$ uses space $\Theta(ik)$, 
 and thus the total space used by $D_0,D_1,\ldots,D_k$ is $\Theta(m\sqrt{m})$. 
-The space used by Demaine et al.~\cite{DemaineIL2007} strategy is $\Oh(m\,T(m))$, 
-where $T(m)$ is the time for a retroactive update in the partially retroactive data structure. 
+The space used by Demaine et al.~\cite{DemaineIL2007} strategy, that relies 
+on a persistent data structure, is $\Oh(m\,T(m))$, where $T(m)$ is the time 
+for a retroactive update in the partially retroactive data structure. 
 
 \section{Semi-retroactive incremental MSF}\label{sec:incMSF}
 
@@ -707,13 +705,12 @@ The empty incremental MSF~$D_0$ is used when $t$ is smaller than~$t_1$.
 
 Now, let us take a look at the time consumption of this approach.
 Recall that $n$ denotes the number of vertices of the graph, 
-and therefore in the link-cut trees.  First of all, the query for 
-the edges in the link-cut trees costs $\Oh(n)$, and all the other 
-routines used from the link-cut trees have an amortized cost of 
-$\Oh(\log{n})$ per operation.  For the \texttt{add\_edge} routine, 
-in the worst case, we have to add one new edge to each $D_i$, hence 
-its amortized time consumption is $\Oh(\sqrt{m}\,\log{n})$. Finally, 
-the time consumption of the \texttt{get\_msf} is $\Oh(n+\sqrt{m}\,\log{n})$,
+and therefore in the link-cut trees.  First of all, the query for the edges 
+in the link-cut trees costs $\Oh(n)$, and all the other routines used from 
+the link-cut trees have an amortized cost of~$\Oh(\log{n})$ per operation.  
+For the \texttt{add\_edge} routine, in the worst case, we have to add one new 
+edge to each~$D_i$, hence its amortized time consumption is~$\Oh(\sqrt{m}\,\log{n})$. 
+Finally, the time consumption of the \texttt{get\_msf} is~$\Oh(n+\sqrt{m}\,\log{n})$,
 because of the updates that need to be applied and rolled back, 
 and the query for the edges in a versions of the link-cut trees.
 
@@ -725,7 +722,7 @@ Junior and Seabra's solution for the semi-retroactive MSF problem.
 The main difference is that we implement the rebuilding steps, 
 and hence we do not restrict the amount of operations or their time range.
 The rebuilding steps are implemented according to 
-the approach presented in Subsection~\ref{subsec:semi}.
+the approach presented in Section~\ref{subsec:semi}.
 Edge insertions and queries are treated similarly to their implementation, 
 but now the checkpoints change during the process, as the rebuildings happen.
 % For details, please check our implementation, available at the following link: \\
@@ -734,7 +731,7 @@ but now the checkpoints change during the process, as the rebuildings happen.
 \medskip
 
 To emphasize the simplicity of the rebuilding step, we present below 
-the idea in pseudocode, using the notation from Subsection~\ref{subsec:semi}.
+the idea in pseudocode, using the notation from Section~\ref{subsec:semi}.
 The procedure receives an integer $k$, a sequence $D$ with the link-cut trees $D_0,\ldots,D_k$, 
 the sequence $t$ where $t_i$ is the last time stamp of an edge in $D_i$ for $i=0,\ldots,k$, and
 the current sequence $S$ with $(k+1)^2$ edge addition pairs $(e,s)$, stored 
@@ -778,7 +775,7 @@ It takes time $\Oh(\log k + \ell\log n)$, where $\ell$ is the number of edges ad
 \end{algorithm}
 
 The running time is dominated by the insertion operations 
-on the incremental MSFs.  As argued in Subsection~\ref{subsec:semi}, 
+on the incremental MSFs.  As argued in Section~\ref{subsec:semi}, 
 this process will execute $\Oh(m)$ such operations and, 
 because each of these operations has an amortized cost of $\Oh(\log{n})$,
 the total amortized cost of {\sc rebuild} is $\Oh(m \log{n})$.  This cost, distributed 
@@ -786,7 +783,6 @@ over the $\Theta(\sqrt{m})$ operations that take place between two rebuildings,
 adds an $\Oh(\sqrt{m}\,\log{n})$ amortized consumption time per operation.
 
 \section{Final remarks}\label{sec:final}
-
 
 During our study of the work of de Andrade Junior and Seabra, we noticed that
 they did not really implement full retroactivity, because their implementation
@@ -798,10 +794,14 @@ in the update sequence edge additions and edge removals.  The update sequence
 contains only edge additions.
 
 Our current implementation also does not give support to removals of edge additions.
+The removal of an edge insertion with time stamp $t$ from the update sequence 
+requires the removal of this edge from each data structure $D_i$ such that $t < t_i$. 
+However, the data structure $D_i$ is for incremental MSF, and does not give support 
+to edge removals. 
 The algorithm of Holm, de Lichtenberg, and Thorup~\cite{HolmLT2001} maintains
 dynamic graphs efficiently.  Their algorithm is also based on link-cut trees.
 It would be interesting to use their ideas to achieve an implementation of
-a fully retroactive incremental MSF.
+an efficient fully retroactive incremental MSF.
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
