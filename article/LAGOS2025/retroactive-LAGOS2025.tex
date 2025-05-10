@@ -187,7 +187,7 @@
 %% \dochead can also be used to include a conference title, if directed by the editors
 %% e.g. \dochead{17th International Conference on Dynamical Processes in Excited States of Solids}
 
-\title{How to go from partial to full retroactivity in details}
+\title{How to go from partial to full retroactivity in detail}
 % \title{From partial to full retroactivity without the use of a persistent data structure}
 
 %% use optional labels to link authors explicitly to addresses:
@@ -209,7 +209,7 @@
   Their description is focused on space savings, which require the use of a
   persistent version of the data structure involved.  We focus on the case in 
   which one does not have or does not want to use a persistent data structure. 
-  We describe and analyse in details how to implement their transformation in this case.
+  We describe and analyze in detail how to implement their transformation in this case.
   As a secondary contribution, using our strategy, we implemented a (halfway) 
   retroactive data structure for the incremental minimum spanning forest (MSF) problem, 
   that we make available. 
@@ -376,7 +376,7 @@ But we were not focused on the space savings, so we concentrated on looking for
 a simple way to keep the $\sqrt{m}$ checkpoints and the link-cut trees so that, 
 after many insertions and removals of operations, at most $(3/2)\sqrt{m}$ 
 operations occur between consecutive checkpoints, with~$m$ changing and all.
-We did not find an efficient way in the lines of rebalancing of B-tree nodes, 
+We did not find an efficient way along the lines of rebalancing of B-tree nodes, 
 so we considered the rebuilding process.  But rebuilding from scratch a whole 
 new collection of link-cut trees from time to time would extrapolate the 
 amortized time by operation.  So, we came up with a simple way to use the 
@@ -389,7 +389,7 @@ one, when one is not willing to use or does not have a persistent version of
 the involved data structure to apply the space saving strategy from Theorem~5 
 in~\cite{DemaineIL2007}.  It achieves the same slowdown in updates and queries 
 that their technique.  We applied our strategy to obtain the improvement we 
-wanted on de Andrade Junior and Seabra's implementation.  So, a secundary 
+wanted on de Andrade Junior and Seabra's implementation.  So, a secondary 
 contribution is an implementation, whose code we made available, of a 
 semi-retroactive version for the incremental MSF, that supports addition of 
 edges and queries at any time, in amortized time $\Oh(\sqrt{m}\lg n)$ per 
@@ -399,7 +399,7 @@ edge insertion and MSF cost query, and uses space $\Theta(m\sqrt{m})$.
 % Our amortized time is better than the $\tilde{\Oh}(n)$ time bound per operation 
 % from Henzinger and Wu~\cite{HenzingerW2021} for $m = o(n^2)$.)
 
-The remaining of the paper is organized as follows. 
+The remainder of the paper is organized as follows. 
 In Section~\ref{sec:review}, we review the strategy of Demaine, Iacono, and 
 Langerman~\cite{DemaineIL2007} to transform a partially retroactive data structure 
 into a fully retroactive one.
@@ -506,7 +506,7 @@ We will use $D_0$ to refer to an empty data structure,
 which is the initial state of the data structure, when $m=0$. 
 We will rebuild the data structures $D_0,D_1,\ldots,D_{\sqrt{m}}$ every 
 time $m$ is a perfect square, that is, $m=k^2$ for a positive integer $k$.
-Because $(k+1)^2-k^2 = 2k+1$, this means that the data structures built 
+Since $(k+1)^2-k^2 = 2k+1$, the data structures built 
 when $m=k^2$ will be rebuilt after exactly $2k+1=\Theta(\sqrt{m})$ retroactive updates.
 
 Let $S$ be the list of updates when $m=k^2$. 
@@ -717,11 +717,11 @@ and the query for the edges in a versions of the link-cut trees.
 \medskip
 
 The development of the idea presented in this paper was driven by
-the desire to get rid of the limitations presented in de Andrade 
+the desire to overcome the limitations in de Andrade 
 Junior and Seabra's solution for the semi-retroactive MSF problem.  
 The main difference is that we implement the rebuilding steps, 
 and hence we do not restrict the amount of operations or their time range.
-The rebuilding steps are implemented according to 
+The rebuilding steps are implemented following 
 the approach presented in Section~\ref{subsec:semi}.
 Edge insertions and queries are treated similarly to their implementation, 
 but now the checkpoints change during the process, as the rebuildings happen.
