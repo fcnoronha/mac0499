@@ -209,7 +209,7 @@
   and Langerman.  In their original paper on retroactivity, they described a way to 
   transform a partially retroactive data structure into a fully retroactive one.
   Their description is focused on space savings, which require the use of a
-  persistent version of the data structure involved.  We focus on the case in 
+  persistent version of the data structure in question.  We focus on the case in 
   which one does not have or does not want to use a persistent data structure. 
   We describe and analyze in detail how to implement their transformation in this case.
   As a secondary contribution, using our strategy, we implemented a (halfway) 
@@ -261,7 +261,7 @@ where $m$ is the number of edges in the graph at the moment of the update.
 
 The concept of retroactivity in data structures was introduced by Demaine, Iacono, 
 and Langerman~\cite{DemaineIL2007}.  Its applications include practical situations 
-where the involved data might be manipulated in imperfect ways, and once in a while 
+where the respective data might be manipulated in imperfect ways, and once in a while 
 there is a need to correct some erroneous operation done, or to perform some operation 
 that was forgotten.
 
@@ -300,7 +300,7 @@ this slowdown is essentially tight~\cite{ChenDGWXY2018}.
 The transformation is done, at first, by keeping $\Oh(\sqrt{m})$ versions of the 
 partially retroactive data structure. 
 Under a condition that assures that there is an efficient persistent version 
-of the data structure involved, they show how to achieve a more effective space
+of the data structure in question, they show how to achieve a more effective space
 consumption without losing in the time consumption. 
 (A persistent data structure is a data structure that always preserves the 
 previous version of itself when it is modified~\cite{DriscollSST1989}.)
@@ -361,8 +361,8 @@ the length $m$ of the time line was known from the start, and that the updates
 had time stamps from 1 to $m$, so they do not ever rebuild the data structure.
 Also, as Frederickson~\cite{Frederickson1983}, 
 they used link-cut trees as the data structure for each checkpoint.  
-This leads to an amortized query and edge addition time of $\Oh(\sqrt{m}\lg n)$.  
-The space used by their implementation is $\Theta(m\sqrt{m})$ 
+This leads to an amortized query and edge addition time of $\Oh(\sqrt{m}\lg n)$ in a graph
+with $n$ vertices. The space used by their implementation is $\Theta(m\sqrt{m})$ 
 because they used a collection of $\Theta(\sqrt{m})$ independent link-cut trees. 
 Our initial goal in this work was to improve de Andrade Junior and Seabra's 
 implementation, allowing the length of the update sequence for the incremental 
@@ -382,7 +382,7 @@ the literature~\cite{DemaineLP2008}, based on the use of the so called \emph{fin
 But we were not focused on the space savings, so we concentrated on looking for 
 a simple way to keep the $\sqrt{m}$ checkpoints and the link-cut trees so that, 
 after many insertions and removals of operations, at most $(3/2)\sqrt{m}$ 
-operations occur between consecutive checkpoints, with~$m$ changing and all.
+operations occur between consecutive checkpoints, again with a variable $m$.
 We did not find an efficient way along the lines of rebalancing of B-tree nodes, 
 so we considered the rebuilding process.  But rebuilding from scratch a whole 
 new collection of link-cut trees from time to time would extrapolate the 
@@ -393,7 +393,7 @@ its new version.
 Our main contribution is that our strategy can be applied in general, 
 to transform any partially retroactive data structure into a fully retroactive 
 one, when one is not willing to use or does not have a persistent version of 
-the involved data structure to apply the space saving strategy from Theorem~5 
+the data structure in question to apply the space saving strategy from Theorem~5 
 in~\cite{DemaineIL2007}.  It achieves the same slowdown in updates and queries 
 that their technique.  We applied our strategy to obtain the improvement we 
 wanted on de Andrade Junior and Seabra's implementation.  So, a secondary 
@@ -481,7 +481,7 @@ They also argue that the space used is $\Oh(m\,T(m))$.
 In this section, we concentrate on the case in which one does not want to use a persistent data structure, 
 or such a structure is not available.  We describe a rebuilding process that is as efficient, in terms of 
 time, as the original one by Demaine et al.~\cite{DemaineIL2007}, but that does not use a persistent 
-version of the involved data structure.  
+version of the data structure in question.  
 % is simpler to implement, as it does not use a persistent version of the involved data structure. 
 
 We refer to a data structure that gives support to retroactive queries, and to retroactive insertions 
@@ -499,7 +499,7 @@ The second one serves to derive a fully retroactive data structure from a partia
 \subsection{Semi-retroactivity}\label{subsec:semi}
 
 Our strategy follows the same idea of Demaine el at., but it does not 
-rely on the use of a persistent version of the data structure involved. 
+rely on the use of a persistent version of the data structure in question. 
 Also, for semi-retroactivity, we propose the use of slightly different 
 checkpoints and rebuilding moments, that make it easier to implement 
 and analyze the correctness of the strategy. 
@@ -701,7 +701,7 @@ all the edge insertions that took place before the moment $t_i$.
 An empty incremental MSF~$D_0$ is also used.
 
 From that, the implementation of de Andrade Junior and Seabra follows 
-the expected.  The operation \texttt{add\_edge}$(u,v,w,t)$ is performed 
+as expected.  The operation \texttt{add\_edge}$(u,v,w,t)$ is performed 
 by adding the respective edge to each $D_i$ such that $t < t_i$, for
 $i \in [1,\sqrt{m}]$.  The \texttt{get\_msf}$(t)$ consists of finding 
 the largest $i$ such that $t_i < t$, and then performing all the 
@@ -794,18 +794,27 @@ adds an $\Oh(\sqrt{m}\,\log{n})$ amortized consumption time per operation.
 During our study of the work of de Andrade Junior and Seabra, we noticed that
 they did not really implement full retroactivity, because their implementation
 does not allow for removals from the update sequence.  Even though the problem
-considered is incremental, a fully retroactive version of the problem should
-allow for the removal of edge additions.  Note that this does not correspond
-to an implementation of a retroactive dynamic MSF, because it does not keep
-in the update sequence edge additions and edge removals.  The update sequence
-contains only edge additions.
+considered is incremental, a fully retroactive version of the problem requires 
+the ability to remove a previous addition from any point in the update sequence,
+a capability their implementation lacks.
+
+Note that a version allowing for the removal of edge additions should not be 
+confused with an implementation of a retroactive dynamic MSF. A dynamic structure 
+for an MSF not only allows for the maintenance of edge additions but also edge 
+removals in the update sequence.
 
 Our current implementation also does not give support to removals of edge additions.
 The removal of an edge insertion with time stamp $t$ from the update sequence 
 requires the removal of this edge from each data structure $D_i$ such that $t < t_i$. 
-However, the data structure $D_i$ is for incremental MSF, and does not give support 
-to edge removals. 
-The algorithm of Holm, de Lichtenberg, and Thorup~\cite{HolmLT2001} maintains
+However, since the data structure $D_i$ is for incremental MSF, we do not have support 
+to edge removals.
+
+The approach we presented to avoid the need for a fixed $m$, as seen in de Andrade Junior 
+and Seabra's implementation, demonstrates an interesting method for adapting a square-root
+decomposition technique to our advantage. This technique could be further explored in other 
+applications as well.
+
+Finally, the algorithm of Holm, de Lichtenberg, and Thorup~\cite{HolmLT2001} maintains
 dynamic graphs efficiently.  Their algorithm is also based on link-cut trees.
 It would be interesting to use their ideas to achieve an implementation of
 an efficient fully retroactive incremental MSF.
