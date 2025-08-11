@@ -91,7 +91,7 @@
 
 %% Give the author list to appear in the running head
 %% Example \runauth{C.V. Radhakrishnan et al.}
-\runauth{C. G. Fernandes, F.C. Noronha}
+\runauth{C. G. Fernandes, F. C. Noronha}
 
 %% The choice of journal logo is determined by the \jid and \jnltitlelogo commands.
 %% A user-supplied logo with the name <\jid>logo.pdf will be inserted if present.
@@ -196,7 +196,7 @@
 %% \address[label1]{<address>}
 %% \address[label2]{<address>}
 
-\author[a]{Cristina G. Fernandes} 
+\author[a]{Cristina G. Fernandes}
 \ead{cris@ime.usp.br}
 \author[a]{Felipe C. Noronha}
 \ead{felipe.castro.noronha@hotmail.com}
@@ -222,7 +222,7 @@
 \end{keyword}
 
 
-% \cortext[cor1]{Corresponding author}
+%\cortext[cor1]{Corresponding author}
 \end{frontmatter}
 
 %\correspondingauthor[*]{Corresponding author. Tel.: +0-000-000-0000 ; fax: +0-000-000-0000.}
@@ -372,8 +372,9 @@ Theorem~5 in~\cite{DemaineIL2007} has two parts.  In the first part, the authors
 are concerned with the running time, and describe the above mentioned technique.
 At this point, they do not give details on how to keep the~$\sqrt{m}$ checkpoints 
 and the data structures so that, after many insertions and removals of operations, 
-at most~$(3/2)\sqrt{m}$ operations occur between consecutive checkpoints, with~$m$ 
-changing and all. The second part of the proof is concerned with saving space, and 
+at most~$(3/2)\sqrt{m}$ operations occur between consecutive checkpoints, 
+with~$m$ changing during the process as the operations happen. 
+The second part of the proof is concerned with saving space, and 
 describes how to rebuild the data structure from time to time to keep this invariant.  
 In order to save space, under the same time consumption, their technique uses 
 a persistent version of the data structure in this rebuilding process.  
@@ -498,7 +499,7 @@ The second one serves to derive a fully retroactive data structure from a partia
 
 \subsection{Semi-retroactivity}\label{subsec:semi}
 
-Our strategy follows the same idea of Demaine el at., but it does not 
+Our strategy follows the same idea of Demaine et al., but it does not 
 rely on the use of a persistent version of the data structure in question. 
 Also, for semi-retroactivity, we propose the use of slightly different 
 checkpoints and rebuilding moments, that make it easier to implement 
@@ -512,7 +513,7 @@ that is, the total number of retroactive updates.
 We will use $D_0$ to refer to an empty data structure, 
 which is the initial state of the data structure, when $m=0$. 
 We will rebuild the data structures $D_0,D_1,\ldots,D_{\sqrt{m}}$ every 
-time $m$ is a perfect square, that is, $m=k^2$ for a positive integer $k$.
+time $m$ is a perfect square, that is, $m=k^2$ for a positive integer~$k$.
 Since $(k+1)^2-k^2 = 2k+1$, the data structures built 
 when $m=k^2$ will be rebuilt after exactly $2k+1=\Theta(\sqrt{m})$ retroactive updates.
 
@@ -558,7 +559,7 @@ Note that the statement does not hold with $i+1$ in the place of $i+2$.
 During the rebuilding, the number of updates applied to $D_i$ to get $D'_{i+2}$ 
 is at most $(i+2)(k+1)-ik = 2k+2+i < 3(k+1)$, for $i=0,1,\ldots,k-1$.  
 The number of updates applied to $D'_1$ is exactly $k+1$.  That is, within the 
-rebuilding, $\Oh(k) = \Oh(\sqrt{m})$ updates are applied to obtain each $D'_i$.
+rebuilding, $\Oh(k) = \Oh(\sqrt{m})$ updates are applied to obtain each~$D'_i$.
 
 \subsection{Full retroactivity}\label{subsec:fully}
 
@@ -747,7 +748,7 @@ It returns the new block size $k+1$, the sequence $D'$ with
 the link-cut trees $D'_0,\ldots,D'_{k+1}$ and the sequence $t'$ 
 where $t'_i$ is the last time stamp of an edge in~$D'_i$ for $i=0,\ldots,k+1$. 
 In this pseudocode, for a pair $p=(e,s)$ in $S$, we use 
-$p.\textrm{time}$ to refer to $s$. % and $p.\textrm{edge}$ to refer to $e$. 
+$p.\textrm{time}$ to refer to~$s$. % and $p.\textrm{edge}$ to refer to $e$. 
 The procedure {\sc newIncrementalMSF} returns 
 a new data structure representing a spanning forest with no edges. 
 It takes~$\Oh(1)$ time in our implementation. 
@@ -818,6 +819,10 @@ Finally, the algorithm of Holm, de Lichtenberg, and Thorup~\cite{HolmLT2001} mai
 dynamic graphs efficiently.  Their algorithm is also based on link-cut trees.
 It would be interesting to use their ideas to achieve an implementation of
 an efficient fully retroactive incremental MSF.
+
+\section*{Acknowledgements}
+
+The first author would like to thank the support from Conselho Nacional de Desenvolvimento Científico e Tecnológico (CNPq) of Brazil, grants 310979/2020-0 and 404315/2023-2, and Fundação de Amparo à Pesquisa do Estado de São Paulo (FAPESP), grant 2023/03167-5.
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{retroactive.bib}
