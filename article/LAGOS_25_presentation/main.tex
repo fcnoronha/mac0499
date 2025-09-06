@@ -1,0 +1,596 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LaTeX Beamer Presentation (Condensed Version)
+%
+% On-slide text is minimal.
+% Speaker notes are included as comments (%) in each frame.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[fleqn]{beamer}
+
+\usepackage[utf8]{inputenc}
+\setlength{\mathindent}{\parindent}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx} 
+\usepackage{pifont}
+\usepackage{cancel}
+\usepackage{tikz}
+\usetikzlibrary{calc,positioning,decorations.pathmorphing,decorations.pathreplacing}
+\usetikzlibrary{backgrounds}
+\usepackage{./figstyle}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\newcommand{\greencheck}{\textbf{\textcolor{green}{\ding{51}}}}
+\newcommand{\Oh}{\mathcal{O}}
+
+%------------------------------------------------------------
+% Theme and Color Scheme
+%------------------------------------------------------------
+\usetheme{Boadilla}
+
+\usecolortheme{default}
+
+\pdfstringdefDisableCommands{%
+  \def\\{}%
+  \def\texttt#1{<#1>}%
+  \def\vspace#1{}%
+}
+
+%------------------------------------------------------------
+% Presentation Information
+%------------------------------------------------------------
+\title[Partial to full retroactivity]{How to go from partial to full retroactivity in detail}
+\author[Felipe C. Noronha]{Cristina Gomes Fernandes, Felipe Castro de Noronha}
+\institute[IME-USP]{
+    IME-USP -- Brazil
+}
+\date{LAGOS 25 -- November 10-14, 2025}
+
+%------------------------------------------------------------
+% The Presentation Begins
+%------------------------------------------------------------
+\begin{document}
+
+%-------------------------------------------------
+% SLIDE 1: Title Page
+%-------------------------------------------------
+\begin{frame}
+    \titlepage
+    \note{
+        - Introduce yourself and collaborators
+        - State topic: going from partial to full retroactivity
+    }
+\end{frame}
+
+
+%-------------------------------------------------
+% SLIDE 2: What is a Spanning Tree?
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{What is a spanning tree?}
+    
+    \begin{itemize}
+    \item Let $G = (V, E)$ be a connected graph \vfill
+    \item \textbf{Spanning tree:} a subgraph that is a tree and contains all vertices \vfill\pause
+    \item \textbf{Properties:}
+        \begin{itemize}
+        \item Connected (path between any two vertices)
+        \item Acyclic (no cycles)
+        \item Contains exactly $n-1$ edges for $n$ vertices
+        \end{itemize} \vfill\pause
+    \item \textbf{Minimum Spanning Tree (MST):} spanning tree with minimum total cost \vfill\pause
+    \item \textbf{Minimum Spanning Forest (MSF):} generalization for disconnected graphs \vfill
+    \end{itemize}
+    \note{
+        - Start with basic concept of spanning tree
+        - Explain key properties: connected, acyclic, n-1 edges
+        - Then define MST as spanning tree with minimum cost
+        - Finally generalize to MSF for disconnected graphs
+        - This builds up the concepts step by step
+    }
+\end{frame}
+
+
+
+%-------------------------------------------------
+% SLIDE 3: Incremental MSF Problem
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Incremental MSF problem}
+    
+    \begin{itemize}
+    \item \textbf{Problem:} Keep track of an MSF in a graph that grows over time \vfill
+    \item Graph starts empty, edges are added one by one \vfill\pause
+    \item \textbf{Operations:}
+        \begin{itemize}
+        \item \texttt{add\_edge}$(u,v,w)$: add edge with cost $w$ between vertices $u$ and $v$
+        \item \texttt{get\_msf}(): return current MSF
+        \end{itemize} \vfill\pause
+    \item \textbf{Solution:} Frederickson (1983) using link-cut trees \vfill
+    \item Cost: $\Oh(\sqrt{m})$ per operation, where $m$ is number of edges \vfill
+    \end{itemize}
+    \note{
+        - Define incremental MSF problem clearly
+        - Emphasize that graph starts empty and grows
+        - Show the two key operations needed
+        - Mention Frederickson's breakthrough solution
+        - Note the cost is in terms of current number of edges
+        - This sets up the foundation for retroactive version
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 4: Frederickson's Link-Cut Tree Solution
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Frederickson's link-cut tree solution}
+    
+    \begin{itemize}
+    \item \textbf{Key insight:} Use link-cut trees to maintain MSF dynamically \vfill\pause
+    \item \textbf{Algorithm for adding edge $(u,v,w)$:}
+        \begin{enumerate}
+        \item Check if $u$ and $v$ are in same component
+        \item If not: add edge to forest
+        \item If yes: find max cost edge on $u$-$v$ path
+        \item If $w < \text{max cost}$: replace max edge with new edge
+        \end{enumerate} \vfill\pause
+    \item \textbf{Link-cut tree operations:}
+        \begin{itemize}
+        \item \texttt{find\_max}$(u,v)$: $\Oh(\log n)$ amortized
+        \item \texttt{link}$(u,v)$: $\Oh(\log n)$ amortized
+        \item \texttt{cut}$(u,v)$: $\Oh(\log n)$ amortized
+        \end{itemize} \vfill\pause
+    \item \textbf{Total cost:} $\Oh(\log n)$ per edge addition \vfill
+    \end{itemize}
+    \note{
+        - Explain Frederickson's key insight about using link-cut trees
+        - Walk through the algorithm step by step
+        - Show how cycle detection and edge replacement works
+        - List the specific link-cut tree operations needed
+        - Emphasize the logarithmic time complexity
+        - This provides technical foundation for later slides
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 5: What is Retroactivity?
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{What is retroactivity?}
+    
+    \begin{itemize}
+    \item \textbf{Problem:} Data structures usually support updates and queries \vfill
+    \item Order of updates affects the state of the data structure \vfill\pause
+    \item \textbf{Retroactivity:} Manipulate the sequence of updates \vfill\pause
+    \item \textbf{Operations:}
+        \begin{itemize}
+        \item Insert update at time $t$ (possibly in the past)
+        \item Remove update at time $t$
+        \item Query at time $t$ (not just present)
+        \end{itemize} \vfill
+    \end{itemize}
+    \note{
+        - Start with the fundamental problem: data structures depend on update order
+        - Explain the motivation: correcting mistakes, adding forgotten operations
+        - Show the three key operations: insert, remove, query at any time
+        - Emphasize that time stamps must be distinct
+        - This sets up the distinction between partial and full retroactivity
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 6: Partial vs Full Retroactivity
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Partial vs Full retroactivity}
+    
+    \begin{block}{Partially Retroactive}
+        \begin{itemize}
+        \item Queries only on \textbf{current} state
+        \item Insert/remove updates at any time
+        \item Example: Dynamic MSF $\rightarrow$ Partially retroactive MSF
+        \end{itemize}
+    \end{block} \pause
+    
+    \begin{block}{Fully Retroactive}
+        \begin{itemize}
+        \item Queries at \textbf{any} time $t$
+        \item Insert/remove updates at any time
+        \item Complete retroactive functionality
+        \end{itemize}
+    \end{block} \pause
+    
+    \begin{alertblock}{Challenge}
+        How to transform partial $\rightarrow$ full retroactivity?
+    \end{alertblock}
+    \note{
+        - Clearly distinguish between partial and full retroactivity
+        - Emphasize that partial only allows queries on current state
+        - Show that full allows queries at any time - much more powerful
+        - Give concrete example: dynamic MSF becomes partially retroactive MSF
+        - State the main challenge: how to transform partial to full
+        - This motivates the need for Demaine et al. solution
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 7: Demaine, Iacono & Langerman's Solution
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Demaine, Iacono \& Langerman's solution}
+    
+    \begin{theorem}[Theorem 5, 2007]
+        Any partially retroactive data structure can be transformed into a fully retroactive one with:
+        \begin{itemize}
+        \item $\Oh(\sqrt{m})$ slowdown per operation
+        \item $\Oh(m)$ space usage
+        \item \textbf{Requirement:} Need persistent version of the data structure
+        \end{itemize}
+    \end{theorem} \pause
+    
+    \begin{itemize}
+    \item \textbf{Key idea:} Square-root decomposition \vfill
+    \item Keep $\sqrt{m}$ checkpoints with data structure states \vfill\pause
+    \item \textbf{Query at time $t$:}
+        \begin{enumerate}
+        \item Find closest checkpoint before $t$
+        \item Apply updates from checkpoint to $t$
+        \item Answer query, then rollback
+        \end{enumerate} \vfill
+    \end{itemize}
+    \note{
+        - State the main theorem with all requirements
+        - Emphasize the persistent data structure requirement
+        - Explain square-root decomposition concept
+        - Show how queries work: find checkpoint, apply updates, rollback
+        - Mention that this is the foundation for space optimization
+        - Set up the problem: what if we don't have persistent version?
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 8: The Space Problem
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{The space problem}
+    
+    \begin{itemize}
+    \item \textbf{Naive approach:} Keep $\sqrt{m}$ independent copies \vfill
+    \item Space usage: $\Theta(m\sqrt{m})$ \vfill\pause
+    \item \textbf{Demaine et al. solution:} Use persistent data structures \vfill
+    \item Space usage: $\Oh(m)$ \vfill\pause
+    \end{itemize}
+    
+    \begin{alertblock}{Problem}
+        What if we don't have or don't want to use persistent data structures?
+    \end{alertblock} \pause
+    
+    \begin{block}{Our contribution}
+        Simple rebuilding strategy without persistent data structures
+        \begin{itemize}
+        \item Same time complexity: $\Oh(\sqrt{m})$ per operation
+        \item Space usage: $\Theta(m\sqrt{m})$
+        \end{itemize}
+    \end{block}
+    \note{
+        - Explain the space issue with naive approach
+        - Show how Demaine et al. solve it with persistent data structures
+        - State the practical problem: persistent versions are complex
+        - Present our key contribution: same performance without persistence
+        - Emphasize the space trade-off we make
+        - This motivates our rebuilding approach
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 9: Starting Point
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Starting point}
+    
+    \begin{itemize}
+    \item \textbf{Junior \& Seabra's solution:} Semi-retroactive incremental MSF \vfill
+    \item \textbf{Operations:}
+        \begin{itemize}
+        \item \texttt{add\_edge}$(u,v,w,t)$: add edge at time $t$
+        \item \texttt{get\_msf}$(t)$: get MSF at time $t$
+        \end{itemize} \vfill\pause
+    \item \textbf{Implementation:} Square-root decomposition \vfill
+    \item \textbf{Checkpoints:} $t_i = i\sqrt{m}$ for $i = 1,\ldots,\sqrt{m}$ \vfill\pause
+    \item \textbf{Data structures:} $D_i$ contains edges before time $t_i$ \vfill
+    \item \textbf{Time:} $\Oh(\sqrt{m}\log n)$ per operation \vfill
+    \end{itemize}
+    \note{
+        - Start with Junior & Seabra's work as our starting point
+        - Explain their semi-retroactive MSF problem
+        - Show their operations: add edge at time t, query at time t
+        - Describe their square-root decomposition approach
+        - Show how they use checkpoints and data structures
+        - Mention their time complexity
+        - This sets up their limitations in the next slide
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 10: Limitations of Junior & Seabra
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Limitations of Junior \& Seabra}
+    
+    \begin{alertblock}{Problems with their approach}
+        \begin{itemize}
+        \item \textbf{Fixed $m$:} Must know sequence length beforehand
+        \item \textbf{Fixed time range:} Operations must have timestamps $1$ to $m$
+        \item \textbf{No rebuilding:} Cannot handle arbitrary growth
+        \end{itemize}
+    \end{alertblock} \pause
+    
+    \begin{block}{Our goal}
+        Remove these limitations while maintaining efficiency
+    \end{block} \pause
+    
+    \begin{itemize}
+    \item \textbf{Key insight:} Implement rebuilding process \vfill
+    \item \textbf{Challenge:} How to rebuild without persistent data structures? \vfill
+    \item \textbf{Solution:} Reuse existing data structures during rebuilding \vfill
+    \end{itemize}
+    \note{
+        - Clearly list their three main limitations
+        - Emphasize that fixed m and time range are serious restrictions
+        - State our goal: remove these limitations while maintaining efficiency
+        - Present our key insight: implement rebuilding process
+        - Explain the challenge: how to rebuild without persistent structures
+        - This motivates our solution in the next slide
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 11: Our Solution - Rebuilding Strategy
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Our solution - Rebuilding strategy}
+    
+    \begin{itemize}
+    \item \textbf{Key idea:} Reuse existing data structures during rebuilding \vfill
+    \item \textbf{Rebuilding moments:} When $m = k^2$ (perfect square) \vfill\pause
+    \item \textbf{Strategy:}
+        \begin{enumerate}
+        \item Create new empty structures $D'_0, D'_1$
+        \item Reuse $D_i \rightarrow D'_{i+2}$ for $i = 0,\ldots,k-1$
+        \item Apply missing updates to each $D'_i$
+        \end{enumerate} \vfill\pause
+    \end{itemize}
+    
+    \begin{block}{Key Lemma}
+        Every update in $D_i$ is within the first $(i+2)(k+1)$ updates in the new sequence.
+    \end{block} \pause
+    
+    \begin{itemize}
+    \item \textbf{Time per rebuilding:} $\Oh(m\log n)$ \vfill
+    \item \textbf{Amortized cost:} $\Oh(\sqrt{m}\log n)$ per operation \vfill
+    \end{itemize}
+    \note{
+        - Explain our key insight: reuse existing data structures
+        - Show rebuilding moments: when m is a perfect square
+        - Walk through the three-step strategy
+        - Present the key lemma that makes this work
+        - Analyze time complexity: O(m log n) total, O(sqrt(m) log n) amortized
+        - This sets up the detailed algorithm in the next slide
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 12: Link-Cut Trees for MSF
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Link-cut trees for MSF}
+    
+    \begin{itemize}
+    \item \textbf{Data structure:} Link-cut trees (Sleator \& Tarjan, 1981) \vfill
+    \item \textbf{Operations:} \vfill
+        \begin{itemize}
+        \item \texttt{link}$(u,v)$: connect trees containing $u$ and $v$
+        \item \texttt{cut}$(u,v)$: disconnect edge between $u$ and $v$
+        \item \texttt{find\_max}$(u,v)$: find maximum cost edge on path $u$-$v$
+        \end{itemize} \vfill\pause
+    \item \textbf{MSF maintenance:} \vfill
+        \begin{enumerate}
+        \item Add edge $(u,v,w)$
+        \item If no cycle: add to forest
+        \item If cycle: find max edge $e$ on $u$-$v$ path
+        \item If $w < \text{cost}(e)$: remove $e$, add $(u,v,w)$
+        \end{enumerate} \vfill\pause
+    \item \textbf{Time:} $\Oh(\log n)$ amortized per operation \vfill
+    \end{itemize}
+    \note{
+        - Introduce link-cut trees as the underlying data structure
+        - Show the three key operations: link, cut, find_max
+        - Explain how each operation works and its time complexity
+        - Walk through the MSF maintenance algorithm step by step
+        - Show how cycle detection and edge replacement works
+        - Emphasize the O(log n) amortized time per operation
+        - This provides the technical foundation for our implementation
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 13: Rebuilding Algorithm
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Rebuilding algorithm}
+    
+    \begin{enumerate}
+        \item $D'_0 \gets$ \textsc{newIncrementalMSF}()
+        \item $D'_1 \gets$ \textsc{newIncrementalMSF}()
+        \item For $i = 2$ to $k+1$: $D'_i \gets D_{i-2}$ \hfill {\footnotesize $\rhd$ reuse existing}
+        \item For $i = 1$ to $k+1$:
+        \begin{itemize}
+        \item $p \gets$ \textsc{kth}$(S, i(k+1))$ \hfill {\footnotesize $\rhd$ $i(k+1)$th edge}
+        \item $t'_i \gets p.\text{time}$
+        \item \textsc{addEdges}$(S, t_{i-2}, t'_i, D'_i)$
+        \end{itemize}
+        \item Return $k+1, D', t'$
+    \end{enumerate} \pause
+    
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            % Original checkpoints
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm] (D0) at (2, 2) {$D_0$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm] (D1) at (4, 2) {$D_1$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm] (D2) at (6, 2) {$D_2$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm] (D3) at (8, 2) {$D_3$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm] (D4) at (10, 2) {$D_4$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm] (D5) at (12, 2) {$D_5$};
+            
+            % New checkpoints
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm, fill=blue!20] (D0new) at (0, 0) {$D'_0$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm, fill=blue!20] (D1new) at (2, 0) {$D'_1$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm, fill=green!20] (D2new) at (4, 0) {$D'_2$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm, fill=green!20] (D3new) at (6, 0) {$D'_3$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm, fill=green!20] (D4new) at (8, 0) {$D'_4$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm, fill=green!20] (D5new) at (10, 0) {$D'_5$};
+            \node[draw, rectangle, minimum width=1.5cm, minimum height=0.8cm, fill=green!20] (D6new) at (12, 0) {$D'_6$};
+            
+            % Arrows showing reuse
+            \draw[->, thick, red] (D0.south) -- (D2new.north);
+            \draw[->, thick, red] (D1.south) -- (D3new.north);
+            \draw[->, thick, red] (D2.south) -- (D4new.north);
+            \draw[->, thick, red] (D3.south) -- (D5new.north);
+            \draw[->, thick, red] (D4.south) -- (D6new.north);
+            
+            % Labels
+            \node at (0, 3) {\small Original};
+            \node at (0, -1) {\small New};
+            \node at (6, -1.5) {\small $D_i \rightarrow D'_{i+2}$};
+        \end{tikzpicture}
+        \caption{Rebuilding: Reuse existing data structures with offset}
+    \end{figure}
+    
+    \begin{itemize}
+    \item \textbf{Key insight:} Reuse $D_i \rightarrow D'_{i+2}$ \vfill
+    \item \textbf{Time:} $\Oh(m\log n)$ total, $\Oh(\sqrt{m}\log n)$ amortized \vfill
+    \item \textbf{Space:} $\Theta(m\sqrt{m})$ \vfill
+    \end{itemize}
+    \note{
+        - Show the step-by-step rebuilding algorithm
+        - Explain how we create new empty structures D'_0, D'_1
+        - Show how we reuse existing structures with offset
+        - Walk through the process of applying missing updates
+        - Explain the key insight: D_i becomes D'_{i+2}
+        - Analyze time complexity: O(m log n) total, O(sqrt(m) log n) amortized
+        - This leads to our results in the next slide
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 14: Results
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Results}
+    
+    \begin{block}{Our contribution}
+        \begin{itemize}
+        \item \textbf{General transformation:} Partial $\rightarrow$ Full retroactivity \vfill
+        \item \textbf{No persistent data structures needed} \vfill
+        \item \textbf{Same time complexity:} $\Oh(\sqrt{m})$ per operation \vfill
+        \item \textbf{Space trade-off:} $\Theta(m\sqrt{m})$ vs $\Oh(m)$ \vfill
+        \end{itemize}
+    \end{block} \pause
+    
+    \begin{block}{Semi-retroactive MSF implementation}
+        \begin{itemize}
+        \item \textbf{Operations:} \texttt{add\_edge}$(u,v,w,t)$, \texttt{get\_msf}$(t)$ \vfill
+        \item \textbf{Time:} $\Oh(\sqrt{m}\log n)$ per operation \vfill
+        \item \textbf{Space:} $\Theta(m\sqrt{m})$ \vfill
+        \item \textbf{No fixed $m$ or time range restrictions} \vfill
+        \end{itemize}
+    \end{block}
+    \note{
+        - Summarize our main theoretical contribution
+        - Emphasize that we don't need persistent data structures
+        - Show we achieve the same time complexity as Demaine et al.
+        - Present our MSF implementation results
+        - Highlight that we removed the fixed m and time range restrictions
+        - This demonstrates the practical value of our approach
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 15: Applications
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Applications to other data structures}
+    
+    \begin{itemize}
+    \item \textbf{General applicability:} Works for any partially retroactive data structure \vfill\pause
+    \item \textbf{Examples:}
+        \begin{itemize}
+        \item \textbf{Union-Find:} Retroactive connectivity queries \vfill
+        \item \textbf{Priority Queue:} Retroactive min/max queries \vfill
+        \item \textbf{Stack/Queue:} Retroactive top/front queries \vfill
+        \end{itemize} \vfill\pause
+    \item \textbf{Requirements:}
+        \begin{itemize}
+        \item Partially retroactive data structure
+        \item Rollback capability
+        \item No persistent version needed
+        \end{itemize} \vfill\pause
+    \item \textbf{Benefits:}
+        \begin{itemize}
+        \item Simple implementation
+        \item No sophisticated persistent data structures
+        \item Same asymptotic performance
+        \end{itemize} \vfill
+    \end{itemize}
+    \note{
+        - Emphasize the general applicability of our approach
+        - Give concrete examples: Union-Find, Priority Queue, Stack/Queue
+        - Explain what each example would enable retroactively
+        - List the requirements: partially retroactive, rollback capability
+        - Highlight the benefits: simple implementation, no persistent structures
+        - This shows the broad impact of our work
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 16: Future Work
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Future work}
+    
+    \begin{itemize}
+    \item \textbf{Space optimization:} Can we achieve $\Oh(m)$ space? \vfill\pause
+    \item \textbf{Full retroactivity:} Extend to support removals \vfill\pause
+    \item \textbf{Other problems:}
+        \begin{itemize}
+        \item Dynamic MSF with deletions
+        \item Retroactive shortest paths
+        \item Retroactive maximum flow
+        \end{itemize} \vfill\pause
+    \end{itemize}
+    \note{
+        - List the main open problems in this area
+        - Emphasize the space optimization challenge
+        - Mention the full retroactivity extension
+        - Give specific examples of other problems to tackle
+        - This shows there's still much work to be done
+        - Sets up the conclusion slide
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE: Thank You
+%-------------------------------------------------
+\begin{frame}
+    \begin{center}
+        \Huge{Thank you! \\ \vfill Questions?}
+    \end{center}
+    \note{
+        - Invite questions
+        - Go back to previous slide
+    }
+\end{frame}
+
+\end{document}
