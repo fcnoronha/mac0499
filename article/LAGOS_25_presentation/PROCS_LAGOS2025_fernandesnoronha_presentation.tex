@@ -108,7 +108,6 @@
         \item \texttt{get\_msf}(): return current MSF
         \end{itemize} \vfill\pause
     \item \textbf{Solution:} Frederickson (1983) using link-cut trees \vfill
-    \item Cost: $\Oh(\sqrt{m})$ per operation, where $m$ is number of edges \vfill
     \end{itemize}
     \note{
         - Define incremental MSF problem clearly
@@ -141,7 +140,7 @@
         \item \texttt{link}$(u,v)$: $\Oh(\log n)$ amortized
         \item \texttt{cut}$(u,v)$: $\Oh(\log n)$ amortized
         \end{itemize} \vfill\pause
-    \item \textbf{Total cost:} $\Oh(\log n)$ per edge addition \vfill
+    \item \textbf{Total cost:} Amortized $\Oh(\log n)$ per edge addition \vfill
     \end{itemize}
     \note{
         - Explain Frederickson's key insight about using link-cut trees
@@ -201,26 +200,56 @@
         \end{itemize}
     \end{block} \pause
     
-    \begin{alertblock}{Challenge}
-        How to transform partial $\rightarrow$ full retroactivity?
-    \end{alertblock}
+    \begin{block}{Semi-Retroactive}
+        \begin{itemize}
+        \item Queries at \textbf{any} time $t$
+        \item Insert updates at any time
+        \item \textbf{No removal} of updates
+        \end{itemize}
+    \end{block}
     \note{
-        - Clearly distinguish between partial and full retroactivity
+        - Clearly distinguish between partial, full, and semi-retroactivity
         - Emphasize that partial only allows queries on current state
         - Show that full allows queries at any time - much more powerful
+        - Define semi-retroactive: queries at any time, insertions, but no removals
         - Give concrete example: dynamic MSF becomes partially retroactive MSF
-        - State the main challenge: how to transform partial to full
-        - This motivates the need for Demaine et al. solution
+        - This sets up the challenge in the next slide
     }
 \end{frame}
 
 %-------------------------------------------------
-% SLIDE 7: Demaine, Iacono & Langerman's Solution
+% SLIDE 7: The Challenge
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{The challenge}
+    
+    \begin{alertblock}{Challenge}
+        How to transform partial $\rightarrow$ full retroactivity?
+    \end{alertblock} \pause
+    
+    \begin{itemize}
+    \item \textbf{Problem:} Need to support queries at any time $t$ \vfill
+    \item \textbf{Solution approach:} Square-root decomposition \vfill\pause
+    \item \textbf{Key insight:} Keep checkpoints with data structure states \vfill
+    \item \textbf{Implementation:} Demaine, Iacono \& Langerman (2007) \vfill
+    \end{itemize}
+    \note{
+        - State the main challenge clearly
+        - Explain what we need to achieve: queries at any time
+        - Introduce the solution approach: square-root decomposition
+        - Mention the key insight about checkpoints
+        - Reference the Demaine et al. work
+        - This motivates the detailed solution in the next slide
+    }
+\end{frame}
+
+%-------------------------------------------------
+% SLIDE 8: Demaine, Iacono & Langerman's Solution
 %-------------------------------------------------
 \begin{frame}
     \frametitle{Demaine, Iacono \& Langerman's solution}
     
-    \begin{theorem}[Theorem 5, 2007]
+    \begin{theorem}[Theorem 05]
         Any partially retroactive data structure can be transformed into a fully retroactive one with:
         \begin{itemize}
         \item $\Oh(\sqrt{m})$ slowdown per operation
@@ -240,7 +269,7 @@
         \end{enumerate} \vfill
     \end{itemize}
     \note{
-        - State the main theorem with all requirements
+        - State Theorem 05 from Demaine, Iacono & Langerman 2007
         - Emphasize the persistent data structure requirement
         - Explain square-root decomposition concept
         - Show how queries work: find checkpoint, apply updates, rollback
@@ -250,7 +279,7 @@
 \end{frame}
 
 %-------------------------------------------------
-% SLIDE 8: The Space Problem
+% SLIDE 9: The Space Problem
 %-------------------------------------------------
 \begin{frame}
     \frametitle{The space problem}
@@ -284,7 +313,7 @@
 \end{frame}
 
 %-------------------------------------------------
-% SLIDE 9: Starting Point
+% SLIDE 10: Starting Point
 %-------------------------------------------------
 \begin{frame}
     \frametitle{Starting point}
@@ -313,10 +342,10 @@
 \end{frame}
 
 %-------------------------------------------------
-% SLIDE 10: Limitations of Junior & Seabra
+% SLIDE 11: Limitations of Junior & Seabra
 %-------------------------------------------------
 \begin{frame}
-    \frametitle{Limitations of Junior \& Seabra}
+    \frametitle{Limitations}
     
     \begin{alertblock}{Problems with their approach}
         \begin{itemize}
@@ -346,7 +375,7 @@
 \end{frame}
 
 %-------------------------------------------------
-% SLIDE 11: Our Solution - Rebuilding Strategy
+% SLIDE 12: Our Solution - Rebuilding Strategy
 %-------------------------------------------------
 \begin{frame}
     \frametitle{Our solution - Rebuilding strategy}
@@ -377,40 +406,6 @@
         - Present the key lemma that makes this work
         - Analyze time complexity: O(m log n) total, O(sqrt(m) log n) amortized
         - This sets up the detailed algorithm in the next slide
-    }
-\end{frame}
-
-%-------------------------------------------------
-% SLIDE 12: Link-Cut Trees for MSF
-%-------------------------------------------------
-\begin{frame}
-    \frametitle{Link-cut trees for MSF}
-    
-    \begin{itemize}
-    \item \textbf{Data structure:} Link-cut trees (Sleator \& Tarjan, 1981) \vfill
-    \item \textbf{Operations:} \vfill
-        \begin{itemize}
-        \item \texttt{link}$(u,v)$: connect trees containing $u$ and $v$
-        \item \texttt{cut}$(u,v)$: disconnect edge between $u$ and $v$
-        \item \texttt{find\_max}$(u,v)$: find maximum cost edge on path $u$-$v$
-        \end{itemize} \vfill\pause
-    \item \textbf{MSF maintenance:} \vfill
-        \begin{enumerate}
-        \item Add edge $(u,v,w)$
-        \item If no cycle: add to forest
-        \item If cycle: find max edge $e$ on $u$-$v$ path
-        \item If $w < \text{cost}(e)$: remove $e$, add $(u,v,w)$
-        \end{enumerate} \vfill\pause
-    \item \textbf{Time:} $\Oh(\log n)$ amortized per operation \vfill
-    \end{itemize}
-    \note{
-        - Introduce link-cut trees as the underlying data structure
-        - Show the three key operations: link, cut, find_max
-        - Explain how each operation works and its time complexity
-        - Walk through the MSF maintenance algorithm step by step
-        - Show how cycle detection and edge replacement works
-        - Emphasize the O(log n) amortized time per operation
-        - This provides the technical foundation for our implementation
     }
 \end{frame}
 
@@ -518,65 +513,33 @@
 \end{frame}
 
 %-------------------------------------------------
-% SLIDE 15: Applications
+% SLIDE 15: Extending for Full Retroactivity
 %-------------------------------------------------
 \begin{frame}
-    \frametitle{Applications to other data structures}
+    \frametitle{Extending for full retroactivity}
     
     \begin{itemize}
     \item \textbf{General applicability:} Works for any partially retroactive data structure \vfill\pause
-    \item \textbf{Examples:}
+    \item \textbf{Supporting removals:} To achieve full retroactivity \vfill
         \begin{itemize}
-        \item \textbf{Union-Find:} Retroactive connectivity queries \vfill
-        \item \textbf{Priority Queue:} Retroactive min/max queries \vfill
-        \item \textbf{Stack/Queue:} Retroactive top/front queries \vfill
+        \item Adapt rebuilding trigger: when $|\lfloor\sqrt{m'}\rfloor - \lfloor\sqrt{m}\rfloor| \leq 1$
+        \item Handle both insertions and removals in update sequence
+        \item Rebuilding frequency: every $2\lfloor\sqrt{m}\rfloor-1$ operations
         \end{itemize} \vfill\pause
     \item \textbf{Requirements:}
         \begin{itemize}
         \item Partially retroactive data structure
         \item Rollback capability
         \item No persistent version needed
-        \end{itemize} \vfill\pause
-    \item \textbf{Benefits:}
-        \begin{itemize}
-        \item Simple implementation
-        \item No sophisticated persistent data structures
-        \item Same asymptotic performance
         \end{itemize} \vfill
     \end{itemize}
     \note{
         - Emphasize the general applicability of our approach
-        - Give concrete examples: Union-Find, Priority Queue, Stack/Queue
-        - Explain what each example would enable retroactively
+        - Explain how to extend for full retroactivity with removals
+        - Show the adapted rebuilding trigger condition
+        - Explain how to handle both insertions and removals
         - List the requirements: partially retroactive, rollback capability
-        - Highlight the benefits: simple implementation, no persistent structures
-        - This shows the broad impact of our work
-    }
-\end{frame}
-
-%-------------------------------------------------
-% SLIDE 16: Future Work
-%-------------------------------------------------
-\begin{frame}
-    \frametitle{Future work}
-    
-    \begin{itemize}
-    \item \textbf{Space optimization:} Can we achieve $\Oh(m)$ space? \vfill\pause
-    \item \textbf{Full retroactivity:} Extend to support removals \vfill\pause
-    \item \textbf{Other problems:}
-        \begin{itemize}
-        \item Dynamic MSF with deletions
-        \item Retroactive shortest paths
-        \item Retroactive maximum flow
-        \end{itemize} \vfill\pause
-    \end{itemize}
-    \note{
-        - List the main open problems in this area
-        - Emphasize the space optimization challenge
-        - Mention the full retroactivity extension
-        - Give specific examples of other problems to tackle
-        - This shows there's still much work to be done
-        - Sets up the conclusion slide
+        - This shows how our approach can be extended for full functionality
     }
 \end{frame}
 
