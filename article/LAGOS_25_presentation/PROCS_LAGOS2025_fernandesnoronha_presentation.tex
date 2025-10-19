@@ -137,8 +137,10 @@
     \end{figure}
     
     \note[item]{Start with basic concept of spanning tree - fundamental in graph theory}
-    \note[item]{Show visual example with graph G (blue edges) and spanning tree T (red wavy edges)}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Explain key properties: connected (path between any two vertices), acyclic (no cycles), contains exactly n-1 edges for n vertices}
+    \note[item]{---------- SKIP SLIDE ----------}
+    \note[item]{Show visual example with graph G (blue edges) and spanning tree T (red wavy edges)}
     \note[item]{In the example: 8 vertices, so spanning tree has exactly 7 edges}
     \note[item]{This builds up the concepts step by step for the incremental MSF problem}
     \note[item]{Emphasize that spanning trees are not unique - there can be many valid spanning trees}
@@ -200,10 +202,11 @@
     \end{figure}
 
     \note[item]{Define MST as spanning tree with minimum total cost - optimization problem}
+    \note[item]{Generalize to MSF for disconnected graphs - collection of MSTs for each component}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show visual example with weighted edges: blue edges show graph G, red wavy edges show MST}
     \note[item]{Demonstrate that red edges form MST with cost 14 (1+2+3+2+3+1+2 = 14)}
     \note[item]{Explain that any other spanning tree would have higher cost - this is the optimal solution}
-    \note[item]{Generalize to MSF for disconnected graphs - collection of MSTs for each component}
     \note[item]{This prepares for the incremental MSF problem where we maintain optimality dynamically}
     \note[item]{Key insight: we need to maintain optimality as edges are added one by one}
 \end{frame}
@@ -226,7 +229,9 @@
     \end{itemize}
     \note[item]{Define incremental MSF problem clearly: maintain MSF as graph grows}
     \note[item]{Emphasize that graph starts empty and grows - this is crucial for our approach}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show the two key operations: add\_edge(u,v,w) and get\_msf()}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Mention Frederickson's breakthrough solution from 1983 using link-cut trees}
     \note[item]{Note the cost is $O(log n)$ amortized per edge addition using link-cut trees}
     \note[item]{This is the foundation for retroactive version - we'll extend this to handle time}
@@ -258,13 +263,14 @@
     \item \textbf{Total cost:} Amortized $\Oh(\log n)$ per edge addition \vfill
     \end{itemize}
     \note[item]{Explain Frederickson's key insight: use link-cut trees to maintain MSF dynamically}
-    \note[item]{Walk through the algorithm step by step:}
-          \note[item]{1. Check connectivity using link-cut trees \(find_root operations\)}
-          \note[item]{2. If not connected: add edge directly \(link operation\)}
-          \note[item]{3. If connected: find max cost edge on u-v path \(find_max operation\)}
-          \note[item]{4. If new edge cheaper: replace max edge \(cut + link operations\)}
-    \note[item]{Show how cycle detection and edge replacement works using link-cut tree properties}
+    \note[item]{---------- SKIP SLIDE ----------}
+    \note[item]{1. Check connectivity using link-cut trees \(find_root operations\)}
+    \note[item]{2. If not connected: add edge directly \(link operation\)}
+    \note[item]{3. If connected: find max cost edge on u-v path \(find_max operation\)}
+    \note[item]{4. If new edge cheaper: replace max edge \(cut + link operations\)}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{List the specific link-cut tree operations: find\_max, link, cut - all $O(log n)$ amortized}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Emphasize the logarithmic time complexity: $O(log n)$ per edge addition}
     \note[item]{Key insight: link-cut trees support efficient rollback, which we'll need for retroactivity}
 \end{frame}
@@ -473,7 +479,7 @@
     \note[item]{Still no cycle, so added to MSF directly}
     \note[item]{Current MSF: {g-h, c-a, f-g, a-f} with total cost 13}
     \note[item]{Link-cut tree operations: link(a,f) - $O(log n)$ time}
-    \note[item]{Now we have components: {g,h,f,a,c} - all vertices connected!}
+    \note[item]{Now we have component: {g,h,f,a,c} - all vertices connected!}
     \note[item]{This shows how components merge as edges are added}
     
 \end{frame}
@@ -528,9 +534,9 @@
     
     \note[item]{Show fifth edge being added: \(c,f\) with cost 5}
     \note[item]{This creates a cycle! c-a-f-g-h-c forms a cycle}
-    \note[item]{Link-cut tree operations: find\_max\(c,f\) finds edge \(f,g\) with cost 6}
-    \note[item]{Since new edge cost 5 $<$ max cost 6, we replace \(f,g\) with \(c,f\)}
-    \note[item]{Current MSF: \{g-h, c-a, c-f, a-f\} with total cost 12 (improved!)}
+    \note[item]{Link-cut tree operations: find\_max(c,f) finds edge \(a,f\) with cost 2}
+    \note[item]{Since new edge cost 5, which is grater than 2, it's not added to the MSF}
+    \note[item]{Current MSF: {g-h, c-a, f-g, a-f} with total cost 13}
     \note[item]{This demonstrates the cycle-breaking optimization in Frederickson's algorithm}
     \note[item]{Key insight: we maintain optimality by replacing expensive edges with cheaper ones}
     
@@ -587,11 +593,9 @@
     
     \note[item]{Show sixth edge being added: \(f,d\) with cost 7}
     \note[item]{This creates a cycle! f-d-g-h-f forms a cycle}
-    \note[item]{Link-cut tree operations: find\_max\(f,d\) finds edge \(g,h\) with cost 4}
-    \note[item]{Since new edge cost 7 > max cost 4, we don't replace - edge is rejected}
-    \note[item]{Current MSF: \{g-h, c-a, c-f, a-f\} with total cost 12 \(unchanged\)}
-    \note[item]{This shows how expensive edges are rejected to maintain optimality}
-    \note[item]{Key insight: not all edges improve the MSF - we only keep beneficial ones}
+    \note[item]{Link-cut tree operations: find\_max(f,d) no cycle returned}
+    \note[item]{Edge is added to the MSF}
+    \note[item]{Current MSF: {g-h, c-a, f-g, a-f, f-d} with total cost 20}
     
 \end{frame}
 
@@ -646,10 +650,10 @@
     \end{itemize}
 
     \note[item]{Show seventh edge being added: \(a,d\) with cost 3}
-    \note[item]{This creates a cycle! a-d-f-c-a forms a cycle}
-    \note[item]{Link-cut tree operations: find\_max\(a,d\) finds edge \(c,f\) with cost 5}
-    \note[item]{Since new edge cost 3 < max cost 5, we replace \(c,f\) with \(a,d\)}
-    \note[item]{Current MSF: \{g-h, c-a, a-d, a-f\} with total cost 10 \(improved!\)}
+    \note[item]{This creates a cycle! a-d-f-a forms a cycle}
+    \note[item]{Link-cut tree operations: find\_max(a,d\ finds edge \(f,d\) with cost 7}
+    \note[item]{Since new edge cost 3 < max cost 7, we replace (f,d) with (a,d)}
+    \note[item]{Current MSF: {g-h, c-a, f-g, a-f, a-d} with total cost 16 \(improved!\)}
     \note[item]{This shows continued optimization as better edges are found}
     \note[item]{Key insight: the algorithm continuously improves the MSF as new edges arrive}
     
@@ -707,10 +711,10 @@
     \end{itemize}
     
     \note[item]{Show eighth edge being added: \(d,g\) with cost 2}
-    \note[item]{This creates a cycle! d-g-h-f-a-d forms a cycle}
-    \note[item]{Link-cut tree operations: find\_max\(d,g\) finds edge \(g,h\) with cost 4}
-    \note[item]{Since new edge cost 2 < max cost 4, we replace \(g,h\) with \(d,g\)}
-    \note[item]{Current MSF: \{d-g, c-a, a-d, a-f\} with total cost 8 \(improved!\)}
+    \note[item]{This creates a cycle! d-g-f-a-d forms a cycle}
+    \note[item]{Link-cut tree operations: find\_max(d,g) finds edge (f,g) with cost 6}
+    \note[item]{Since new edge cost 2 < max cost 6, we replace (f,g) with (d,g)}
+    \note[item]{Current MSF: \{g-h, c-a, a-f, a-d, d-g\} with total cost 12 \(improved!\)}
     \note[item]{This shows the final optimization step}
     \note[item]{Key insight: the algorithm finds the optimal MSF through incremental improvements}
     \note[item]{Total cost reduced from 14 to 8 through smart edge replacements}
@@ -774,6 +778,8 @@
     \item \textbf{Solution:} Frederickson (1983) using link-cut trees \vfill
     \end{itemize}
     
+    \note[item]{If we continue adding edges and applying this algorithm}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show final complete MSF with optimal cost = 12}
     \note[item]{Summarize the incremental process: started empty, added edges one by one}
     \note[item]{Transition to Frederickson's solution: $O(log n)$ amortized per edge addition}
@@ -804,10 +810,11 @@
     
     \note[item]{Start with the fundamental problem: data structures depend on update order}
     \note[item]{Explain the motivation: correcting mistakes, adding forgotten operations}
-    \note[item]{Show the three key operations: insert, remove, query at any time}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Make it clear that query at any time is crucial for full retroactivity}
+    \note[item]{---------- SKIP SLIDE ----------}
+    \note[item]{Show the three key operations: insert, remove, query at any time}
     \note[item]{Emphasize that time stamps must be distinct - this is important for correctness}
-    \note[item]{Give concrete example: MSF at time t = 5 vs MSF at time t = 10}
     \note[item]{This sets up the distinction between partial and full retroactivity}
     \note[item]{Key insight: we need to maintain state at every possible time, not just current}
     
@@ -845,9 +852,11 @@
     
     \note[item]{Clearly distinguish between partial, full, and semi-retroactivity}
     \note[item]{Emphasize that partial only allows queries on current state - this is the limitation}
-    \note[item]{Show that full allows queries at any time - much more powerful and useful}
-    \note[item]{Define semi-retroactive: queries at any time, insertions, but no removals}
     \note[item]{Give concrete example: dynamic MSF becomes partially retroactive MSF}
+    \note[item]{---------- SKIP SLIDE ----------}
+    \note[item]{Show that full allows queries at any time - much more powerful and useful}
+    \note[item]{---------- SKIP SLIDE ----------}
+    \note[item]{Define semi-retroactive: queries at any time, insertions, but no removals}
     \note[item]{This sets up the challenge: how do we go from partial to full?}
     \note[item]{Key insight: the main difficulty is supporting queries at any time, not just current}
     \note[item]{Our work addresses this challenge with a practical solution}
@@ -872,7 +881,9 @@
     \end{itemize}
     
     \note[item]{State the main challenge clearly: partial to full retroactivity}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Explain what we need to achieve: queries at any time t}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Introduce the solution approach: square-root decomposition}
     \note[item]{Mention the key insight about checkpoints}
     \note[item]{Reference the Demaine et al. work from 2007}
@@ -910,7 +921,9 @@
     
     \note[item]{State Theorem 05 from Demaine, Iacono and Langerman 2007}
     \note[item]{Emphasize the persistent data structure requirement, this is the key limitation}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Explain square-root decomposition concept: break timeline into $\sqrt{m}$ blocks}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show how queries work: find checkpoint, apply updates, rollback}
     \note[item]{Time complexity: $O(\sqrt{m})$ slowdown per operation}
     \note[item]{Space complexity: $O(m)$ using persistent data structures}
@@ -946,8 +959,11 @@
     \end{block}
     
     \note[item]{Explain the space issue with naive approach: $\Theta(m\sqrt{m})$ space}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show how Demaine et al. solve it with persistent data structures: O\(m\) space}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{State the practical problem: persistent versions are complex to implement}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Present our key contribution: same performance without persistence}
     \note[item]{Emphasize the space trade-off we make: $\Theta(m\sqrt{m})$ vs O\(m\)}
     \note[item]{This motivates our rebuilding approach}
@@ -978,8 +994,10 @@
     \note[item]{Start with Junior and Seabra's work as our starting point}
     \note[item]{Explain their semi-retroactive MSF problem: add edge at time t, query at time t}
     \note[item]{Show their operations: add\_edge\(u,v,w,t\) and get\_msf\(t\)}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Describe their square-root decomposition approach: $\sqrt{m}$ checkpoints}
     \note[item]{Show how they use checkpoints: $t_i = i \sqrt{m} for i = 1,...,sqrt{m}$}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Data structures: $D_i$ contains edges before time $t_i$}
     \note[item]{Time complexity: $O(\sqrt{m} log n)$ per operation}
     \note[item]{This sets up their limitations in the next slide}
@@ -1013,7 +1031,9 @@
     
     \note[item]{Clearly list their three main limitations}
     \note[item]{Emphasize that fixed m and time range are serious restrictions}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{State our goal: remove these limitations while maintaining efficiency}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Present our key insight: implement rebuilding process}
     \note[item]{Explain the challenge: how to rebuild without persistent structures}
     \note[item]{This motivates our solution in the next slide}
@@ -1050,11 +1070,14 @@
     
     \note[item]{Explain our key insight: reuse existing data structures}
     \note[item]{Show rebuilding moments: when $m$ is a perfect square $(m = k^2)$}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Walk through the three-step strategy:}
     \note[item]{1. Create new empty structures $D'_0, D'_1$}
     \note[item]{2. Reuse $D_i to D'_{i+2}$ for $i = 0,...,k-1$}
     \note[item]{3. Apply missing updates to each $D'_i$}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Present the key lemma: every update in $D_i$ is within first $(i+2)(k+1)$ updates}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Analyze time complexity: $O(m log n)$ total, $O(\sqrt{m} log n)$ amortized}
     \note[item]{This sets up the detailed algorithm in the next slide}
     \note[item]{Key insight: we can reuse most of the work from previous structures}
@@ -1126,6 +1149,7 @@
     \note[item]{Explain how we create new empty structures $D'_0$, $D'_1$}
     \note[item]{Show how we reuse existing structures with offset: $D_i$ becomes $D'_{i+2}$}
     \note[item]{Walk through the process of applying missing updates}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Explain the key insight: $D_i$ becomes $D'_{i+2}$ with offset}
     \note[item]{Analyze time complexity: $O(m log n)$ total, $O(\sqrt{m} log n)$ amortized}
     \note[item]{Space complexity: $\Theta(m\sqrt{m})$ - this is our trade-off}
