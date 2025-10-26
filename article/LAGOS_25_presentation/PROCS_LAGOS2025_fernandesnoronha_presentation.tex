@@ -68,12 +68,12 @@
 %-------------------------------------------------
 \begin{frame}
     \titlepage
-    \note[item]{Introduce yourself: Cristina Gomes Fernandes (IME-USP) and Felipe Castro de Noronha}
-    \note[item]{State topic: going from partial to full retroactivity in detail}
+    \note[item]{Hello there everybody, my name is Felipe Noronha and today I'm gonna gonna be doing a quick presentation about the paper professor Cristina and I did at the IME of USP}
+    \note[item]{with the topic being: going from partial to full retroactivity in detail}
     \note[item]{This work addresses a practical limitation in Demaine, Iacono \& Langerman's 2007 transformation}
-    \note[item]{Our contribution: same time complexity without requiring persistent data structures}
-    \note[item]{Secondary contribution: implementation of semi-retroactive incremental MSF}
-    \note[item]{Key insight: we can reuse existing data structures during rebuilding process}
+    \note[item]{And also iterates over Junior \& Seabra's solution from 2022}
+    \note[item]{Our contribution shows how to go from partial to full retroactivity with same time complexity without requiring persistent data structures}
+    \note[item]{As our main focus of study we had the minimum spanning fores problem, and that's what we are going to start with today }
 \end{frame}
 
 
@@ -155,8 +155,8 @@
     \frametitle{Minimum Spanning Tree and Forest}
     
     \begin{itemize}
-    \item \textbf{Minimum Spanning Tree (MST):} spanning tree with minimum total cost \vfill\pause
-    \item \textbf{Minimum Spanning Forest (MSF):} generalization for disconnected graphs \vfill
+    \item \textbf{Minimum Spanning Tree (MST):} spanning tree in a weighted graph with minimum total cost \vfill\pause
+    \item \textbf{Minimum Spanning Forest (MSF):} generalization for disconnected graphs\pause \vfill
     \end{itemize}
     
     \begin{figure}
@@ -201,7 +201,8 @@
         \caption{Graph $G$ (blue edges) and Minimum Spanning Tree (red wavy edges)}
     \end{figure}
 
-    \note[item]{Define MST as spanning tree with minimum total cost - optimization problem}
+    \note[item]{Define MST as spanning tree in a graph with weighted edges with minimum total cost - optimization problem}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Generalize to MSF for disconnected graphs - collection of MSTs for each component}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show visual example with weighted edges: blue edges show graph G, red wavy edges show MST}
@@ -247,6 +248,12 @@
     
     \begin{itemize}
     \item \textbf{Key insight:} Use link-cut trees to maintain MSF dynamically \vfill\pause
+    \item \textbf{Link-cut tree operations:}
+        \begin{itemize}
+        \item \texttt{find\_max}$(u,v)$: $\Oh(\log n)$ amortized
+        \item \texttt{link}$(u,v,w)$: $\Oh(\log n)$ amortized
+        \item \texttt{cut}$(u,v)$: $\Oh(\log n)$ amortized
+        \end{itemize} \vfill\pause
     \item \textbf{Algorithm for adding edge $(u,v,w)$:}
         \begin{enumerate}
         \item Check if $u$ and $v$ are in same component
@@ -254,22 +261,16 @@
         \item If yes: find max cost edge on $u$-$v$ path
         \item If $w < \text{max cost}$: replace max edge with new edge
         \end{enumerate} \vfill\pause
-    \item \textbf{Link-cut tree operations:}
-        \begin{itemize}
-        \item \texttt{find\_max}$(u,v)$: $\Oh(\log n)$ amortized
-        \item \texttt{link}$(u,v)$: $\Oh(\log n)$ amortized
-        \item \texttt{cut}$(u,v)$: $\Oh(\log n)$ amortized
-        \end{itemize} \vfill\pause
     \item \textbf{Total cost:} Amortized $\Oh(\log n)$ per edge addition \vfill
     \end{itemize}
     \note[item]{Explain Frederickson's key insight: use link-cut trees to maintain MSF dynamically}
+    \note[item]{---------- SKIP SLIDE ----------}
+    \note[item]{List the specific link-cut tree operations: find\_max, link, cut - all $O(log n)$ amortized}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{1. Check connectivity using link-cut trees \(find_root operations\)}
     \note[item]{2. If not connected: add edge directly \(link operation\)}
     \note[item]{3. If connected: find max cost edge on u-v path \(find_max operation\)}
     \note[item]{4. If new edge cheaper: replace max edge \(cut + link operations\)}
-    \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{List the specific link-cut tree operations: find\_max, link, cut - all $O(log n)$ amortized}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Emphasize the logarithmic time complexity: $O(log n)$ per edge addition}
     \note[item]{Key insight: link-cut trees support efficient rollback, which we'll need for retroactivity}
@@ -798,7 +799,7 @@
     
     \begin{itemize}
     \item \textbf{Problem:} Data structures usually support updates and queries \vfill
-    \item Order of updates affects the state of the data structure \vfill\pause
+    \item The order of updates affects the state of the data structure \vfill\pause
     \item \textbf{Retroactivity:} Manipulate the sequence of updates \vfill\pause
     \item \textbf{Operations:}
         \begin{itemize}
@@ -808,10 +809,10 @@
         \end{itemize} \vfill
     \end{itemize}
     
-    \note[item]{Start with the fundamental problem: data structures depend on update order}
-    \note[item]{Explain the motivation: correcting mistakes, adding forgotten operations}
+    \note[item]{Data structures usually support queries, and generally, the order in which the updates are done will affect the result of the queries}
+    \note[item]{Because of this, we don't always have a proper way of correcting mistakes or adding forgotten operations}
     \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{Make it clear that query at any time is crucial for full retroactivity}
+    \note[item]{That where retroactive comes to play, to allow us to manipulate the sequence of updates, while also allowing for queries at any moment in time}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show the three key operations: insert, remove, query at any time}
     \note[item]{Emphasize that time stamps must be distinct - this is important for correctness}
@@ -826,19 +827,17 @@
 \begin{frame}
     \frametitle{Partial vs Full retroactivity}
     
-    \begin{block}{Partially Retroactive}
-        \begin{itemize}
-        \item Queries only on \textbf{current} state
-        \item Insert/remove updates at any time
-        \item Example: Dynamic MSF $\rightarrow$ Partially retroactive MSF
-        \end{itemize}
-    \end{block} \pause
-    
     \begin{block}{Fully Retroactive}
         \begin{itemize}
         \item Queries at \textbf{any} time $t$
         \item Insert/remove updates at any time
-        \item Complete retroactive functionality
+        \end{itemize}
+    \end{block} \pause
+
+    \begin{block}{Partially Retroactive}
+        \begin{itemize}
+        \item Queries only on \textbf{current} state
+        \item Insert/remove updates at any time
         \end{itemize}
     \end{block} \pause
     
@@ -850,16 +849,13 @@
         \end{itemize}
     \end{block}
     
-    \note[item]{Clearly distinguish between partial, full, and semi-retroactivity}
-    \note[item]{Emphasize that partial only allows queries on current state - this is the limitation}
-    \note[item]{Give concrete example: dynamic MSF becomes partially retroactive MSF}
+    \note[item]{We also have different flavors of retroactivity, namely partial and semi-retroactivity}
+    \note[item]{With full retroactivity, we have the operations we just showed}
     \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{Show that full allows queries at any time - much more powerful and useful}
+    \note[item]{While partial retroactivitty only allows queries on current state - this is the limitation}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Define semi-retroactive: queries at any time, insertions, but no removals}
-    \note[item]{This sets up the challenge: how do we go from partial to full?}
-    \note[item]{Key insight: the main difficulty is supporting queries at any time, not just current}
-    \note[item]{Our work addresses this challenge with a practical solution}
+    \note[item]{Generally, partial retroactive structures are simpler to implement, and with that, an interesting challange arrives}
     
 \end{frame}
 
@@ -961,14 +957,13 @@
     \note[item]{Explain the space issue with naive approach: $\Theta(m\sqrt{m})$ space}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show how Demaine et al. solve it with persistent data structures: O\(m\) space}
+    \note[item]{A persistent data structure is a data structure that always preserves the previous version of itself when it is modified, so you can query at any time $t$ but only update the present }
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{State the practical problem: persistent versions are complex to implement}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Present our key contribution: same performance without persistence}
     \note[item]{Emphasize the space trade-off we make: $\Theta(m\sqrt{m})$ vs O\(m\)}
-    \note[item]{This motivates our rebuilding approach}
-    \note[item]{Key insight: we can achieve same time complexity with simpler implementation}
-    \note[item]{Our approach: use independent copies instead of persistent structures}
+    \note[item]{This motivates our improved rebuilding approach that use idepedent copies}
     
 \end{frame}
 
