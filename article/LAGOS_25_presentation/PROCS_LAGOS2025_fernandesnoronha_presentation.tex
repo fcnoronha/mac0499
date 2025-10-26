@@ -68,10 +68,9 @@
 %-------------------------------------------------
 \begin{frame}
     \titlepage
-    \note[item]{Hello everyone. My name is Felipe Noronha, and today I'll be presenting our work with Professor Cristina Fernandes from IME-USP.}
+    \note[item]{Hello everyone. My name is Felipe Noronha, and today I'll be presenting the work done by Professor Cristina Fernandes and I at IME-USP.}
     \note[item]{Our paper details a method for transforming partially retroactive data structures into fully retroactive ones.}
-    \note[item]{This work is motivated by a practical limitation in the well-known 2007 transformation by Demaine, Iacono, and Langerman...}
-    \note[item]{...and it also builds upon a 2022 solution by Junior and Seabra.}
+    \note[item]{This work is motivated by a practical limitation in the well-known 2007 transformation by Demaine, Iacono, and Langerman and it also builds upon a 2022 solution by Junior and Seabra.}
     \note[item]{Our key contribution is a method to achieve this transformation with the same time complexity, but *without* the need for complex persistent data structures.}
     \note[item]{To illustrate our approach, we'll use the minimum spanning forest problem as our main example. So, let's start by defining what that is.}
 \end{frame}
@@ -139,7 +138,7 @@
     \note[item]{Lets start of by defining what is a spanning tree on a graph G with a set of vertices and edges}
     \note[item]{A spanning tree will be a tree will all the vertices of G}
     \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{It will have 3 main properties: connected (path between any two vertices), acyclic (no cycles), contains exactly n-1 edges for n vertices}
+    \note[item]{It will have 3 main properties: it is connected (path between any two vertices), acyclic (no cycles), contains exactly n-1 edges for n vertices}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Show visual example with graph G (blue edges) and spanning tree T (red wavy edges)}
     \note[item]{In the example: 8 vertices, so spanning tree has exactly 7 edges}
@@ -204,7 +203,7 @@
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{This concept generalizes to disconnected graphs as well. We call this a Minimum Spanning Forest, or MSF, which is simply the collection of MSTs for each connected component.}
     \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{In the visual example, you can see the same graph as before, but now with costs on the edges. The red wavy edges again show the tree, but this time, they've been chosen to be the MST.}
+    \note[item]{In the visual example, you can see the same graph as before, but now with costs on the edges. The red edges again show the tree, but this time, they've been chosen to be the MST.}
     \note[item]{If we sum the costs of the red edges, we get a total of 14. Any other spanning tree you could build for this graph would have a total cost greater than or equal to 14.}
     \note[item]{This idea of maintaining an optimal-cost forest is central to our problem. Specifically, how to maintain this optimality as the graph changes.}
 \end{frame}
@@ -230,8 +229,8 @@
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{This problem is defined by two operations: $add\_edge$, which inserts a new weighted edge, and $get\_msf$, which returns the current minimum spanning forest.}
     \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{The solution to this was given by Frederickson in 1983. He used a dynamic data structure called link-cut trees which achieves a $O(\log n)$ amortized time per edge addition.}
-    \note[item]{This incremental solution is the foundation for the *retroactive* version, which is what we're interested in.}
+    \note[item]{The solution to this was given by Frederickson in 1983. He used a dynamic data structure called link-cut trees which achieves a $O(\log n)$ amortized time per edge addition, where $n$ is the number of vertices.}
+    % \note[item]{This incremental solution is the foundation for the *retroactive* version, which is what we're interested in.}
     % \note[item]{The key challenge will be adapting this to not only work for the *current* state, but for *any* time $t$ in the past.}
 \end{frame}
 
@@ -258,9 +257,9 @@
         \end{enumerate} \vfill\pause
     \item \textbf{Total cost:} Amortized $\Oh(\log n)$ per edge addition \vfill
     \end{itemize}
-    \note[item]{So, what was Frederickson's key insight? He showed that link-cut trees can efficiently maintain this dynamic forest.}
+    \note[item]{So, what was Frederickson's solution? He showed that link-cut trees can efficiently maintain this incrementing forest.}
     \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{Link-cut trees provide the exact operations we need, all in $O(\log n)$ amortized time: $find\_max$ to find the most expensive edge on a path, $link$ to add a weighted edge, and $cut$ to remove one.}
+    \note[item]{Link-cut trees provide all the operations we need, all in $O(\log n)$ amortized time: $find\_max$ to find the most expensive edge on a path, $link$ to add a weighted edge, and $cut$ to remove one.}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{With this, we can construct a straightforward algorithm that supports adding a new edge $(u,v,w)$:}
     \note[item]{First, we check if $u$ and $v$ are already connected. If they're not, the new edge can't create a cycle, so we just add it to the forest using $link$.}
@@ -750,8 +749,8 @@
     \note[item]{If we continue this process, adding all the remaining edges from our original graph...}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{...we would eventually arrive at the final, optimal Minimum Spanning Tree. The one shown here, for example, has a total cost of 12.}
-    \note[item]{So, to summarize, Frederickson's solution gives us an efficient $O(\log n)$ amortized time per *incremental* update.}
-    \note[item]{It perfectly handles cycle detection and edge replacement to maintain optimality.}
+    % \note[item]{So, to summarize, Frederickson's solution gives us an efficient $O(\log n)$ amortized time per *incremental* update.}
+    % \note[item]{It perfectly handles cycle detection and edge replacement to maintain optimality.}
     \note[item]{But this only answers queries about the *present*. What if we want to ask: "What did the MSF look like 10 updates ago?"}
     \note[item]{This is the core question of retroactivity. How do we efficiently query the past?}    
 \end{frame}
@@ -774,7 +773,7 @@
         \end{itemize} \vfill
     \end{itemize}
     
-    \note[item]{In a normal data structure, the order of updates is important. The state of the structure, and thus the answers to queries, depends on this sequence.}
+    \note[item]{In a normal data structure, the order of updates is important. Most of the time, the state of the structure, and thus the answers to queries, depends on this sequence.}
     \note[item]{This means we usually don't have a good way to go back and correct mistakes or insert operations we forgot.}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{That's where retroactivity comes in. A retroactive data structure allows us to manipulate this sequence of updates.}
@@ -813,7 +812,7 @@
         \end{itemize}
     \end{block}
     
-    \note[item]{There are a few different "flavors" of retroactivity. The most powerful is Fully Retroactive, which supports all the operations we just saw: insert, remove, and query, all at any time $t$.}
+    \note[item]{There are a few different "flavors" of retroactivity. The most powerful is Fully Retroactivity, which supports all the operations we just saw: insert, remove, and query, all at any time $t$.}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Partially Retroactive is more limited. You can still insert or remove updates anywhere in the timeline, but you can only query the state of the structure at the *current* time, "now". This is a key limitation.}
     \note[item]{---------- SKIP SLIDE ----------}
@@ -840,11 +839,11 @@
     
     \note[item]{...which is this: How can we transform a simple partially retroactive structure into a fully retroactive one?}
     \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{The problem is clear: We *have* a structure that lets us query "now", but we *need* a structure that lets us query any time $t$ in the past.}
+    \note[item]{We *have* a structure that lets us query "now", but we *need* a structure that lets us query any time $t$ in the past.}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{A general solution for this was proposed by Demaine, Iacono, and Langerman in 2007.}
     \note[item]{Their approach uses a classic technique called square-root decomposition.}
-    \note[item]{The key insight is to store checkpoints, or snapshots, of the data structure's state at various points in time. Let's see how that works.}    
+    \note[item]{Let's see how that works.}    
 \end{frame}
 
 %-------------------------------------------------
@@ -875,7 +874,7 @@
     
     \note[item]{Their paper presented this theorem: any partially retroactive data structure can be made fully retroactive.}
     \note[item]{The cost is an $O(\sqrt{m})$ slowdown per operation and $O(m)$ space, where $m$ is the number of updates.}
-    \note[item]{But there's a catch: this transformation *requires* a persistent version of the data structure. This is the key limitation we want to address.}
+    \note[item]{But there's a catch: this transformation *requires* a persistent version of the data structure.}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{So, how does it work? The idea is to break the $m$ updates into $\sqrt{m}$ blocks, each of size $\sqrt{m}$.}
     \note[item]{At the beginning of each block, we store a "checkpoint" of the data structure's state.}
@@ -958,37 +957,32 @@
 % Limitations of Junior & Seabra
 %-------------------------------------------------
 \begin{frame}
-    \frametitle{Limitations}
-    
-    \begin{alertblock}{Problems with their approach}
+    \frametitle{Limitations $\rightarrow$ Key Insight}
+
+    \begin{alertblock}{Problems with the Existing Static Approach}
         \begin{itemize}
-        \item \textbf{Fixed $m$:} Must know sequence length beforehand
-        \item \textbf{Fixed time range:} Operations must have timestamps $1$ to $m$
-        \item \textbf{No rebuilding:} Cannot handle arbitrary growth
+        \item \textbf{Fixed $m$:} Requires knowing the maximum sequence length ($\mathbf{m}$) beforehand. Meaning that it cannot handle arbitrary growth or dynamic operation counts.
         \end{itemize}
-    \end{alertblock} \pause
-    
-    \begin{block}{Our goal}
-        Remove these limitations while maintaining efficiency
-    \end{block} \pause
-    
-    \begin{itemize}
-    \item \textbf{Key insight:} Implement rebuilding process \vfill
-    \item \textbf{Challenge:} How to rebuild without persistent data structures? \vfill
-    \item \textbf{Solution:} Reuse existing data structures during rebuilding \vfill
-    \end{itemize}
-    
-    \note[item]{...namely, their approach has three main problems:}
-    \note[item]{It assumes a *fixed m*, meaning you have to know the total number of operations in advance.}
-    \note[item]{It assumes a *fixed time range*, with timestamps from 1 to $m$. This is not flexible.}
-    \note[item]{And most importantly, it has *no rebuilding process*, so it can't handle a growing number of operations.}
-    \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{Our goal was to remove these limitations, especially the need to know $m$ in advance, while keeping the same efficiency.}
-    \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{Our key insight is to introduce a rebuilding process.}
-    \note[item]{The challenge is: How do we rebuild all $\sqrt{m}$ checkpoints without persistence, and without it being too slow?}
-    \note[item]{Our solution is to cleverly *reuse* the data structures we already have.}    
+    \end{alertblock}
+
+    \begin{block}{Our Dynamic Goal and Solution}
+        \textbf{Goal:} Remove the $\mathbf{Fixed \ m}$ dependency while preserving time complexity.
+        \begin{itemize}
+            \item \textbf{Key Insight:} Introduce a **dynamic rebuilding process** to handle arbitrary growth. \vfill
+            \item \textbf{Challenge:} Rebuilding $\mathbf{\sqrt{m}}$ checkpoints must be fast, avoiding complex persistent data structures. \vfill
+            \item \textbf{Solution:} **Reuse** the existing data structures to efficiently reconstruct new checkpoints. \vfill
+        \end{itemize}
+    \end{block}
+
+    \note[item]{The existing approach is based on a static constraint: we must assume a fixed $m$.}
+    \note[item]{This means you have to know the total number of operations in advance.}
+    \note[item]{Crucially, they lack a mechanism for **rebuilding**, making them unable to handle a growing or unknown number of operations.}
+    \note[item]{Our goal is simple: remove the dependence on a fixed $m$ while keeping the time efficiency.}
+    \note[item]{Our key insight is to introduce a **dynamic rebuilding process** to handle growth.}
+    \note[item]{The challenge is doing this efficiently. Rebuilding $\sqrt{m}$ checkpoints non-persistently usually takes too long.}
+    \note[item]{Our solution is a clever trick: we **reuse** the data structures already present in our system to reconstruct new checkpoints quickly.}
 \end{frame}
+
 
 %-------------------------------------------------
 % Our Solution - Rebuilding Strategy
@@ -1138,36 +1132,36 @@
 %-------------------------------------------------
 % Extending for Full Retroactivity
 %-------------------------------------------------
-\begin{frame}
-    \frametitle{Extending for full retroactivity}
+% \begin{frame}
+%     \frametitle{Extending for full retroactivity}
     
-    \begin{itemize}
-    \item \textbf{General applicability:} Works for any partially retroactive data structure \vfill\pause
-    \item \textbf{Supporting removals:} To achieve full retroactivity \vfill
-        \begin{itemize}
-        \item Adapt rebuilding trigger: when $|\lfloor\sqrt{m'}\rfloor - \lfloor\sqrt{m}\rfloor| \leq 1$
-        \item Handle both insertions and removals in update sequence
-        \item Rebuilding frequency: every $2\lfloor\sqrt{m}\rfloor-1$ operations
-        \end{itemize} \vfill\pause
-    \item \textbf{Requirements:}
-        \begin{itemize}
-        \item Partially retroactive data structure
-        \item Rollback capability
-        \item No persistent version needed
-        \end{itemize} \vfill
-    \end{itemize}
+%     \begin{itemize}
+%     \item \textbf{General applicability:} Works for any partially retroactive data structure \vfill\pause
+%     \item \textbf{Supporting removals:} To achieve full retroactivity \vfill
+%         \begin{itemize}
+%         \item Adapt rebuilding trigger: when $|\lfloor\sqrt{m'}\rfloor - \lfloor\sqrt{m}\rfloor| \leq 1$
+%         \item Handle both insertions and removals in update sequence
+%         \item Rebuilding frequency: every $2\lfloor\sqrt{m}\rfloor-1$ operations
+%         \end{itemize} \vfill\pause
+%     \item \textbf{Requirements:}
+%         \begin{itemize}
+%         \item Partially retroactive data structure
+%         \item Rollback capability
+%         \item No persistent version needed
+%         \end{itemize} \vfill
+%     \end{itemize}
     
-    \note[item]{Finally, while we focused on the semi-retroactive MSF, our transformation is general.}
-    \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{It can be extended to support *full* retroactivity, meaning it can handle *removals* of operations as well.}
-    \note[item]{To do this, we just adapt the rebuilding trigger. Instead of rebuilding only when $m$ grows, we rebuild whenever the *number of blocks* (the floor of $\sqrt{m}$) changes, whether from insertions or removals.}
-    \note[item]{This just means rebuilding happens a bit more frequently, but the amortized cost remains the same.}
-    \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{The only requirements for our transformation to work are:}
-    \note[item]{You must start with a partially retroactive data structure...}
-    \note[item]{...and it must have rollback capability, which the incremental MSF structure does.}
-    \note[item]{If you have those, you can use our method to make it fully retroactive *without* persistence.}    
-\end{frame}
+%     \note[item]{Finally, while we focused on the semi-retroactive MSF, our transformation is general.}
+%     \note[item]{---------- SKIP SLIDE ----------}
+%     \note[item]{It can be extended to support *full* retroactivity, meaning it can handle *removals* of operations as well.}
+%     \note[item]{To do this, we just adapt the rebuilding trigger. Instead of rebuilding only when $m$ grows, we rebuild whenever the *number of blocks* (the floor of $\sqrt{m}$) changes, whether from insertions or removals.}
+%     \note[item]{This just means rebuilding happens a bit more frequently, but the amortized cost remains the same.}
+%     \note[item]{---------- SKIP SLIDE ----------}
+%     \note[item]{The only requirements for our transformation to work are:}
+%     \note[item]{You must start with a partially retroactive data structure...}
+%     \note[item]{...and it must have rollback capability, which the incremental MSF structure does.}
+%     \note[item]{If you have those, you can use our method to make it fully retroactive *without* persistence.}    
+% \end{frame}
 
 %-------------------------------------------------
 % SLIDE: Thank You
