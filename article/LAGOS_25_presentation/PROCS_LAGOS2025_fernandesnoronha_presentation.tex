@@ -28,9 +28,9 @@
 %------------------------------------------------------------
 % Beamer notes
 %------------------------------------------------------------
-%\setbeameroption{hide notes} % Only slides
+\setbeameroption{hide notes} % Only slides
 % \setbeameroption{show only notes} % Only notes
-\setbeameroption{show notes on second screen=right} % Both
+% \setbeameroption{show notes on second screen=right} % Both
 
 % Make notes font smaller to fit on page
 \addtobeamertemplate{note page}{\begingroup\footnotesize}{\endgroup} % Wraps note page in smaller font
@@ -721,7 +721,7 @@
             % Graph G edges (blue straight lines - edges NOT in MST)
             \draw[blue, thick] (A) -- (B) node[midway, above=0.1cm, font=\small] {8};  % AB
             \draw[blue, thick] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};  % FG
-            \draw[blue, thick] (A) -- (D) node[midway, above=0.1cm, font=\small] {3};  % AD
+            \draw[blue, thick] (F) -- (D) node[midway, left=0.1cm, font=\small] {7};  % FD
             \draw[blue, thick] (H) -- (D) node[midway, right=0.1cm, font=\small] {9};  % HD  
             \draw[blue, thick] (C) -- (F) node[midway, left=0.1cm, font=\small] {5};  % CF
             \draw[blue, thick] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};  % GH
@@ -729,7 +729,7 @@
             % MST edges (red wavy lines) - with weights that make it minimum
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (C) -- (A) node[midway, left=0.1cm, font=\small] {1};  % CA
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};  % AF
-            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (D) node[midway, left=0.1cm, font=\small] {1};  % FD
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (D) node[midway, above=0.1cm, font=\small] {3};  % AD
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (D) node[midway, right=0.1cm, font=\small] {2};  % GD
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (B) -- (D) node[midway, above=0.1cm, font=\small] {3};  % BD
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (B) -- (E) node[midway, right=0.1cm, font=\small] {1};  % BE
@@ -739,7 +739,7 @@
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
         \end{tikzpicture}
-        \caption{Final MSF with optimal cost = 12}
+        \caption{Final MSF with optimal cost = 14}
     \end{figure}
     
     \begin{itemize}
