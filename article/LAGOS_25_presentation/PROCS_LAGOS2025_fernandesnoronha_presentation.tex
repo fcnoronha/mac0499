@@ -28,9 +28,9 @@
 %------------------------------------------------------------
 % Beamer notes
 %------------------------------------------------------------
-\setbeameroption{hide notes} % Only slides
-% \setbeameroption{show only notes} % Only notes
-% \setbeameroption{show notes on second screen=right} % Both
+% \setbeameroption{hide notes} % Only slides
+% % \setbeameroption{show only notes} % Only notes
+\setbeameroption{show notes on second screen=right} % Both
 
 % Make notes font smaller to fit on page
 \addtobeamertemplate{note page}{\begingroup\footnotesize}{\endgroup} % Wraps note page in smaller font
@@ -52,7 +52,7 @@
 % Presentation Information
 %------------------------------------------------------------
 \title[Partial to full retroactivity]{How to go from partial to full retroactivity in detail}
-\author[Felipe C. Noronha]{Cristina Gomes Fernandes, Felipe Castro de Noronha}
+\author[Felipe C. Noronha]{Cristina G. Fernandes, Felipe C. de Noronha}
 \institute[IME-USP]{
     IME-USP -- Brazil
 }
@@ -132,7 +132,6 @@
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {T};
         \end{tikzpicture}
-        \caption{Graph $G$ (blue edges) and spanning tree $T$ (red wavy edges)}
     \end{figure}
     
     \note[item]{Lets start of by defining what is a spanning tree on a graph G with a set of vertices and edges}
@@ -196,7 +195,6 @@
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MST};
         \end{tikzpicture}
-        \caption{Graph $G$ (blue edges) and Minimum Spanning Tree (red wavy edges)}
     \end{figure}
 
     \note[item]{Now, let's add weights or costs to the edges. In a weighted graph, a Minimum Spanning Tree, or MST, is a spanning tree that has the minimum possible total cost. It's an optimization problem.}
@@ -247,19 +245,20 @@
         \item \texttt{find\_max}$(u,v)$: $\Oh(\log n)$ amortized
         \item \texttt{link}$(u,v,w)$: $\Oh(\log n)$ amortized
         \item \texttt{cut}$(u,v)$: $\Oh(\log n)$ amortized
+        \item \texttt{is\_connected}$(u,v)$: $\Oh(\log n)$ amortized
         \end{itemize} \vfill\pause
     \item \textbf{Algorithm for adding edge $(u,v,w)$:}
         \begin{enumerate}
-        \item Check if $u$ and $v$ are in same component
-        \item If not: add edge to forest
-        \item If yes: find max cost edge on $u$-$v$ path
-        \item If $w < \text{max cost}$: replace max edge with new edge
+        \item Check if $u$ and $v$ are in connected in the same component
+        \item If not: add edge $(u,v,w)$ to forest
+        \item If yes: find the edge with maximum cost on the $u$-$v$ path
+        \item If $w < \text{maximum cost}$: replace maximum cost edge with $(u,v,w)$
         \end{enumerate} \vfill\pause
     \item \textbf{Total cost:} Amortized $\Oh(\log n)$ per edge addition \vfill
     \end{itemize}
-    \note[item]{So, what was Frederickson's solution? He showed that link-cut trees can efficiently maintain this incrementing forest.}
-    \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{Link-cut trees provide all the operations we need, all in $O(\log n)$ amortized time: $find\_max$ to find the most expensive edge on a path, $link$ to add a weighted edge, and $cut$ to remove one.}
+    \note[item]{So, what was Frederickson's solution? He showed that link-cut trees can efficiently maintain this incrementing forest. ---------- SKIP SLIDE}
+    % \note[item]{---------- SKIP SLIDE ----------}
+    \note[item]{Link-cut trees provide all the operations we need, all in $O(\log n)$ amortized time: $find\_max$ to find the most expensive edge on a path, $link$ to add a weighted edge, $cut$ to remove one, and $is_connected$ to check if $u$ and $v$ are in the same component}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{With this, we can construct a straightforward algorithm that supports adding a new edge $(u,v,w)$:}
     \note[item]{First, we check if $u$ and $v$ are already connected. If they're not, the new edge can't create a cycle, so we just add it to the forest using $link$.}
@@ -276,7 +275,7 @@
     \frametitle{Incremental MSF example - Step 1}
     
     \begin{itemize}
-    \item \textbf{add\_edge(g, h, 4):} Add edge with cost 4 \vfill
+    \item \textbf{add\_edge(g, h, 4):} Add edge $(g,h)$ with cost 4 \vfill
     \end{itemize}
     
     \begin{figure}
@@ -304,7 +303,6 @@
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
         \end{tikzpicture}
-        \caption{Step 1: Added edge (g,h) with cost 4}
     \end{figure}
     
     \begin{itemize}
@@ -329,30 +327,26 @@
     \begin{figure}
         \centering
         \begin{tikzpicture}[scale=0.8]
+        
             % Define vertices in tree-like structure
             % Row 1: A B
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
-            
             % Row 2: C D E  
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
-            
             % Row 3: F G H
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
-            
             % Edges 1-2
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (C) -- (A) node[midway, left=0.1cm, font=\small] {1};
-            
             % Labels
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
         \end{tikzpicture}
-        \caption{Step 2: Added edge (c,a) with cost 1}
     \end{figure}
     
     \begin{itemize}
@@ -365,109 +359,10 @@
 \end{frame}
 
 %-------------------------------------------------
-% Incremental MSF Example - Step 3
+% Incremental MSF Example - Step 3 (Cycle Check)
 %-------------------------------------------------
 \begin{frame}
-    \frametitle{Incremental MSF example - Step 3}
-    
-    \begin{itemize}
-    \item \textbf{add\_edge(f, g, 6):} Add edge with cost 6 \vfill
-    \end{itemize}
-    
-    \begin{figure}
-        \centering
-        \begin{tikzpicture}[scale=0.8]
-            % Define vertices in tree-like structure
-            % Row 1: A B
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
-            
-            % Row 2: C D E  
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
-            
-            % Row 3: F G H
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
-            
-            % Edges 1-3
-            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};
-            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (C) -- (A) node[midway, left=0.1cm, font=\small] {1};
-            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};
-            
-            % Labels
-            \node[blue, font=\Large] at (-3, 2) {G};
-            \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
-        \end{tikzpicture}
-        \caption{Step 3: Added edge (f,g) with cost 6}
-    \end{figure}
-    
-    \begin{itemize}
-    \item \textbf{MSF:} \{g-h, c-a, f-g\} \vfill
-    \end{itemize}
-
-    \note[item]{Now, add (f, g) with cost 6.}
-    \note[item]{Are 'f' and 'g' connected? No. 'f' is isolated, and 'g' is in the \{g-h\} component.}
-    \note[item]{We link them. The MSF now contains \{c-a\} and \{f-g-h\}.}    
-\end{frame}
-
-%-------------------------------------------------
-% Incremental MSF Example - Step 4
-%-------------------------------------------------
-\begin{frame}
-    \frametitle{Incremental MSF example - Step 4}
-    
-    \begin{itemize}
-    \item \textbf{add\_edge(a, f, 2):} Add edge with cost 2 \vfill
-    \end{itemize}
-    
-    \begin{figure}
-        \centering
-        \begin{tikzpicture}[scale=0.8]
-            % Define vertices in tree-like structure
-            % Row 1: A B
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
-            
-            % Row 2: C D E  
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
-            
-            % Row 3: F G H
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
-            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
-            
-            % Edges 1-4
-            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};
-            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (C) -- (A) node[midway, left=0.1cm, font=\small] {1};
-            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};
-            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};
-            
-            % Labels
-            \node[blue, font=\Large] at (-3, 2) {G};
-            \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
-        \end{tikzpicture}
-        \caption{Step 4: Added edge (a,f) with cost 2}
-    \end{figure}
-    
-    \begin{itemize}
-    \item \textbf{MSF:} \{g-h, c-a, f-g, a-f\} \vfill
-    \end{itemize}
-    
-    \note[item]{Add (a, f) with cost 2.}
-    \note[item]{Are 'a' and 'f' connected? No. 'a' is in the \{c-a\} component and 'f' is in the \{f-g-h\} component.}
-    \note[item]{We link these two components. Our forest now becomes a single tree, and all vertices shown so far are connected.}    
-\end{frame}
-
-%-------------------------------------------------
-% Incremental MSF Example - Step 5
-%-------------------------------------------------
-\begin{frame}
-    \frametitle{Incremental MSF example - Step 5}
+    \frametitle{Incremental MSF example - Step 3 (Cycle Check)}
     
     \begin{itemize}
     \item \textbf{add\_edge(c, f, 5):} Add edge with cost 5 \vfill
@@ -480,49 +375,94 @@
             % Row 1: A B
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
-            
             % Row 2: C D E  
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
-            
             % Row 3: F G H
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
-            
-            % Edge NOT in MSF
-            \draw[blue, thick] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};  % CF
 
-            % Edges 1-5
+            % Edges from fast-forwarded steps (1-4)
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (C) -- (A) node[midway, left=0.1cm, font=\small] {1};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};
             
+            % New edge being checked (dotted)
+            \draw[blue, thick, dotted] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};  % CF
+
             % Labels
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
         \end{tikzpicture}
-        \caption{Step 5: Added edge (c,f) with cost 5}
     \end{figure}
     
     \begin{itemize}
     \item \textbf{MSF:} \{g-h, c-a, f-g, a-f\} \vfill
     \end{itemize}
     
-    \note[item]{Okay, now we add (c, f) with cost 5. This is our first interesting case.}
+    \note[item]{After fast-forwarding through a few steps (adding f-g and a-f), our forest is more connected.}
+    \note[item]{Now, we add (c, f) with cost 5. This is our first interesting case.}
     \note[item]{Are 'c' and 'f' connected? Yes, they are. Adding this edge will create a cycle: c-a-f-c.}
     \note[item]{So, we go to step 3. We find the max-cost edge on the path c-a-f. The edges are (c,a) with cost 1 and (a,f) with cost 2. The max cost is 2.}
+\end{frame}
+
+%-------------------------------------------------
+% Incremental MSF Example - Step 3 (Result)
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Incremental MSF example - Step 3 (Result)}
+    
+    \begin{itemize}
+    \item \textbf{add\_edge(c, f, 5):} Edge is > max cost (2), not added \vfill
+    \end{itemize}
+    
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            % Define vertices in tree-like structure
+ 
+           % Row 1: A B
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
+            % Row 2: C D E  
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
+            % Row 3: F G H
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
+            % Edge NOT in MSF
+            \draw[blue, thick] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};
+            % CF
+
+            % Edges 1-4 (from prev steps)
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (C) -- (A) node[midway, left=0.1cm, font=\small] {1};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};
+            % Labels
+            \node[blue, font=\Large] at (-3, 2) {G};
+            \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
+        \end{tikzpicture}
+    \end{figure}
+    
+    \begin{itemize}
+    \item \textbf{MSF:} \{g-h, c-a, f-g, a-f\} \vfill
+    \end{itemize}
+    
     \note[item]{Our new edge costs 5. Since 5 is *not* less than the max cost of 2, we *do not* add this edge. It's discarded.}
     \note[item]{The MSF remains unchanged.}
 \end{frame}
 
 %-------------------------------------------------
-% Incremental MSF Example - Step 6
+% Incremental MSF Example - Step 4
 %-------------------------------------------------
 \begin{frame}
-    \frametitle{Incremental MSF example - Step 6}
+    \frametitle{Incremental MSF example - Step 4}
     
     \begin{itemize}
     \item \textbf{add\_edge(f, d, 7):} Add edge with cost 7 \vfill
@@ -532,22 +472,21 @@
         \centering
         \begin{tikzpicture}[scale=0.8]
             % Define vertices in tree-like structure
+           
             % Row 1: A B
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
-            
             % Row 2: C D E  
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
-            
-            % Row 3: F G H
+            %Row 3: F G H
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
-            
             % Edge NOT in MSF
-            \draw[blue, thick] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};  % CF
+            \draw[blue, thick] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};
+            % CF
 
             % Edges 1-6
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};
@@ -555,12 +494,10 @@
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (D) node[midway, left=0.1cm, font=\small] {7};
-            
             % Labels
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
         \end{tikzpicture}
-        \caption{Step 6: Added edge (f,d) with cost 7}
     \end{figure}
     
     \begin{itemize}
@@ -573,10 +510,10 @@
 \end{frame}
 
 %-------------------------------------------------
-% Incremental MSF Example - Step 7
+% Incremental MSF Example - Step 5 (Cycle Check)
 %-------------------------------------------------
 \begin{frame}
-    \frametitle{Incremental MSF example - Step 7}
+    \frametitle{Incremental MSF example - Step 5 (Cycle Check)}
     
     \begin{itemize}
     \item \textbf{add\_edge(a, d, 3):} Add edge with cost 3 \vfill
@@ -589,17 +526,69 @@
             % Row 1: A B
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
-            
             % Row 2: C D E  
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
-            
             % Row 3: F G H
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
+            
+            % Edge NOT in MSF
+            \draw[blue, thick] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};
+            
+            % Edges from prev steps
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (C) -- (A) node[midway, left=0.1cm, font=\small] {1};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (D) node[midway, left=0.1cm, font=\small] {7};
 
+            % New edge being checked (dotted)
+            \draw[blue, thick, dotted] (A) -- (D) node[midway, left=0.1cm, font=\small] {3};
+
+            % Labels
+            \node[blue, font=\Large] at (-3, 2) {G};
+            \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
+        \end{tikzpicture}
+    \end{figure}
+    
+    \begin{itemize}
+    \item \textbf{MSF:} \{g-h, c-a, f-g, a-f, f-d\} \vfill
+    \end{itemize}
+
+    \note[item]{Now, add (a, d) with cost 3.}
+    \note[item]{Are 'a' and 'd' connected? Yes. This creates the cycle a-f-d-a.}
+    \note[item]{We find the max-cost edge on the path a-f-d. The edges are (a,f) with cost 2 and (f,d) with cost 7. The max cost is 7.}
+\end{frame}
+
+%-------------------------------------------------
+% Incremental MSF Example - Step 5 (Result)
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Incremental MSF example - Step 5 (Result)}
+    
+    \begin{itemize}
+    \item \textbf{add\_edge(a, d, 3):} Cost 3 < max cost 7, swap edges \vfill
+    \end{itemize}
+    
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            % Define vertices in tree-like structure
+            
+            % Row 1: A B
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
+            % Row 2: C D E  
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
+            % Row 3: F G H
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
             % Edge NOT in MSF
             \draw[blue, thick] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};  % CF
             \draw[blue, thick] (F) -- (D) node[midway, above=0.1cm, font=\small] {7};  % FD
@@ -610,31 +599,26 @@
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (D) node[midway, left=0.1cm, font=\small] {3};
-            
             % Labels
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
         \end{tikzpicture}
-        \caption{Step 7: Added edge (a,d) with cost 3}
     \end{figure}
     
     \begin{itemize}
     \item \textbf{MSF:} \{g-h, c-a, f-g, a-f, a-d\} \vfill
     \end{itemize}
 
-    \note[item]{Now, add (a, d) with cost 3.}
-    \note[item]{Are 'a' and 'd' connected? Yes. This creates the cycle a-f-d-a.}
-    \note[item]{We find the max-cost edge on the path a-f-d. The edges are (a,f) with cost 2 and (f,d) with cost 7. The max cost is 7.}
     \note[item]{Our new edge costs 3. Since 3 *is* less than 7, we swap them.}
     \note[item]{We `cut` the expensive edge (f,d) and `link` our new, cheaper edge (a,d).}
     \note[item]{The MSF is now \{g-h, c-a, f-g, a-f, a-d\} and its total cost has improved.}    
 \end{frame}
 
 %-------------------------------------------------
-% Incremental MSF Example - Step 8
+% Incremental MSF Example - Step 6 (Cycle Check)
 %-------------------------------------------------
 \begin{frame}
-    \frametitle{Incremental MSF example - Step 8}
+    \frametitle{Incremental MSF example - Step 6 (Cycle Check)}
     
     \begin{itemize}
     \item \textbf{add\_edge(d, g, 2):} Add edge with cost 2 \vfill
@@ -647,17 +631,69 @@
             % Row 1: A B
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
-            
             % Row 2: C D E  
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
-            
             % Row 3: F G H
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
+            
+            % Edge NOT in MSF
+            \draw[blue, thick] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};
+            \draw[blue, thick] (F) -- (D) node[midway, above=0.1cm, font=\small] {7};
+            
+            % Edges 1-7 (state from end of last step)
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (G) -- (H) node[midway, below=0.1cm, font=\small] {4};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (C) -- (A) node[midway, left=0.1cm, font=\small] {1};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};
+            \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (D) node[midway, left=0.1cm, font=\small] {3};
+            
+            % New edge being checked (dotted)
+            \draw[blue, thick, dotted] (D) -- (G) node[midway, right=0.1cm, font=\small] {2};
+            
+            % Labels
+            \node[blue, font=\Large] at (-3, 2) {G};
+            \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
+        \end{tikzpicture}
+    \end{figure}
+    
+    \begin{itemize}
+    \item \textbf{MSF:} \{g-h, c-a, f-g, a-f, a-d\} \vfill
+    \end{itemize}
+    
+    \note[item]{Finally, let's add (d, g) with cost 2.}
+    \note[item]{Are 'd' and 'g' connected? Yes. This creates the cycle d-a-f-g-d.}
+    \note[item]{We find the max-cost edge on the path d-a-f-g. The edges are (d,a) cost 3, (a,f) cost 2, and (f,g) cost 6. The max cost is 6, from edge (f,g).}
+\end{frame}
 
+%-------------------------------------------------
+% Incremental MSF Example - Step 6 (Result)
+%-------------------------------------------------
+\begin{frame}
+    \frametitle{Incremental MSF example - Step 6 (Result)}
+    
+    \begin{itemize}
+    \item \textbf{add\_edge(d, g, 2):} Cost 2 < max cost 6, swap edges \vfill
+    \end{itemize}
+    
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            % Define vertices in tree-like structure
+            % Row 1: A B
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
+            % Row 2: C D E  
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
+            % Row 3: F G H
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
+            \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
             % Edge NOT in MSF
             \draw[blue, thick] (C) -- (F) node[midway, above=0.1cm, font=\small] {5};  % CF
             \draw[blue, thick] (F) -- (D) node[midway, above=0.1cm, font=\small] {7};  % FD
@@ -669,31 +705,26 @@
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (D) -- (G) node[midway, right=0.1cm, font=\small] {2};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (F) node[midway, left=0.1cm, font=\small] {2};
             \draw[red, thick, decorate, decoration={snake, amplitude=1pt, segment length=8pt}] (A) -- (D) node[midway, left=0.1cm, font=\small] {3};
-            
             % Labels
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
         \end{tikzpicture}
-        \caption{Step 8: Added edge (d,g) with cost 2}
     \end{figure}
     
     \begin{itemize}
     \item \textbf{MSF:} \{g-h, c-a, a-f, a-d, d-g\} \vfill
     \end{itemize}
     
-    \note[item]{Finally, let's add (d, g) with cost 2.}
-    \note[item]{Are 'd' and 'g' connected? Yes. This creates the cycle d-a-f-g-d.}
-    \note[item]{We find the max-cost edge on the path d-a-f-g. The edges are (d,a) cost 3, (a,f) cost 2, and (f,g) cost 6. The max cost is 6, from edge (f,g).}
     \note[item]{Our new edge costs 2. Since 2 *is* less than 6, we swap them.}
     \note[item]{We `cut` edge (f,g) and `link` our new edge (d,g).}
     \note[item]{The MSF is updated again, and the total cost is now 12.}    
 \end{frame}
 
 %-------------------------------------------------
-% Incremental MSF Example - Final Result
+% Incremental MSF Example - Step 7 (Final Result)
 %-------------------------------------------------
 \begin{frame}
-    \frametitle{Incremental MSF example - Final Result}
+    \frametitle{Incremental MSF example - Step 7 (Final Result)}
     
     \begin{itemize}
     \item \textbf{Continue adding edges...} \vfill\pause
@@ -707,17 +738,14 @@
             % Row 1: A B
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (A) at (0, 4) {a};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (B) at (4, 4) {b};
-            
             % Row 2: C D E  
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (C) at (-2, 2) {c};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (D) at (2, 2) {d};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (E) at (6, 2) {e};
-            
             % Row 3: F G H
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (F) at (0, 0) {f};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (G) at (2, 0) {g};
             \node[circle, draw, fill=blue!20, minimum size=0.6cm] (H) at (4, 0) {h};
-            
             % Graph G edges (blue straight lines - edges NOT in MST)
             \draw[blue, thick] (A) -- (B) node[midway, above=0.1cm, font=\small] {8};  % AB
             \draw[blue, thick] (F) -- (G) node[midway, below=0.1cm, font=\small] {6};  % FG
@@ -739,7 +767,6 @@
             \node[blue, font=\Large] at (-3, 2) {G};
             \node[red, font=\Large] at (7, 2) {\hspace{1em}MSF};
         \end{tikzpicture}
-        \caption{Final MSF with optimal cost = 14}
     \end{figure}
     
     \begin{itemize}
@@ -859,6 +886,7 @@
         \item $\Oh(m)$ space usage
         \item \textbf{Requirement:} Need persistent version of the data structure
         \end{itemize}
+        Where $m$ is the number of updates.
     \end{theorem} \pause
     
     \begin{itemize}
@@ -959,13 +987,13 @@
 \begin{frame}
     \frametitle{Limitations $\rightarrow$ Key Insight}
 
-    \begin{alertblock}{Problems with the Existing Static Approach}
+    \begin{alertblock}{Problems with the existing static approach}
         \begin{itemize}
         \item \textbf{Fixed $m$:} Requires knowing the maximum sequence length ($\mathbf{m}$) beforehand. Meaning that it cannot handle arbitrary growth or dynamic operation counts.
         \end{itemize}
     \end{alertblock}
 
-    \begin{block}{Our Dynamic Goal and Solution}
+    \begin{block}{Our dynamic goal and solution}
         \textbf{Goal:} Remove the $\mathbf{Fixed \ m}$ dependency while preserving time complexity.
         \begin{itemize}
             \item \textbf{Key Insight:} Introduce a **dynamic rebuilding process** to handle arbitrary growth. \vfill
@@ -1036,7 +1064,7 @@
         \item For $i = 2$ to $k+1$: $D'_i \gets D_{i-2}$ \hfill {\footnotesize $\rhd$ reuse existing}
         \item For $i = 1$ to $k+1$:
         \begin{itemize}
-        \item $p \gets$ \textsc{kth}$(S, i(k+1))$ \hfill {\footnotesize $\rhd$ $i(k+1)$th edge}
+        \item $p \gets$ \textsc{kth}$(S, i(k+1))$ \hfill {\footnotesize $\rhd$ $i(k+1)$th item in the sequence of updates}
         \item $t'_i \gets p.\text{time}$
         \item \textsc{addEdges}$(S, t_{i-2}, t'_i, D'_i)$
         \end{itemize}
