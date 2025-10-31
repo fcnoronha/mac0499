@@ -28,9 +28,9 @@
 %------------------------------------------------------------
 % Beamer notes
 %------------------------------------------------------------
-% \setbeameroption{hide notes} % Only slides
-% % \setbeameroption{show only notes} % Only notes
-\setbeameroption{show notes on second screen=right} % Both
+\setbeameroption{hide notes} % Only slides
+% \setbeameroption{show only notes} % Only notes
+% \setbeameroption{show notes on second screen=right} % Both
 
 % Make notes font smaller to fit on page
 \addtobeamertemplate{note page}{\begingroup\footnotesize}{\endgroup} % Wraps note page in smaller font
@@ -258,12 +258,12 @@
     \end{itemize}
     \note[item]{So, what was Frederickson's solution? He showed that link-cut trees can efficiently maintain this incrementing forest. ---------- SKIP SLIDE}
     % \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{Link-cut trees provide all the operations we need, all in $O(\log n)$ amortized time: $find\_max$ to find the most expensive edge on a path, $link$ to add a weighted edge, $cut$ to remove one, and $is_connected$ to check if $u$ and $v$ are in the same component}
+    \note[item]{Link-cut trees provide all the operations we need, all in $O(\log n)$ amortized time: $find\_max$ to find the most expensive edge on a path, $link$ to add a weighted edge, $cut$ to remove one, and $is\_connected$ to check if $u$ and $v$ are in the same component}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{With this, we can construct a straightforward algorithm that supports adding a new edge $(u,v,w)$:}
     \note[item]{First, we check if $u$ and $v$ are already connected. If they're not, the new edge can't create a cycle, so we just add it to the forest using $link$.}
     \note[item]{If they *are* connected, adding this new edge creates a cycle. We find the most expensive edge on the path in that cycle using $find\_max$.}
-    \note[item]{If our new edge's cost $w$ is cheaper than that maximum cost, we swap them: we $cut$ the old, expensive edge and $link$ our new, cheaper edge .}
+    \note[item]{If our new edge's cost is cheaper than that maximum cost, we swap them: we $cut$ the old, expensive edge and $link$ our new, cheaper edge .}
     \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{With these steps using LCT operations, the time per edge addition is $O(\log n)$ amortized.}
 \end{frame}
@@ -416,7 +416,7 @@
     \frametitle{Incremental MSF example - Step 3 (Result)}
     
     \begin{itemize}
-    \item \textbf{add\_edge(c, f, 5):} Edge is > max cost (2), not added \vfill
+    \item \textbf{add\_edge(c, f, 5):} Edge cost is greater than max cost (2), not added \vfill
     \end{itemize}
     
     \begin{figure}
@@ -775,7 +775,7 @@
     
     \note[item]{If we continue this process, adding all the remaining edges from our original graph...}
     \note[item]{---------- SKIP SLIDE ----------}
-    \note[item]{...we would eventually arrive at the final, optimal Minimum Spanning Tree. The one shown here, for example, has a total cost of 12.}
+    \note[item]{...we would eventually arrive at the final, optimal Minimum Spanning Tree. The one shown here, for example, has a total cost of 14.}
     % \note[item]{So, to summarize, Frederickson's solution gives us an efficient $O(\log n)$ amortized time per *incremental* update.}
     % \note[item]{It perfectly handles cycle detection and edge replacement to maintain optimality.}
     \note[item]{But this only answers queries about the *present*. What if we want to ask: "What did the MSF look like 10 updates ago?"}
@@ -991,20 +991,21 @@
         \begin{itemize}
         \item \textbf{Fixed $m$:} Requires knowing the maximum sequence length ($\mathbf{m}$) beforehand. Meaning that it cannot handle arbitrary growth or dynamic operation counts.
         \end{itemize}
-    \end{alertblock}
+    \end{alertblock} \vfill\pause
 
     \begin{block}{Our dynamic goal and solution}
         \textbf{Goal:} Remove the $\mathbf{Fixed \ m}$ dependency while preserving time complexity.
         \begin{itemize}
-            \item \textbf{Key Insight:} Introduce a **dynamic rebuilding process** to handle arbitrary growth. \vfill
+            \item \textbf{Key Insight:} Introduce a dynamic rebuilding process to handle arbitrary growth. \vfill
             \item \textbf{Challenge:} Rebuilding $\mathbf{\sqrt{m}}$ checkpoints must be fast, avoiding complex persistent data structures. \vfill
-            \item \textbf{Solution:} **Reuse** the existing data structures to efficiently reconstruct new checkpoints. \vfill
+            \item \textbf{Solution:} Reuse the existing data structures to efficiently reconstruct new checkpoints. \vfill
         \end{itemize}
     \end{block}
 
     \note[item]{The existing approach is based on a static constraint: we must assume a fixed $m$.}
     \note[item]{This means you have to know the total number of operations in advance.}
     \note[item]{Crucially, they lack a mechanism for **rebuilding**, making them unable to handle a growing or unknown number of operations.}
+    \note[item]{---------- SKIP SLIDE ----------}
     \note[item]{Our goal is simple: remove the dependence on a fixed $m$ while keeping the time efficiency.}
     \note[item]{Our key insight is to introduce a **dynamic rebuilding process** to handle growth.}
     \note[item]{The challenge is doing this efficiently. Rebuilding $\sqrt{m}$ checkpoints non-persistently usually takes too long.}
